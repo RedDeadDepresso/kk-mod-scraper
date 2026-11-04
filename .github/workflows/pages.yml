@@ -1,10 +1,10 @@
-name: Deploy mod index to GitHub Pages
+name: Deploy indices to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
-      - kkc_mod_index.json
+      - indices/**
       - .github/workflows/pages.yml
   workflow_run:
     workflows: ["Scrape mod index"]
@@ -33,13 +33,15 @@ jobs:
           # so we always deploy the branch the scrape workflow just updated.
           ref: main
 
-      - name: Generate {"guid":"link"} index
+      - name: Build site from indices
         run: |
-          mkdir -p _site
-          # Source list is newest-first; reverse so the newest entry wins on duplicate GUIDs.
-          # -c = compact output (no indentation).
-          jq -c 'reverse | map({(.Guid): .Link}) | add // {}' kkc_mod_index.json > _site/kkc_mod_index.json
-          echo "Generated $(jq 'length' _site/kkc_mod_index.json) entries"
+          mkdir -p _site/indices
+          cp -r indices/. _site/indices/
+          # mod.json is stored as a newest-first list of mods. Publish it as a compact
+          # {"guid":"link"} map instead; reverse so the newest entry wins on duplicate GUIDs.
+          jq -c 'reverse | map({(.Guid): .Link}) | add // {}' indices/mod.json > _site/indices/mod.json
+          echo "Generated $(jq 'length' _site/indices/mod.json) mod entries"
+          ls -lR _site
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

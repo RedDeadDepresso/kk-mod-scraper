@@ -1,4 +1,4 @@
-package main
+package scrapers
 
 // Sideloader Modpack GUID indexes, built straight from the BetterRepack download server.
 //
@@ -1086,8 +1086,8 @@ func buildModpackIndexes(opt modpackOptions) (problems int, err error) {
 	return problems, nil
 }
 
-// runModpack is the `modpack` subcommand.
-func runModpack(args []string) {
+// RunModpack builds the modpack indexes. args are command-line style flags (nil = defaults).
+func RunModpack(args []string) {
 	fs := flag.NewFlagSet("modpack", flag.ExitOnError)
 	gameType := fs.String("game-type", "all", "which index to build: kk, kks or all")
 	indicesDir := fs.String("indices-dir", defaultIndicesDir, "where <game>_modpack.json is written")
