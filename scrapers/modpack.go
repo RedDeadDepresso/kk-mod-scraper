@@ -990,6 +990,19 @@ type modpackIndexFile struct {
 	Guids     map[string][]string `json:"guids"`
 }
 
+// readIndexGuids returns the GUIDs of an existing index file (nil if it can't be read).
+func readIndexGuids(path string) map[string][]string {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	var prev modpackIndexFile
+	if json.Unmarshal(data, &prev) != nil {
+		return nil
+	}
+	return prev.Guids
+}
+
 // writeIndex writes the index of one game unless the file already holds exactly these GUIDs
 // (so a day without changes on the server leaves no diff). Reports whether it wrote.
 func writeIndex(path, game string, index map[string][]string) (bool, error) {
@@ -1031,9 +1044,10 @@ type modpackOptions struct {
 }
 
 // buildModpackIndexes crawls the server and writes <indicesDir>/<game>_modpack.json for each
-// game. The returned count is how many listings/files could not be read (those mods are
-// missing from the index until a later run picks them up).
-func buildModpackIndexes(opt modpackOptions) (problems int, err error) {
+// game. problems is how many listings/files could not be read (those mods are missing from
+// the index until a later run picks them up); newGuids is how many GUIDs were not in the
+// previous index files (counted once even if they are new in both games).
+func buildModpackIndexes(opt modpackOptions) (problems, newGuids int, err error) {
 	baseURL := opt.baseURL
 	if !strings.HasSuffix(baseURL, "/") {
 		baseURL += "/"
@@ -1050,7 +1064,7 @@ func buildModpackIndexes(opt modpackOptions) (problems int, err error) {
 	slog.Info("Crawling the server listings", "server", baseURL, "games", strings.Join(opt.games, ","))
 	crawled, err := crawl(baseURL, categories, opt.workers)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	cache := map[string]cacheEntry{}
@@ -1064,12 +1078,19 @@ func buildModpackIndexes(opt modpackOptions) (problems int, err error) {
 		full: opt.full, retryFailed: opt.retryFailed, workers: opt.workers, cachePath: opt.cachePath,
 	})
 
+	added := map[string]bool{}
 	for _, game := range opt.games {
 		index := buildGameIndex(entries, gameCategories[game], baseURL, opt.maxURLs)
 		out := filepath.Join(opt.indicesDir, game+"_modpack.json")
+		prev := readIndexGuids(out)
+		for guid := range index {
+			if _, ok := prev[guid]; !ok {
+				added[guid] = true
+			}
+		}
 		wrote, err := writeIndex(out, game, index)
 		if err != nil {
-			return 0, fmt.Errorf("could not write %s: %w", out, err)
+			return 0, 0, fmt.Errorf("could not write %s: %w", out, err)
 		}
 		urls := 0
 		for _, v := range index {
@@ -1083,11 +1104,12 @@ func buildModpackIndexes(opt modpackOptions) (problems int, err error) {
 		slog.Warn("Some mods are missing from the index; the next run will try them again",
 			"unreadable_listings", len(crawled.failed), "unreachable_files", unreachable)
 	}
-	return problems, nil
+	return problems, len(added), nil
 }
 
-// RunModpack builds the modpack indexes. args are command-line style flags (nil = defaults).
-func RunModpack(args []string) {
+// RunModpack builds the modpack indexes and returns how many GUIDs are new. args are
+// command-line style flags (nil = defaults).
+func RunModpack(args []string) int {
 	fs := flag.NewFlagSet("modpack", flag.ExitOnError)
 	gameType := fs.String("game-type", "all", "which index to build: kk, kks or all")
 	indicesDir := fs.String("indices-dir", defaultIndicesDir, "where <game>_modpack.json is written")
@@ -1109,7 +1131,7 @@ func RunModpack(args []string) {
 		fatal("Unknown -game-type", "value", *gameType)
 	}
 
-	if _, err := buildModpackIndexes(modpackOptions{
+	_, newGuids, err := buildModpackIndexes(modpackOptions{
 		games:       games,
 		baseURL:     *baseURL,
 		indicesDir:  *indicesDir,
@@ -1118,7 +1140,9 @@ func RunModpack(args []string) {
 		retryFailed: *retryFailed,
 		maxURLs:     max(1, *maxURLs),
 		workers:     max(1, min(*workers, 16)),
-	}); err != nil {
+	})
+	if err != nil {
 		fatal("Modpack index build failed", "err", err)
 	}
+	return newGuids
 }

@@ -50,8 +50,23 @@ func commitChanges(message string) {
 }
 
 func main() {
-	newMods := scrapers.ScrapeMods()
-	scrapers.RunModpack(nil)
+	kkcMods := scrapers.ScrapeMods()
+	modpackMods := scrapers.RunModpack(nil)
 
-	commitChanges(fmt.Sprintf("Update indices (%d new mods)", newMods))
+	commitChanges(commitMessage(kkcMods, modpackMods))
+}
+
+// commitMessage lists only the sources that actually produced new mods.
+func commitMessage(kkcMods, modpackMods int) string {
+	switch {
+	case kkcMods > 0 && modpackMods > 0:
+		return fmt.Sprintf("Update indices (%d new mods, %d from koikatsucards, %d from betterrepack)",
+			kkcMods+modpackMods, kkcMods, modpackMods)
+	case kkcMods > 0:
+		return fmt.Sprintf("Update indices (%d new mods from koikatsucards)", kkcMods)
+	case modpackMods > 0:
+		return fmt.Sprintf("Update indices (%d new mods from betterrepack)", modpackMods)
+	default:
+		return "Update indices"
+	}
 }
