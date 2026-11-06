@@ -52,21 +52,40 @@ func commitChanges(message string) {
 func main() {
 	kkcMods := scrapers.ScrapeMods()
 	modpackMods := scrapers.RunModpack(nil)
+	megaMods, megaFailures := scrapers.RunMega(nil)
 
-	commitChanges(commitMessage(kkcMods, modpackMods))
+	commitChanges(commitMessage(kkcMods, modpackMods, megaMods))
+
+	// Commit what did work first, then make the run visibly fail so a broken Mega link
+	// doesn't go unnoticed.
+	if megaFailures > 0 {
+		fatal("Some Mega folders could not be indexed (see the errors above)", "folders", megaFailures)
+	}
 }
 
 // commitMessage lists only the sources that actually produced new mods.
-func commitMessage(kkcMods, modpackMods int) string {
-	switch {
-	case kkcMods > 0 && modpackMods > 0:
-		return fmt.Sprintf("Update indices (%d new mods, %d from koikatsucards, %d from betterrepack)",
-			kkcMods+modpackMods, kkcMods, modpackMods)
-	case kkcMods > 0:
-		return fmt.Sprintf("Update indices (%d new mods from koikatsucards)", kkcMods)
-	case modpackMods > 0:
-		return fmt.Sprintf("Update indices (%d new mods from betterrepack)", modpackMods)
-	default:
+func commitMessage(kkcMods, modpackMods, megaMods int) string {
+	var (
+		parts []string
+		names []string
+		total int
+	)
+	for _, src := range []struct {
+		n    int
+		name string
+	}{{kkcMods, "koikatsucards"}, {modpackMods, "betterrepack"}, {megaMods, "mega"}} {
+		if src.n > 0 {
+			total += src.n
+			names = append(names, src.name)
+			parts = append(parts, fmt.Sprintf("%d from %s", src.n, src.name))
+		}
+	}
+	switch len(parts) {
+	case 0:
 		return "Update indices"
+	case 1:
+		return fmt.Sprintf("Update indices (%d new mods from %s)", total, names[0])
+	default:
+		return fmt.Sprintf("Update indices (%d new mods, %s)", total, strings.Join(parts, ", "))
 	}
 }

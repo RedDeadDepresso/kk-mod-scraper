@@ -265,12 +265,30 @@ type manifestInfo struct{ Guid, Version string }
 
 const maxManifestSize = 8 << 20
 
-// readRemoteManifest reads the GUID and version of a remote zipmod via Range requests
-// (tail, then manifest.xml). Files that can't be read (ZIP64, encrypted, no root
-// manifest.xml, no GUID, ...) give a *permanentProbeError; anything else is network trouble
-// worth retrying later.
+// rangeReader gives random access to a remote file. HTTP servers implement it with Range
+// requests (httpRanger); Mega implements it with ranged downloads that it decrypts.
+type rangeReader interface {
+	// Suffix returns the last `length` bytes, the total size and the offset they start at.
+	Suffix(length int) (suffixResult, error)
+	// Range returns bytes start..end inclusive.
+	Range(start, end int) ([]byte, error)
+}
+
+type httpRanger struct{ url string }
+
+func (h httpRanger) Suffix(length int) (suffixResult, error) { return suffixGet(h.url, length) }
+func (h httpRanger) Range(start, end int) ([]byte, error)    { return rangeGet(h.url, start, end) }
+
+// readRemoteManifest reads the GUID and version of a zipmod on a plain HTTP server.
 func readRemoteManifest(rawURL string) (manifestInfo, error) {
-	tail, err := suffixGet(rawURL, 256*1024)
+	return readManifest(httpRanger{rawURL})
+}
+
+// readManifest reads the GUID and version of a remote zipmod via ranged reads (tail, then
+// manifest.xml). Files that can't be read (ZIP64, encrypted, no root manifest.xml, no GUID,
+// ...) give a *permanentProbeError; anything else is network trouble worth retrying later.
+func readManifest(r rangeReader) (manifestInfo, error) {
+	tail, err := r.Suffix(256 * 1024)
 	if err != nil {
 		return manifestInfo{}, err
 	}
@@ -294,7 +312,7 @@ func readRemoteManifest(rawURL string) (manifestInfo, error) {
 		end := min(begin+cSize, len(tail.data))
 		central = tail.data[begin:end]
 	} else {
-		central, err = rangeGet(rawURL, cOffset, cOffset+cSize-1)
+		central, err = r.Range(cOffset, cOffset+cSize-1)
 		if err != nil {
 			return manifestInfo{}, err
 		}
@@ -335,7 +353,7 @@ func readRemoteManifest(rawURL string) (manifestInfo, error) {
 
 	var prefix, localHeader []byte
 	if localOffset < 64*1024 {
-		prefix, err = rangeGet(rawURL, 0, min(size-1, 64*1024-1))
+		prefix, err = r.Range(0, min(size-1, 64*1024-1))
 		if err != nil {
 			return manifestInfo{}, err
 		}
@@ -344,7 +362,7 @@ func readRemoteManifest(rawURL string) (manifestInfo, error) {
 		}
 		localHeader = prefix[localOffset:]
 	} else {
-		localHeader, err = rangeGet(rawURL, localOffset, min(size-1, localOffset+4095))
+		localHeader, err = r.Range(localOffset, min(size-1, localOffset+4095))
 		if err != nil {
 			return manifestInfo{}, err
 		}
@@ -358,7 +376,7 @@ func readRemoteManifest(rawURL string) (manifestInfo, error) {
 	if prefix != nil && dataOffset+compressedSize <= len(prefix) {
 		compressed = prefix[dataOffset : dataOffset+compressedSize]
 	} else {
-		compressed, err = rangeGet(rawURL, dataOffset, dataOffset+compressedSize-1)
+		compressed, err = r.Range(dataOffset, dataOffset+compressedSize-1)
 		if err != nil {
 			return manifestInfo{}, err
 		}
@@ -757,12 +775,23 @@ type refreshOptions struct {
 	full, retryFailed bool
 	workers           int
 	cachePath         string
+
+	// Optional hooks; the defaults suit the BetterRepack server.
+	probe   func(url string) (manifestInfo, error) // reads GUID/version (default readRemoteManifest)
+	label   func(url string) string                // human-readable name for log lines
+	noMoves bool                                   // don't match new files to vanished ones by name/date/size
 }
 
 // refreshCache brings the cache in line with the listing, probing only new/changed files.
 // Returns the new cache and the number of files that couldn't be probed this time.
 func refreshCache(listing map[string]fileSig, cache map[string]cacheEntry, failedDirs []string,
 	opt refreshOptions) (map[string]cacheEntry, int) {
+	if opt.probe == nil {
+		opt.probe = readRemoteManifest
+	}
+	if opt.label == nil {
+		opt.label = func(u string) string { return unquote(urlPath(u)) }
+	}
 	old := cache
 	if opt.full {
 		old = map[string]cacheEntry{}
@@ -816,7 +845,7 @@ func refreshCache(listing map[string]fileSig, cache map[string]cacheEntry, faile
 			changed++
 		}
 		twin := gone[twinKey{filenameOf(u), sig.Mtime, sig.Size}]
-		if !known && len(twin) == 1 {
+		if !known && !opt.noMoves && len(twin) == 1 {
 			t := twin[0]
 			t.Mtime, t.Size = sig.Mtime, sig.Size
 			result[u] = t
@@ -845,7 +874,7 @@ func refreshCache(listing map[string]fileSig, cache map[string]cacheEntry, faile
 		go func() {
 			defer wg.Done()
 			for u := range jobs {
-				info, err := readRemoteManifest(u)
+				info, err := opt.probe(u)
 				var pe *permanentProbeError
 				results <- probeResult{u, info, err, errors.As(err, &pe)}
 			}
@@ -875,10 +904,10 @@ func refreshCache(listing map[string]fileSig, cache map[string]cacheEntry, faile
 		case r.permanent:
 			permanentCount++
 			result[r.url] = cacheEntry{Mtime: sig.Mtime, Size: sig.Size, Error: r.err.Error()}
-			slog.Info("Skipping unindexable zipmod", "path", unquote(urlPath(r.url)), "reason", r.err)
+			slog.Info("Skipping unindexable zipmod", "path", opt.label(r.url), "reason", r.err)
 		default:
 			unreachable++
-			slog.Warn("Could not probe zipmod", "path", unquote(urlPath(r.url)), "err", r.err)
+			slog.Warn("Could not probe zipmod", "path", opt.label(r.url), "err", r.err)
 		}
 		if done%200 == 0 || done == len(toProbe) {
 			slog.Info("Probing", "done", done, "total", len(toProbe))

@@ -20,10 +20,10 @@ import (
 type Mod map[string]string
 
 const (
-	// ModIndexFile is where the koikatsucards.com mod index is stored.
-	ModIndexFile   = "indices/mod.json"
-	kkcBaseURL     = "https://koikatsucards.com"
-	telegramPrefix = "https://t.me/KK_archive_modlibrary/"
+	// TelegramIndexFile is where the koikatsucards.com / Telegram archive mod index is stored.
+	TelegramIndexFile = "indices/telegram.json"
+	kkcBaseURL        = "https://koikatsucards.com"
+	telegramPrefix    = "https://t.me/KK_archive_modlibrary/"
 )
 
 var modAttributes = []string{"Name", "Version", "Author", "Guid", "File"}
@@ -42,7 +42,7 @@ func isModAttribute(s string) bool {
 // ---------- persistence ----------
 
 func loadPreviousMods() []Mod {
-	data, err := os.ReadFile(ModIndexFile)
+	data, err := os.ReadFile(TelegramIndexFile)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			slog.Warn("Previous data doesn't exist")
@@ -69,10 +69,10 @@ func saveMods(newMods, prevMods []Mod) {
 		fatal("Failed to save mods", "err", err)
 	}
 
-	if err := os.MkdirAll(filepath.Dir(ModIndexFile), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(TelegramIndexFile), 0o755); err != nil {
 		fatal("Failed to save mods", "err", err)
 	}
-	if err := os.WriteFile(ModIndexFile, []byte(sb.String()), 0o644); err != nil {
+	if err := os.WriteFile(TelegramIndexFile, []byte(sb.String()), 0o644); err != nil {
 		fatal("Failed to save mods", "err", err)
 	}
 	slog.Info("Mods saved successfully")
@@ -203,7 +203,7 @@ func fetchTelegramLink(href string) string {
 // ---------- scrape ----------
 
 // ScrapeMods scrapes koikatsucards.com for mods newer than the ones already in
-// ModIndexFile, writes the updated index and returns how many mods were new.
+// TelegramIndexFile, writes the updated index and returns how many mods were new.
 func ScrapeMods() int {
 	newMods := []Mod{}
 	prevMods := loadPreviousMods()

@@ -37,10 +37,30 @@ jobs:
         run: |
           mkdir -p _site/indices
           cp -r indices/. _site/indices/
-          # mod.json is stored as a newest-first list of mods. Publish it as a compact
-          # {"guid":"link"} map instead; reverse so the newest entry wins on duplicate GUIDs.
-          jq -c 'reverse | map({(.Guid): .Link}) | add // {}' indices/mod.json > _site/indices/mod.json
-          echo "Generated $(jq 'length' _site/indices/mod.json) mod entries"
+          # telegram.json and indices/mega/*.json are published merged, as mod.json, rather
+          # than as separate files.
+          rm -rf _site/indices/telegram.json _site/indices/mega
+
+          # mod.json: {"<guid>": {"mega": [link, ...], "telegram": [link, ...]}, ...}
+          #  - telegram: telegram.json is a newest-first list of mods; every link of a GUID
+          #    is kept, newest first.
+          #  - mega: the "guids" maps of every folder in indices/mega/ (best link of each
+          #    folder first, folders in file-name order).
+          #  - Links are de-duplicated; a GUID known from only one source gets an empty list
+          #    for the other.
+          shopt -s nullglob
+          jq -n -c \
+            --slurpfile t indices/telegram.json \
+            --slurpfile m <(cat /dev/null indices/mega/*.json) '
+            def uniq: reduce .[] as $x ([]; if any(.[]; . == $x) then . else . + [$x] end);
+            ($t[0] | reduce .[] as $mod ({}; .[$mod.Guid] += [$mod.Link]) | map_values(uniq)) as $telegram
+            | ($m | reduce (.[] | (.guids // {}) | to_entries[]) as $e ({}; .[$e.key] += $e.value) | map_values(uniq)) as $mega
+            | reduce (($telegram | keys) + ($mega | keys) | unique)[] as $guid
+                ({}; .[$guid] = {mega: ($mega[$guid] // []), telegram: ($telegram[$guid] // [])})
+          ' > _site/indices/mod.json
+          echo "Generated $(jq 'length' _site/indices/mod.json) mod entries" \
+            "($(jq '[.[] | select(.mega | length > 0)] | length' _site/indices/mod.json) with mega links," \
+            "$(jq '[.[] | select(.telegram | length > 0)] | length' _site/indices/mod.json) with telegram links)"
           ls -lR _site
 
       - name: Setup Pages
