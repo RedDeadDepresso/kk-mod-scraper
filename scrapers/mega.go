@@ -20,7 +20,7 @@ package scrapers
 //
 // Output, one pair of files per folder, named after the folder as it is called on Mega:
 //
-//	indices/mega/<folder name>.json   {"generated": "...", "game_type": "mega", "count": 123,
+//	indices/mega/<folder name>.json   {"generated": "...", "count": 123,
 //	                                   "guids": {"com.example.mod": ["https://mega.nz/folder/<id>#<key>/file/<node>", ...]}}
 //	cache/mega/<folder name>.json     incremental-update cache ({url: {mtime, size, guid, version, error}})
 //
@@ -50,7 +50,7 @@ import (
 const (
 	megaUserAgent   = "kk-mod-scraper-mega-index-builder/1.0"
 	defaultCacheDir = "cache"
-	megaGameType    = "mega"
+	megaKind        = "mega"
 )
 
 var (
@@ -472,7 +472,7 @@ func (m *megaRanger) fetch(start, end int) ([]byte, error) {
 
 type megaProvider struct{}
 
-func (megaProvider) Kind() string { return megaGameType }
+func (megaProvider) Kind() string { return megaKind }
 
 func (megaProvider) ID(raw string) (string, error) {
 	link, err := parseMegaFolderLink(raw)

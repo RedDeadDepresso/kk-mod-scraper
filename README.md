@@ -4,7 +4,7 @@
 | Source | Scraper | Config | Index | Cache |
 |---|---|---|---|---|
 | Telegram archive (via koikatsucards.com) | `scrapers/telegram.go` | - | `indices/telegram.json` | - |
-| BetterRepack | `scrapers/modpack.go` | - | `indices/kk_modpack.json`, `indices/kks_modpack.json` | `cache/modpack.json` |
+| BetterRepack | `scrapers/modpack.go` | - | `indices/modpack.json` (KK and KKS folders together) | `cache/modpack.json` |
 | Mega folders | `scrapers/mega.go` | `config/mega.json` | `indices/mega/<folder name>.json` | `cache/mega/<folder name>.json` |
 | Google Drive folders | `scrapers/drive.go` | `config/drive.json` | `indices/drive/<folder name>.json` | `cache/drive/<folder name>.json` |
 
@@ -40,7 +40,7 @@ Flags (all optional) for both: `-config`, `-indices-dir`, `-cache-dir`, `-full`,
 
 ### Published site
 
-The Pages workflow publishes `kk_modpack.json`, `kks_modpack.json` and a merged `mod.json`
+The Pages workflow publishes `modpack.json` and a merged `mod.json`
 built from `telegram.json`, every `indices/mega/*.json` and every `indices/drive/*.json`:
 
 ```json

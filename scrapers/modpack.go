@@ -8,32 +8,33 @@ package scrapers
 //  2. For every .zipmod that is new or changed since the last run, read its GUID and version
 //     from the server with HTTP Range requests (the zip's tail, then only manifest.xml - a
 //     few KB per mod, never the whole file).
-//  3. Write one index per game: {guid: [url, ...]}, best URL first.
+//  3. Write one index, {guid: [url, ...]}, best URL first, covering the categories of both
+//     games (kkCategories and kksCategories). The URLs say which folder, and so which game,
+//     a file is in.
 //
 // Incremental updates: the listing's date and size strings are the change signature. Files
 // whose signature is unchanged keep their cached GUID and are not probed; a file that only
-// moved or was renamed (same filename, date and size) keeps it too. The cache is shared by
-// both games and lives in the repo (cache/modpack.json).
+// moved or was renamed (same filename, date and size) keeps it too. The cache lives in the
+// repo (cache/modpack.json).
 //
 // Not indexed: "Sideloader Modpack - Bleeding Edge" (not part of the BetterRepack game
 // release) and the EmotionCreators categories. Edit kkCategories / kksCategories below to
-// change what a game's index contains.
+// change what the index contains.
 //
-// Output (indices/kk_modpack.json, indices/kks_modpack.json):
+// Output (indices/modpack.json):
 //
 //	{
 //	  "generated": "2025-01-01T12:00:00",
-//	  "game_type": "kk",
-//	  "count":     4300,
+//	  "count":     5800,
 //	  "guids":     {"com.example.mod": ["https://.../Sideloader%20Modpack/a/mod.zipmod", ...], ...}
 //	}
 //
 // The URLs are percent-encoded exactly as the server lists them.
 //
 // URLs of one GUID are ordered best first: main "Sideloader Modpack" folder before the
-// specialised categories, then newest manifest version, then newest file date. Identical
-// copies (same filename, date and size) in several folders are listed once, and at most
-// -max-urls URLs are kept per GUID.
+// specialised categories (studio last), then newest manifest version, then newest file date.
+// Identical copies (same filename, date and size) in several folders are listed once, and at
+// most -max-urls URLs are kept per GUID.
 
 import (
 	"bytes"
@@ -75,9 +76,9 @@ const (
 	defaultIndicesDir   = "indices"
 )
 
-// Server folders (first level under the base URL) that go into each game's index, in ranking
-// order: the main folder always first. Anything else on the server (Bleeding Edge, EC_*) is
-// neither crawled nor indexed.
+// Server folders (first level under the base URL) of each game, in ranking order: the main
+// folder always first. Anything else on the server (Bleeding Edge, EC_*) is neither crawled
+// nor indexed.
 var kkCategories = []string{
 	mainCategory,
 	"Sideloader Modpack - Exclusive KK KKS",
@@ -103,7 +104,24 @@ var kksCategories = []string{
 	studioCategory,
 }
 
-var gameCategories = map[string][]string{"kk": kkCategories, "kks": kksCategories}
+// modpackCategories is every category of both games, once, in ranking order: the main folder
+// first, then the others in the order they appear in kkCategories and then kksCategories,
+// with the studio folder last.
+var modpackCategories = mergeCategories(kkCategories, kksCategories)
+
+func mergeCategories(lists ...[]string) []string {
+	var out []string
+	seen := map[string]bool{}
+	for _, list := range lists {
+		for _, c := range list {
+			if !seen[c] && c != studioCategory {
+				seen[c] = true
+				out = append(out, c)
+			}
+		}
+	}
+	return append(out, studioCategory)
+}
 
 // ---------------------------------------------------------------------------
 // HTTP
@@ -319,10 +337,10 @@ func readManifest(r rangeReader) (manifestInfo, error) {
 	}
 
 	var (
-		found                              bool
-		flags, method                      uint16
-		compressedSize, localOffset        int
-		position                           = 0
+		found                       bool
+		flags, method               uint16
+		compressedSize, localOffset int
+		position                    = 0
 	)
 	for position+46 <= len(central) && bytes.Equal(central[position:position+4], []byte("PK\x01\x02")) {
 		h := central[position:]
@@ -680,7 +698,8 @@ func crawl(baseURL string, categories map[string]bool, workers int) (crawlResult
 }
 
 // ---------------------------------------------------------------------------
-// Cache (shared by both games; {url: {mtime, size, guid, version, error}})
+// Cache ({url: {mtime, size, guid, version, error}}); the Mega and Drive scrapers use the same
+// format for their own cache files
 // ---------------------------------------------------------------------------
 
 type cacheEntry struct {
@@ -964,7 +983,7 @@ func compareVersions(a, b string) int {
 	return 0
 }
 
-// buildGameIndex returns {guid: [url, ...]} for one game, best URL first.
+// buildGameIndex returns {guid: [url, ...]} for the given categories, best URL first.
 func buildGameIndex(entries map[string]cacheEntry, categories []string, baseURL string, maxURLs int) map[string][]string {
 	rank := map[string]int{}
 	for i, c := range categories {
@@ -1014,7 +1033,6 @@ func buildGameIndex(entries map[string]cacheEntry, categories []string, baseURL 
 
 type modpackIndexFile struct {
 	Generated string              `json:"generated"`
-	GameType  string              `json:"game_type"`
 	Count     int                 `json:"count"`
 	Guids     map[string][]string `json:"guids"`
 }
@@ -1032,18 +1050,21 @@ func readIndexGuids(path string) map[string][]string {
 	return prev.Guids
 }
 
-// writeIndex writes the index of one game unless the file already holds exactly these GUIDs
-// (so a day without changes on the server leaves no diff). Reports whether it wrote.
-func writeIndex(path, game string, index map[string][]string) (bool, error) {
+// writeIndex writes an index unless the file already holds exactly these GUIDs (so a day
+// without changes on the server leaves no diff). A file that still has the old "game_type"
+// field is rewritten once, to drop it. Reports whether it wrote.
+func writeIndex(path string, index map[string][]string) (bool, error) {
 	if data, err := os.ReadFile(path); err == nil {
-		var prev modpackIndexFile
-		if json.Unmarshal(data, &prev) == nil && prev.GameType == game && reflect.DeepEqual(prev.Guids, index) {
+		var prev struct {
+			modpackIndexFile
+			LegacyGameType json.RawMessage `json:"game_type"`
+		}
+		if json.Unmarshal(data, &prev) == nil && prev.LegacyGameType == nil && reflect.DeepEqual(prev.Guids, index) {
 			return false, nil
 		}
 	}
 	doc := modpackIndexFile{
 		Generated: time.Now().UTC().Format("2006-01-02T15:04:05"),
-		GameType:  game,
 		Count:     len(index),
 		Guids:     index,
 	}
@@ -1062,7 +1083,6 @@ func writeIndex(path, game string, index map[string][]string) (bool, error) {
 // ---------------------------------------------------------------------------
 
 type modpackOptions struct {
-	games       []string
 	baseURL     string
 	indicesDir  string
 	cachePath   string
@@ -1072,11 +1092,12 @@ type modpackOptions struct {
 	workers     int
 }
 
-// buildModpackIndexes crawls the server and writes <indicesDir>/<game>_modpack.json for each
-// game. problems is how many listings/files could not be read (those mods are missing from
-// the index until a later run picks them up); newGuids is how many GUIDs were not in the
-// previous index files (counted once even if they are new in both games).
-func buildModpackIndexes(opt modpackOptions) (problems, newGuids int, err error) {
+const modpackIndexName = "modpack.json"
+
+// buildModpackIndex crawls the server and writes <indicesDir>/modpack.json. problems is how
+// many listings/files could not be read (those mods are missing from the index until a later
+// run picks them up); newGuids is how many GUIDs were not in the previous index file.
+func buildModpackIndex(opt modpackOptions) (problems, newGuids int, err error) {
 	baseURL := opt.baseURL
 	if !strings.HasSuffix(baseURL, "/") {
 		baseURL += "/"
@@ -1084,13 +1105,11 @@ func buildModpackIndexes(opt modpackOptions) (problems, newGuids int, err error)
 	baseURL = canonical(baseURL)
 
 	categories := map[string]bool{}
-	for _, g := range opt.games {
-		for _, c := range gameCategories[g] {
-			categories[c] = true
-		}
+	for _, c := range modpackCategories {
+		categories[c] = true
 	}
 
-	slog.Info("Crawling the server listings", "server", baseURL, "games", strings.Join(opt.games, ","))
+	slog.Info("Crawling the server listings", "server", baseURL, "categories", len(categories))
 	crawled, err := crawl(baseURL, categories, opt.workers)
 	if err != nil {
 		return 0, 0, err
@@ -1107,41 +1126,37 @@ func buildModpackIndexes(opt modpackOptions) (problems, newGuids int, err error)
 		full: opt.full, retryFailed: opt.retryFailed, workers: opt.workers, cachePath: opt.cachePath,
 	})
 
-	added := map[string]bool{}
-	for _, game := range opt.games {
-		index := buildGameIndex(entries, gameCategories[game], baseURL, opt.maxURLs)
-		out := filepath.Join(opt.indicesDir, game+"_modpack.json")
-		prev := readIndexGuids(out)
-		for guid := range index {
-			if _, ok := prev[guid]; !ok {
-				added[guid] = true
-			}
+	index := buildGameIndex(entries, modpackCategories, baseURL, opt.maxURLs)
+	out := filepath.Join(opt.indicesDir, modpackIndexName)
+	prev := readIndexGuids(out)
+	for guid := range index {
+		if _, ok := prev[guid]; !ok {
+			newGuids++
 		}
-		wrote, err := writeIndex(out, game, index)
-		if err != nil {
-			return 0, 0, fmt.Errorf("could not write %s: %w", out, err)
-		}
-		urls := 0
-		for _, v := range index {
-			urls += len(v)
-		}
-		slog.Info("Modpack index", "game", game, "guids", len(index), "urls", urls, "path", out, "changed", wrote)
 	}
+	wrote, err := writeIndex(out, index)
+	if err != nil {
+		return 0, 0, fmt.Errorf("could not write %s: %w", out, err)
+	}
+	urls := 0
+	for _, v := range index {
+		urls += len(v)
+	}
+	slog.Info("Modpack index", "guids", len(index), "urls", urls, "path", out, "changed", wrote)
 
 	problems = len(crawled.failed) + unreachable
 	if problems > 0 {
 		slog.Warn("Some mods are missing from the index; the next run will try them again",
 			"unreadable_listings", len(crawled.failed), "unreachable_files", unreachable)
 	}
-	return problems, len(added), nil
+	return problems, newGuids, nil
 }
 
-// RunModpack builds the modpack indexes and returns how many GUIDs are new. args are
+// RunModpack builds the modpack index and returns how many GUIDs are new. args are
 // command-line style flags (nil = defaults).
 func RunModpack(args []string) int {
 	fs := flag.NewFlagSet("modpack", flag.ExitOnError)
-	gameType := fs.String("game-type", "all", "which index to build: kk, kks or all")
-	indicesDir := fs.String("indices-dir", defaultIndicesDir, "where <game>_modpack.json is written")
+	indicesDir := fs.String("indices-dir", defaultIndicesDir, "where modpack.json is written")
 	cachePath := fs.String("cache", defaultModpackCache, "incremental-update cache")
 	baseURL := fs.String("base-url", defaultModpackBaseURL, "BetterRepack download server")
 	full := fs.Bool("full", false, "ignore the cache and probe every file")
@@ -1150,18 +1165,7 @@ func RunModpack(args []string) int {
 	workers := fs.Int("workers", 8, "parallel requests (max 16)")
 	_ = fs.Parse(args)
 
-	var games []string
-	switch *gameType {
-	case "all":
-		games = []string{"kk", "kks"}
-	case "kk", "kks":
-		games = []string{*gameType}
-	default:
-		fatal("Unknown -game-type", "value", *gameType)
-	}
-
-	_, newGuids, err := buildModpackIndexes(modpackOptions{
-		games:       games,
+	_, newGuids, err := buildModpackIndex(modpackOptions{
 		baseURL:     *baseURL,
 		indicesDir:  *indicesDir,
 		cachePath:   *cachePath,

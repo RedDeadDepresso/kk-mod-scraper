@@ -31,7 +31,7 @@ type remoteFolder struct {
 }
 
 type folderProvider interface {
-	// Kind is "mega" or "drive": the sub-directory and game_type of the output.
+	// Kind is "mega" or "drive": the sub-directory of the output.
 	Kind() string
 	// ID validates a link from the config and returns a stable id for the folder.
 	ID(raw string) (string, error)
@@ -180,7 +180,7 @@ func syncFolder(p folderProvider, raw, id string, opt hostedOptions, used map[st
 			newGuids++
 		}
 	}
-	wrote, err := writeIndex(out, kind, index)
+	wrote, err := writeIndex(out, index)
 	if err != nil {
 		return base, 0, unreachable, fmt.Errorf("could not write %s: %w", out, err)
 	}

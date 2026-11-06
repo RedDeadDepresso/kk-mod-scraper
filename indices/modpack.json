@@ -1,7 +1,6 @@
 {
- "generated": "2026-11-04T14:39:39",
- "game_type": "kks",
- "count": 5619,
+ "generated": "2026-11-06T11:04:46",
+ "count": 5717,
  "guids": {
   "-debuff.0079": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/-debuff/%5b-debuff%5d%20GBO2-Mobile%20Suit%20Gundam%20v1.0.zipmod"
@@ -366,6 +365,9 @@
   "AA2HexaFrontHairAddition": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Zeta/%5bZeta%5d%20AA2HexaFrontHairAddition%20v3.1.zipmod"
   ],
+  "AAA.LeviathanHalberd": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20Leviathan%20Halberd%20v1.0.zipmod"
+  ],
   "AAA.MegamanNTPorts": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/AAA/%5bAAA%5d%20Mega%20Man%20Network%20Transmission%20Ports%20v1.1.zipmod"
   ],
@@ -688,6 +690,7 @@
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Augh/%5bAugh%5d%20Ear%20Tag%20v1.0.0.zipmod"
   ],
   "Augh.FaceOutline": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Augh/%5bAugh%5d%20Augh%20Face%20Outline%20Rework%20v1.1.0.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KKS/Augh/%5bAugh%5d%20Augh%20Face%20Outline%20Rework%20v1.1.2.zipmod"
   ],
   "Augh.Firefly": [
@@ -830,6 +833,9 @@
   ],
   "Augh.StarouEyes": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Augh/%5bAugh%5d%20Starou%20Eyes%20v1.0.0.zipmod"
+  ],
+  "Augh.StirrupStockings": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Augh/%5bAugh%5d%20Stirrup%20Stockings%20v1.0.2.zipmod"
   ],
   "Augh.StrappyHeels": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Augh/%5bAugh%5d%20Strappy%20Heels%20v1.0.3.zipmod"
@@ -1377,6 +1383,9 @@
   "Bodytights_v3": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/super25011/%5bsuper25011%5d%20Bodytights_v3%20v1.0.1.zipmod"
   ],
+  "BotsParts": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20BotsParts%20v1.0.zipmod"
+  ],
   "BronyaMN": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bQianMo%5dBronya_Dusk%20siren.zipmod"
   ],
@@ -1499,6 +1508,9 @@
   ],
   "Chisa.Sigma": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Sigma/%5bSigma%5d%20Chisa%20Yukizome%20v1.0.zipmod"
+  ],
+  "CielChristmas": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20CielChristmas%20v1.0.zipmod"
   ],
   "Clair Hair": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/NASCA/%5bNASCA%5d%20Clair%20Hair%20v1.0.zipmod"
@@ -1626,6 +1638,9 @@
   "Cz_Longcoat": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Cz/%5bCz%5dLongcoat.zipmod"
   ],
+  "Cz_Magic_Mirror_car": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bCz%5dH-Map%20Magic%20Mirror%20Car.zipmod"
+  ],
   "Cz_Mika_boots": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Cz/%5bCz%5d%20Mika_boots%20v1.0.zipmod"
   ],
@@ -1749,7 +1764,26 @@
   "DRHark.Zoroark": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DrHarkness/%5bDrHarkness%5d%20Zoroark_items_v1.0.zipmod"
   ],
+  "DS27.COM3D2_H_Maps": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dCOM3D2%20H-Maps%202.2.zipmod"
+  ],
+  "DS27.DarkSoldier27_H_Map_Pack_01": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%20DS27%20H-Maps%20Pack%20v1.1.zipmod"
+  ],
+  "DS27.H_Map_Among_Us": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%20Among%20Us%20The%20Skeld%20v1.1.zipmod"
+  ],
+  "DS27.H_Map_Genshin_Impact_Jean Office": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%20Genshin%20Impact%20Jean%20Office%20v1.0.zipmod"
+  ],
+  "DS27.H_Map_Persona_5_Leblanc_Attic": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%20Persona%205%20Leblanc%20Attic%20v1.0.zipmod"
+  ],
+  "DS27.H_Map_Splatoon2_M001": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%20Splatoon%20v1.0.zipmod"
+  ],
   "DS27.JRPG_H_Maps_01": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dJRPG%20H-Maps%20v1.8.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dJRPG%20H-Maps%20-%20Missing%20Mod%20Fix.zipmod"
   ],
   "DS27.KKS_JRPG_H_Maps_01": [
@@ -1765,27 +1799,35 @@
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/DarkSoldier27/%5bDarkSoldier27%5d%20Trials%20of%20Cold%20Steel%20Studio%20Items%20v1.0.zipmod"
   ],
   "DS27.MiSide_MapPack01": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dMiSide%20H-Map%20Pack%201.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dMiSide%20H-Map%20Pack%201.zipmod"
   ],
   "DS27.MiSide_MapPack02": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dMiSide%20H-Map%20Pack%202.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dMiSide%20H-Map%20Pack%202.zipmod"
   ],
   "DS27.MiSide_MapPack03": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dMiSide%20H-Map%20Pack%203.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dMiSide%20H-Map%20Pack%203.zipmod"
   ],
   "DS27.MiSide_MapPack04": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dMiSide%20H-Map%20Pack%204.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dMiSide%20H-Map%20Pack%204.zipmod"
   ],
   "DS27.MoreHentaiMaps": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dMore%20H-Maps%202.9.1.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dMore%20H-Maps%20Fix.zipmod"
   ],
   "DS27.ProjectDiva_H_Maps_Collection": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dProject%20DIVA%20H-Map%20Collection%203.5.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dProject%20DIVA%20H-Map%20-%20Missing%20Mod%20Fix.zipmod"
   ],
   "DS27.ProjectDiva_H_Maps_Collection_Extend01": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dProject%20DIVA%20H-Map%20Collection%20Extend%201.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dProject%20DIVA%20H-Map%20Extend%201.zipmod"
   ],
   "DS27.ProjectDiva_H_Maps_Collection_Extend02": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dProject%20DIVA%20H-Map%20Collection%20Extend%202.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dProject%20DIVA%20H-Map%20Extend%202.zipmod"
   ],
   "DS27.Project_DIVA_AFT_MOD": [
@@ -1798,24 +1840,31 @@
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bDarkSoldier27%5dProject%20DIVA%20Hair%20Styles%201.2.zipmod"
   ],
   "DS27.Random_H_Map_Pack01": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dRandom%20H-Map%20Pack%201.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dRandom%20H-Map%20Pack%201.zipmod"
   ],
   "DS27.Random_H_Map_Pack02": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dRandom%20H-Map%20Pack%202.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dRandom%20H-Map%20Pack%202.zipmod"
   ],
   "DS27.Random_H_Map_Pack03": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dRandom%20H-Map%20Pack%203.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dRandom%20H-Map%20Pack%203.zipmod"
   ],
   "DS27.Random_H_Map_Pack04": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dRandom%20H-Map%20Pack%204.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dRandom%20H-Map%20Pack%204.zipmod"
   ],
   "DS27.Random_H_Map_Pack05": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dRandom%20H-Map%20Pack%205.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dRandom%20H-Map%20Pack%205.zipmod"
   ],
   "DS27.Random_H_Map_Pack06": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dRandom%20H-Map%20Pack%206.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dRandom%20H-Map%20Pack%206.zipmod"
   ],
   "DS27.Random_H_Map_Pack07": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKK%5dRandom%20H-Map%20Pack%207.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DarkSoldier27/%5bDarkSoldier27%5d%5bKKS%5dRandom%20H-Map%20Pack%207.zipmod"
   ],
   "DS27.Vanilla_Maps": [
@@ -1899,6 +1948,9 @@
   "DrHarkness.IrisHeart": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DrHarkness/%5bDrHarkness%5d%20Iris%20Heart%20v1.0.zipmod"
   ],
+  "DrHarkness.LusaminePack": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/DrHarkness/%5bDrHarkness%5d%20Lusamine%20Pack%20v1.0.zipmod"
+  ],
   "DrHarkness.Padlock": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DrHarkness/%5bDrHarkness%5d%20Padlock%20Heart%20Collar%20v1.0.zipmod"
   ],
@@ -1911,11 +1963,17 @@
   "DrHarkness.SonicShoesPort": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DrHarkness/%5bDrHarkness%5d%20Sonic%20Shoes%20v1.0.zipmod"
   ],
+  "DrHarkness.StockingDress": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/DrHarkness/%5bDrHarkness%5d%20Stocking%20Dress%20v1.0.zipmod"
+  ],
   "Drake": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Tinala/%5bTinala%5d%20Drake%20v1.0.zipmod"
   ],
   "Drharkness.HiyokoArm": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DrHarkness/%5bDrHarkness%5d%20Hiyoko%20Hair%20v1.0.zipmod"
+  ],
+  "Droitclair Parts": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20Droitclair%20Parts%20v1.0.zipmod"
   ],
   "DuDu.lust_tattoo": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bDuDu%5dLust%20Tatoo.zipmod"
@@ -1928,6 +1986,12 @@
   ],
   "Durandal hair mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bDarobJ%2C%e3%81%bc%e3%81%8f%e9%87%8c%5dDurandal%20hair%20acc.zipmod"
+  ],
+  "Dweller1221.BlueRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Dweller1221/%5bDweller1221%5d%20Blue%20Room%20v1.0.zipmod"
+  ],
+  "Dweller1221.GreenRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Dweller1221/%5bDweller1221%5d%20Green%20Room%20v1.0.zipmod"
   ],
   "DynastKing.QoS_Tattoo_Pack": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DynastKing/%5bDynastKing%5d%20QoS_Tattoo_Pack_v1.0.zipmod"
@@ -1949,6 +2013,9 @@
   ],
   "ECshoes": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Dale/%5bDale%5d%20ECchange%20v1.5.zipmod"
+  ],
+  "EXE Parts": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20EXE%20Parts%20v1.0.zipmod"
   ],
   "EdelSwimsuit": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Nillsfriend/%5bNillsfriend%5d%20EdelSwimsuit.zipmod"
@@ -1985,6 +2052,9 @@
   ],
   "Eph_mod_Cetol": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Cetol/%5bCetol%5d%20Eph_mod%20v1.0.3.zipmod"
+  ],
+  "Eratoeir Parts": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20Eratoeir%20Parts%20v1.0.zipmod"
   ],
   "EricB.ChessPieces": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/%5bEricB%5d%20Chess%20Pieces%20v1.0.zipmod"
@@ -2289,8 +2359,14 @@
   "FTVRV": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Makisu/%5bMakisu%5d%20Flametail%20VR%20Visor%20v1.0.zipmod"
   ],
+  "Fabi_an.AshleyAccesories": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Fabi_an/%5bFabi_an%5d%20AshleyAccesories%20v4.0.zipmod"
+  ],
   "Fabi_an.TetraAccesories": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Fabi_an/%5bFabi_an%5d%20Tetra%20Accesories%20v1.0.zipmod"
+  ],
+  "Face Fixes": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Fixes/%5bKK%5dFace%20Fixes%20v2.0.zipmod"
   ],
   "Facepaintaddon.CharamakerSupportMOD": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bAnonymous%5dFacepaint%20addon%20charamaker%20support%20MOD.zipmod"
@@ -2789,6 +2865,9 @@
   ],
   "HappyCat.PatternMod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bHappyCat%5dPattern%20Mod.zipmod"
+  ],
+  "HarpuiaHelmet": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20HarpuiaHelmet%20v1.0.zipmod"
   ],
   "HarvexARC.MatCapShader": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KK_MaterialEditor/%5bHarvexARC%5dMatCap%20Shader%20v1.0.1.zipmod"
@@ -3589,8 +3668,17 @@
   "KoiBoy.RWBYMods": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bKoiBoy%5d%20RWBYMods%20v1.0.zipmod"
   ],
+  "KoikDaisy.Campsite": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bKoikDaisy%5d%20Campsite%20v1.0.zipmod"
+  ],
   "KoikDaisy.ChristmasPresent": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/%5bKoikDaisy%5dChristmas%20Present%20v1.0.zipmod"
+  ],
+  "KoikDaisy.DiningRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bKoikDaisy%5d%5bKK%5dDining%20Room%20v1.0.zipmod"
+  ],
+  "KoikDaisy.LuigisMansion": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bKoikDaisy%5d%5bKK%5dLuigi%27s%20Mansion%20v1.0.zipmod"
   ],
   "KoikDaisy.MoreBellyButtonPiercings": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/KoikDaisy/%5bKoikDaisy%5d%20More%20Belly%20Button%20Piercings%20v1.0.zipmod"
@@ -4333,6 +4421,12 @@
   "MeleHigh26.Plantsad": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/MeleHigh26/%5bMeleHigh26%5d%20Plantsad%20v0.1.zipmod"
   ],
+  "Memoca.Tsuchinoko": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Memoca/%5bMemoca%5d%20Tsuchinoko%20Hair%20v1.0.zipmod"
+  ],
+  "Memoca.TsuchinokoHood": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Memoca/%5bMEMOCA%5d%20Tsuchinoko%20Hood%20v1.0.zipmod"
+  ],
   "Menace_123_123": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/NewBie/%5bNewBie%5d%20Menace_1_1%20v1.0.zipmod"
   ],
@@ -4384,6 +4478,9 @@
   "Misc Ports Wow": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Timmeh/%5btimmeh%5d%20Misc%20Ports%20Wow%20v1.6.zipmod"
   ],
+  "Miscellaneous Parts": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20Miscellaneous%20Parts%20v1.0.zipmod"
+  ],
   "Mobius": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/limico/%5blimico%5d%20Mobius%20v1.1.zipmod"
   ],
@@ -4391,9 +4488,11 @@
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/modeler9/%5bmodeler9%5d%20Lana%20eye.zipmod"
   ],
   "Modified head": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/i/%5bi%5d%20Modified%20head%20v2.3.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KKS/i/%5bi%5d%20Modified%20head%20v2.2.zipmod"
   ],
   "Modified headmod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/i/%5bi%5d%20Modified%20headmod%20v2.3.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KKS/i/%5bi%5d%20Modified%20headmod%20v2.2.zipmod"
   ],
   "Monarch.Castle": [
@@ -6286,6 +6385,9 @@
   "Muze Cloth": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Alois/Samejima%20Tamura/%5bAlois_Samejima%20Tamura%5d%20Muze%20v1.0.0.zipmod"
   ],
+  "Mw_FineMotion": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/mysterious_W/%5bmysterious_W%5d%20FineMotion%20v1.0.zipmod"
+  ],
   "Mw_Kitasan Black": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/mysterious_W/%5bmysterious_W%5d%20Kitasan%20Black%20v1.0.zipmod"
   ],
@@ -6321,6 +6423,9 @@
   ],
   "NPCpack.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Noble_Kale/%5bNoble_kale%5d%20npc%27s%20Pack%20v1.zipmod"
+  ],
+  "Nana Parts": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20Nana%20Parts%20v1.0.zipmod"
   ],
   "Narmaya_hairclip": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Vinovel/%5bViNovel%5d%20Narmaya_hairclip%20v1.0.zipmod"
@@ -6553,6 +6658,9 @@
   "Primo": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Vegeboy9000/%5bVegeboy9000%5d%20Primo%20v1.0.zipmod"
   ],
+  "Quiet.momohair": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Darkkingdkc_quiet/%5bDarkkingdkc_quiet%5d%20Quietmomohair%20v1.0.zipmod"
+  ],
   "QuietStuff001": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/quiet/%5bquiet%5d%20Quietstuff%20v1.0.zipmod"
   ],
@@ -6636,6 +6744,9 @@
   ],
   "RSkoi.ztokki.LongSocks": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/RSkoi/%5bRSkoi%5dMoved%20Long%20Socks.zipmod"
+  ],
+  "RUMilitaryEquipment.Clothes.Maker": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Creamstar/%5bCreamstar%5d%20Russian%20Military%20Equipment%20v1.0.zipmod"
   ],
   "RURUDO HEAD": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/HX/%5bHX%5d%20RURUDO%20HEAD%20v1.0.zipmod"
@@ -6917,6 +7028,7 @@
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Reverie/%5bReverie%5dAnimals%20v1.0.0.zipmod"
   ],
   "Reverie.BFWApartment1": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bReverie%5d%5bKK%5dBFW%20Apartment%201%20v1.1.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/Reverie/%5bReverie%5d%5bKKS%5d%20BFW%20Apartment%201%20v1.3.zipmod"
   ],
   "Reverie.Bathroom": [
@@ -6943,7 +7055,11 @@
   "Reverie.OnePiece": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Reverie/%5bReverie%5d%20One%20Piece%20v1.0.zipmod"
   ],
+  "Reverie.PersonaMaps": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bReverie%5d%5bKK%5dPersona%20Maps%20v1.0.zipmod"
+  ],
   "Reverie.SchoolBuildings": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bReverie%5d%5bKK%5dSchool%20Buildings%20v2.2.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/Reverie/%5bReverie%5d%5bKKS%5d%20School%20Buildings%20v2.4.zipmod"
   ],
   "Reverie.Ships": [
@@ -7108,8 +7224,30 @@
   "Roy12.Revealing_loincloth_2mat": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Roy12%2CA-fan/%5bRoy12%2CA-fan%5d%20Revealing%20loincloth%202%20materials%20v1.0.zipmod"
   ],
+  "Ruine02.AyakaRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Ruine02/%5bRuine02%5d%20AyakaRoom%20v1.0.zipmod"
+  ],
+  "Ruine02.FisaliaRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Ruine02/%5bRuine02%5d%20FisaliaRoom%20v1.0.zipmod"
+  ],
+  "Ruine02.LupaRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Ruine02/%5bRuine02%5d%20LupaRoom%20v1.0.zipmod"
+  ],
+  "Ruine02.LynaeRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Ruine02/%5bRuine02%5d%20LynaeRoom%20v1.0.zipmod"
+  ],
+  "Ruine02.NKGuestRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Ruine02/%5bRuine02%5d%20NKGuestRoom%20v1.0.zipmod"
+  ],
+  "Ruine02.StartorchClassrooms": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Ruine02/%5bRuine02%5d%20StartorchClassrooms%20v1.0.zipmod"
+  ],
   "Ruine02.TrailblazerRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Ruine02/%5bRuine02%5d%20%5bKK%5d%20TrailblazerRoom%20v1.1.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/Ruine02/%5bRuine02%5d%20%5bKKS%5d%20TrailblazerRoom%20v1.1.zipmod"
+  ],
+  "Ruine02.WuwaMapPack": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Ruine02/%5bRuine02%5d%20Wuthering%20Waves%20Map%20Pack%20v1.0.zipmod"
   ],
   "Rushia head": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/HX/%5bHX%5d%20Rushia%20head%20v1.0.zipmod"
@@ -7351,11 +7489,32 @@
   "SnowElf": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/SnowElf/%5bSnowElf%5d%20SnowElf%20vSnowElf.zipmod"
   ],
+  "Sny.Balti.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20Sny.BaltiHair%20v1.0.zipmod"
+  ],
   "Sny.Cloe.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5d%20Sny_CloeOutfit%20v1.1.zipmod"
   ],
+  "Sny.Suisei.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20Sny.Suiseimod%20v1.0.zipmod"
+  ],
+  "Sny.TaimaFeli.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20SnyTaimafeliOutfit%20v1.0.zipmod"
+  ],
+  "Sny.Towa.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20Sny.TowaHair%20v1.0.zipmod"
+  ],
+  "Sny.Tron.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20SnyTronOutfit%20v1.1.zipmod"
+  ],
+  "Sny.Wata.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20Sny.WataOutfit%20v1.0.zipmod"
+  ],
   "SnyMay.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5d%20Sny_MayOutfit%20v1.0.zipmod"
+  ],
+  "Snydrex.AccClothClaws.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20SnyAccClothClawsMod%20v1.0.zipmod"
   ],
   "Snydrex.AccClothesRings.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5d%20SnyAccClothesRingsMod%20v1.zipmod"
@@ -7363,8 +7522,14 @@
   "Snydrex.Aile.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5d%20SnyAileMod%20v1.0.zipmod"
   ],
+  "Snydrex.And18.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20Android18ProtoMod%20v1.0.zipmod"
+  ],
   "Snydrex.BS.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Snydrex/%5bSnydrex%5dBlood%20Scythe%20v1.1.zipmod"
+  ],
+  "Snydrex.BeidouH.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20BeidouHairMod%20v1.0.zipmod"
   ],
   "Snydrex.Breakthings.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Snydrex/%5bSnydrex%5d%20SnyBreakObjMod%20v1.0.zipmod"
@@ -7380,6 +7545,15 @@
   ],
   "Snydrex.DBDItems.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Snydrex/%5bSnydrex%5d%20Sny.DBD.Mod%20v1.0.zipmod"
+  ],
+  "Snydrex.Dancer.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20SnyDancerMod%20v1.0.zipmod"
+  ],
+  "Snydrex.EgyptHead.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20EgyptheadMod%20v1.0.zipmod"
+  ],
+  "Snydrex.Facialhair.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20SnyFacialHairMod%20v1.1.zipmod"
   ],
   "Snydrex.Fest.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5d%20HairbandFestMod%20v1.zipmod"
@@ -7404,6 +7578,9 @@
   ],
   "Snydrex.Garbage.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Snydrex/%5bSnydrex%5d%20SnygarboMod%20v1.0.zipmod"
+  ],
+  "Snydrex.Geta.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20SnyGetaMod%20v1.0.zipmod"
   ],
   "Snydrex.GhostHair.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5d%20GhostHairMod%20v1.zipmod"
@@ -7437,6 +7614,9 @@
   ],
   "Snydrex.Lei.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5dLei%20Mod%20v1.0.zipmod"
+  ],
+  "Snydrex.Malenia.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20MaleniaMod%20v1.0.zipmod"
   ],
   "Snydrex.Masque.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5d%20MasksandmoreMasksMod%20v1.zipmod"
@@ -7480,6 +7660,9 @@
   "Snydrex.Skele.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5d%20Skeleton%20Mod%20v1.0.zipmod"
   ],
+  "Snydrex.Smoothmask": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20Snydrexsmoothmaskmod%20v1.0.zipmod"
+  ],
   "Snydrex.SpermEgg.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Snydrex/%5bSnydrex%5d%20SpermEgg.Mod%20v1.0.zipmod"
   ],
@@ -7498,6 +7681,9 @@
   "Snydrex.Tharjahair.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5dTharjahair%20Mod%20v1.0.zipmod"
   ],
+  "Snydrex.Toga.mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20SnyTogaMod%20v1.0.zipmod"
+  ],
   "Snydrex.Tohru.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK%20KKS/Snydrex/%5bSnydrex%5d%20AndroiddragontohruMod%20v1.0.zipmod"
   ],
@@ -7510,6 +7696,9 @@
   "Snydrex.Wildlife.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Snydrex/%5bSnydrex%5dWildlife%20v1.0.zipmod"
   ],
+  "Snydrex.commhairgreeta.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20commgreetaMod%20v1.1.zipmod"
+  ],
   "Snydrex.crumpled.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Snydrex/%5bSnydrex%5d%20Snydrex.CrumpledTissue.Mod%20v1.0.zipmod"
   ],
@@ -7521,6 +7710,9 @@
   ],
   "Snydrex.shorthair.Mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Snydrex/%5bSnydrex%5dShorthair%20Mod%20v1.0.zipmod"
+  ],
+  "Snydrex.vhashley.Mod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Snydrex/%5bSnydrex%5d%20vhashleyMod%20v1.0.zipmod"
   ],
   "SoDevs.AThousandYearSolo": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/SoDevs&YeDevs/%5bSoDevs&YeDevs%5d%20PDE%20A%20Thousand%20Year%20Solo%20Stages%20v1.0.zipmod"
@@ -7981,6 +8173,9 @@
   "TheLuckyFreeman.actionfigurepackage": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/The%20Lucky%20Freeman/%5bThe%20Lucky%20Freeman%5d%20Action%20Figure%20Package%20v1.0.zipmod"
   ],
+  "TheLuckyFreeman.ryokan": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/The%20Lucky%20Freeman/%5bThe%20Lucky%20Freeman%5d%20Ryokan%20v1.0.zipmod"
+  ],
   "The_Hat_That_Is_Hard": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/RaidenKei/%5bRaidenKei%5d%20The%20Hat%20That%20Is%20Hard%20v1.0.zipmod"
   ],
@@ -8061,6 +8256,9 @@
   ],
   "Tsun.koi.explosions": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Tsundere%20Operartor/%5bTsundere%20Operartor%5d%20Ordnance%20Pack%20v1.0.zipmod"
+  ],
+  "Tsuna.FavoniusKnights": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/Tsuna/%5bTsuna%5d%20Favonius%20Knights%20v1.0.zipmod"
   ],
   "Tsunade Hair": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Bada/%5bBada%5d%20Tsunade%20Hair%20v1.0.zipmod"
@@ -8145,6 +8343,9 @@
   ],
   "Umi Sonoda Hair": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/U315/%5bU315%5d%20Umi%20Sonoda%20Hair%20v1.zipmod"
+  ],
+  "Un0wned.AmongUs_Map": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bUn0wned%5d%20amongus.zipmod"
   ],
   "UniTwindrills": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bInimical_Divinity%5dUni%20Accessories.zipmod"
@@ -8256,6 +8457,9 @@
   ],
   "Vi.particle.fireworks": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/%5bV%5dFirework%20v1.0.zipmod"
+  ],
+  "Vile Parts": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20Vile%20Parts%20v1.0.zipmod"
   ],
   "Vita_mod_Cetol": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Cetol/%5bCetol%5d%20Vita_mod%20v1.1.1.zipmod"
@@ -9244,6 +9448,9 @@
   "[Ω-C-5] Cowgirl set": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Omega/%5b%ce%a9-C-5%5dCowgirl%20set%20v1.1.zipmod"
   ],
+  "[Ω-G16] HS2-KK Demo": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/WorldOf%5b%ce%a9MEGA%5d/%5bWorldOf%5b%ce%a9MEGA%5d%5d%20HS2%20port%20to%20KK%20WIP%20v1.0.zipmod"
+  ],
   "[Ω-G16] HS2-KK Set": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Omega/%5bOmega%5d%20HS2-KK%20Pack%20v1.7.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/%5bOMEGA%5d/%5b%5bOMEGA%5d%5d%20HS2%20port%20to%20KK%20v1.8.1.zipmod"
@@ -9562,6 +9769,9 @@
   ],
   "aquan.top": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5baquan%5dAkua.zipmod"
+  ],
+  "arcown.holo_fox": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/arcown/%5barcown%5d%20holo_fox%20v1.0.zipmod"
   ],
   "arcown.neptune": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/NewBie/%5bNewBie%5d%20neptune%20v1.0.zipmod"
@@ -9903,6 +10113,9 @@
   "com.DeathWeasel.AccessoryHairSide": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DeathWeasel%20AKA%20Anon11/%5bDeathWeasel%5d%20Accessory%20Hair%20Side%20v1.1.zipmod"
   ],
+  "com.DeathWeasel.AccessoryHairVanillaFix": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Fixes/%5bDeathWeasel%5d%5bKK%5dAccessory%20Hair%20Vanilla%20Fix%20v1.1.zipmod"
+  ],
   "com.DeathWeasel.Bandages": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DeathWeasel%20AKA%20Anon11/%5bDeathWeasel%5dBandages%20v1.0.1.zipmod"
   ],
@@ -9925,6 +10138,7 @@
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DeathWeasel%20AKA%20Anon11/%5bDeathWeasel%5dCentered%20Body%20Paint%20Layout%20v1.0.zipmod"
   ],
   "com.DeathWeasel.CharacterMakerPoses": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/DeathWeasel%20AKA%20Anon11/%5bDeathWeasel%5d%5bKK%5dCharacter%20Maker%20Poses%20v1.0.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KKS/DeathWeasel/%5bDeathWeasel%5d%20Character%20Maker%20Poses%20v1.0.zipmod"
   ],
   "com.DeathWeasel.Clover": [
@@ -9958,24 +10172,31 @@
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DeathWeasel%20AKA%20Anon11/%5bDeathWeasel%5d%20Goatee%20v1.1.zipmod"
   ],
   "com.DeathWeasel.HeadNoEars": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/DeathWeasel%20AKA%20Anon11/%5bDeathWeasel%5d%20No%20Ears%20v1.1.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KKS/DeathWeasel/%5bDeathWeasel%5d%20No%20Ears%20v1.1.zipmod"
   ],
   "com.DeathWeasel.HeadWithFangs": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/DeathWeasel%20AKA%20Anon11/%5bDeathWeasel%5d%20Fangs%20v1.2.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KKS/DeathWeasel/%5bDeathWeasel%5d%20Fangs%20v1.2.zipmod"
   ],
   "com.DeathWeasel.Map.HS2Suite": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bDeathWeasel%5d%5bKK%5dHoney%20Select%202%20Map%20-%20Suite%20v1.0.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DeathWeasel/%5bDeathWeasel%5d%5bKKS%5d%20Honey%20Select%202%20Map%20-%20Suite%20v1.0.zipmod"
   ],
   "com.DeathWeasel.Map.MMBath": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bDeathWeasel%5d%5bKK%5dMusumakeup%20Map%20-%20Bath%20v1.0.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DeathWeasel/%5bDeathWeasel%5d%5bKKS%5d%20Musumakeup%20Map%20-%20Bath%20v1.0.zipmod"
   ],
   "com.DeathWeasel.Map.MMHouse01": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bDeathWeasel%5d%5bKK%5dMusumakeup%20Map%20-%20House%2001%20v1.1.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DeathWeasel/%5bDeathWeasel%5d%5bKKS%5d%20Musumakeup%20Map%20-%20House%2001%20v1.1.zipmod"
   ],
   "com.DeathWeasel.Map.Pool": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bDeathWeasel%5d%5bKK%5dMap%20-%20Pool%20v1.0.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DeathWeasel/%5bDeathWeasel%5d%5bKKS%5d%20Map%20-%20Pool%20v1.0.zipmod"
   ],
   "com.DeathWeasel.Map.Sakura'sRoom": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bDeathWeasel%5d%5bKK%5dMap%20-%20Sakura%27s%20Room%20v1.0.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KKS_Maps/DeathWeasel/%5bDeathWeasel%5d%5bKKS%5d%20Map%20-%20Sakura%27s%20Room%20v1.0.zipmod"
   ],
   "com.DeathWeasel.Nails": [
@@ -10025,6 +10246,9 @@
   ],
   "com.DeathWeasel.Tail": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DeathWeasel%20AKA%20Anon11/%5bDeathWeasel%5dTail%20v1.0.zipmod"
+  ],
+  "com.DeathWeasel.TextureFixes": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Fixes/%5bDeathWeasel%5d%5bKKS%5d%20Texture%20Fixes%20v2.0.2.zipmod"
   ],
   "com.DeathWeasel.WombTattoo": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/DeathWeasel%20AKA%20Anon11/%5bDeathWeasel%5dWomb%20Tattoo%20v1.1.zipmod"
@@ -11253,6 +11477,12 @@
   "com.ymgpt.acc_earrings_top": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/ymgpt/%5bymgpt%5dAcc%20Earrings%20Top%20v1.0.zipmod"
   ],
+  "com.ymgpt.base_liquid_extension": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Fixes/%5bymgpt%5d%5bKK%5d%20Base%20Liquid%20Extension%20v1.1.zipmod"
+  ],
+  "com.ymgpt.gloves_liquid_patch": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Fixes/%5bymgpt%5d%5bKK%5d%20Gloves%20Liquid%20Patch%20v1.0.zipmod"
+  ],
   "com.ymgpt.long_gloves_left_right": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/ymgpt/%5bymgpt%5dLong%20Gloves%20Left%20Right%20v1.0.zipmod"
   ],
@@ -11913,6 +12143,9 @@
   "creamstage00": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Creamstar/%5bCreamstar%5dStudio%20Stuff.zipmod"
   ],
+  "crogun.Volleyball": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/crogun/%5bcrogun%5d%20Volleyball%20v1.0.zipmod"
+  ],
   "custom animations": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Animations/%5bjohnbbob_la_petite%5dCustom%20Animations.zipmod"
   ],
@@ -12086,6 +12319,9 @@
   ],
   "dsbg_hair": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/kyonko/%5bkyonko%5d%20dsbg_hair%20v1.0.zipmod"
+  ],
+  "dujiaoshou": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/HX/%5bHX%5d%20dujiaoshou%20v1.0.zipmod"
   ],
   "dunsparmy.dragonballhair": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/dunsparmy/%5bdunsparmy%5d%20Dragon%20Ball%20Hairs%20v1.3.zipmod"
@@ -12338,6 +12574,12 @@
   ],
   "elesa_pokemon_123": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Vinovel/%5bviNovel%5d%20elesa_pokemon1%20v1.0.zipmod"
+  ],
+  "elizabeth hair": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20elizabeth%20hair%20v1.0.zipmod"
+  ],
+  "elizabethclothe": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20elizabethclothe%20v1.0.zipmod"
   ],
   "elven_panst": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Unknown/%5bUnknown%5d%20elven_panst%20v1.5.zipmod"
@@ -13098,6 +13340,12 @@
   "haircare props": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/neverlucky/%5bneverlucky%5d%20haircare%20props%20v1.zipmod"
   ],
+  "hakudress": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20hakudress%20v1.0.zipmod"
+  ],
+  "hakuhair2": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20hakuhair2%20v1.0.zipmod"
+  ],
   "half_tights": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Omega/%5bOmega%5dHalf%20Tights.zipmod"
   ],
@@ -13127,6 +13375,15 @@
   ],
   "hankokuri.yorumi.rena.costume": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/hankokuri/%5bhankokuri%5d%20yorumi%20rena%20cloths%20v1.2.zipmod"
+  ],
+  "hankokuri.yorumi.rena.custom.hair(keiyuu)": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/hankokuri/%5bhankokuri%5d%20yorumi%20rena%20custom%20hair%28keiyuu%29%20v1.3.zipmod"
+  ],
+  "harenchi izabella hair": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/harenchi/%5bharenchi%5d%20izabella%20hair%20v1.0.zipmod"
+  ],
+  "harenchi_elinalise skirt": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/harenchi/%5bharenchi%5d%20elinalise%20skirt%20v1.0.zipmod"
   ],
   "hayashi.DevilGlovesNoDecoration": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/hayashi/%5bhayashi%5dDevil%20Gloves%20%28No%20Decoration%29%20v1.0.1.zipmod"
@@ -13184,6 +13441,9 @@
   ],
   "hijiri_default_hair": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/JohnDoe/%5bJohnDoe%5d%20hijiri_default_hair%20v1.0.zipmod"
+  ],
+  "himawariclothes": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20himawariclothes%20v1.0.zipmod"
   ],
   "hina": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/pi-haruka/%5bpi-haruka%5d%20hina%20v1.0.zipmod"
@@ -13317,6 +13577,9 @@
   "hypno": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/neverlucky/%5bneverlucky%5dHypno%20v1.0.zipmod"
   ],
+  "icoParts": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/AAA/%5bAAA%5d%20icoParts%20v1.0.zipmod"
+  ],
   "idunhair.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Noble_kale/%5bNoble_kale%5d%20Idun%20Hair%20v1.zipmod"
   ],
@@ -13391,6 +13654,9 @@
   ],
   "junmapss.modstd": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Noble_Kale/%5bNoble_kale%5d%20%20june%20maps%202021%20v1.zipmod"
+  ],
+  "kPlug.Map": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Maps/%5bkatarsys%5dkPlug%20Maps%20v3.zipmod"
   ],
   "kaede_04_modpack": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/JohnDoe/%5bJohnDoe%5d%20kaede_04_modpack%20v1.0.zipmod"
@@ -13562,6 +13828,9 @@
   ],
   "kiyoubi": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/qb/%5bqb%5d%20b0ndage%20v1.0.zipmod"
+  ],
+  "kiyoubi. vill V": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/kiyoubi/%5bkiyoubi%5d%20vill%20V%20v0.5.zipmod"
   ],
   "kk.polar.pitoueye": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bPolarManne%5dNeferpitou%20Eyes.zipmod"
@@ -13761,6 +14030,12 @@
   "kumbhiraeyeline": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/ucklline/%5bucklline%5d%20kumbhiraeyeline%20v1.0.zipmod"
   ],
+  "kurot": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20kurot%20v1.0.zipmod"
+  ],
+  "kurotsuchihair": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20kurotsuchihair%20v1.0.zipmod"
+  ],
   "kushinahairpack.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Noble_kale/%5bNoble_kale%5d%20%20Kushina%20Hair%20v1.zipmod"
   ],
@@ -13805,6 +14080,12 @@
   ],
   "liquid.shader": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KK_MaterialEditor/%5bGF%5d%20Liquid%20Shader%20v1.0.zipmod"
+  ],
+  "lisaclothe": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20lisaclothe%20v1.0.zipmod"
+  ],
+  "lisahair": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20lisahair%20v1.0.zipmod"
   ],
   "liunian123.Excalibur": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/%5bliunian123%5dExcalibur.zipmod"
@@ -13982,6 +14263,12 @@
   ],
   "machan_uniform_modpack": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/JohnDoe/%5bJohnDoe%5d%20machan_uniform_modpack%20v1.0.zipmod"
+  ],
+  "machi": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20machi%20v1.0.zipmod"
+  ],
+  "machihair": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20machihair%20v1.0.zipmod"
   ],
   "mae_dirtypair": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Mae/%5bMae%5d%20dirtypair_v1.0.zipmod"
@@ -14520,11 +14807,17 @@
   "murara.MHRS": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/murara/%5bmurara%5d%20murara_MHRS%20v1.0.zipmod"
   ],
+  "murara.YUE": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/murara/%5bmurara%5d%20YUE%20v1.0.zipmod"
+  ],
   "murara.cal": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/murara/%5bmurara%5d%20cal%20v1.0.1.zipmod"
   ],
   "murara.cape": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/murara/%5bmurara%5dcape_acc%20v1.1.zipmod"
+  ],
+  "murara.djt": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/murara/%5bmurara%5d%20djt%20v1.0.zipmod"
   ],
   "murara.grang": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/murara/%5bmurara%5dgrnag%20v1.2.2.zipmod"
@@ -15060,6 +15353,12 @@
   "peter247.hakuhair": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/peter247/%5bpeter247%5d%20hakuhair%20v1.0.zipmod"
   ],
+  "peter247.himahair": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20himawari%20hair%20v1.0.zipmod"
+  ],
+  "peter247.hokagehat": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20hokagehat%20v1.0.zipmod"
+  ],
   "peter247.kushinathumb": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/peter247/%5bpeter247%5d%20kushinaclothe%20v1.0.zipmod"
   ],
@@ -15107,6 +15406,12 @@
   ],
   "pipboypack": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/SnapplesVA/%5bSnapplesVA%5d%20Pipboy%20Pack%20v4.2.zipmod"
+  ],
+  "pitou": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20pitou%20v1.0.zipmod"
+  ],
+  "pitouclothe": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20pitouclothe%20v1.0.zipmod"
   ],
   "plane001": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Creamstar/%5bCreamstar%5dAircraft.zipmod"
@@ -15353,6 +15658,9 @@
   ],
   "saotomehair.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Noble_kale/%5bNoble_kale%5d%20Saotome%20Hair%20v1.0.zipmod"
+  ],
+  "saradamod": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20saradamod%20v1.0.zipmod"
   ],
   "saratogaclothes": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/WQY/%5bWQY%5d%20saratogaclothes%20v1.0.zipmod"
@@ -15975,6 +16283,9 @@
   "thatdude.parkheejin": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Thatdude/%5bThatdude%5d%20Park%20Heejin%20Mod%20v1.0.zipmod"
   ],
+  "thatdude.xiao wu": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Thatdude/%5bThatdude%5d%20Douluo%20v1.2.zipmod"
+  ],
   "thatdude.yaemiko": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Thatdude/%5bThatdude%5d%20Yae%20Miko%20Mod%20v1.0.zipmod"
   ],
@@ -16023,6 +16334,9 @@
   "tiamatpackv2.mod": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Noble_kale/%5bNoble_kale%5d%20Tiamat%20Content%20Pack%20v2%20v2.0.zipmod"
   ],
+  "tiana": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/peter247/%5bpeter247%5d%20tiana%20v1.0.zipmod"
+  ],
   "ticklefistwedding": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Studio/Ticklefist/%5bTicklefist%5d%5bKK%5dWedding%20Props%20v1.0.zipmod"
   ],
@@ -16069,6 +16383,7 @@
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/JohnDoe/%5bJohnDoe%5d%20turbo_uniform_modpack%20v1.0.zipmod"
   ],
   "turime_face": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/i/%5bi%5d%20turime_face%20v2.2.zipmod",
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KKS/i/%5bi%5d%20turime_face%20v2.2.zipmod"
   ],
   "type95_eye_mugen": [
@@ -16085,6 +16400,9 @@
   ],
   "ubin_sunflower_eyeline": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/ubin/%5bubin%5d%20sunflower_eyeline.zipmod"
+  ],
+  "ucs.evaan_gardevoirbody": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/Evaan/%5bKK%5d%5bFemale%5dEV_Gardevoir.zipmod"
   ],
   "ucs.evaan_musclebody": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20KK_UncensorSelector/%5bKK%5d%5bFemale%5dEV_MuscleBody.zipmod",
@@ -16153,6 +16471,12 @@
   ],
   "uppervolta.TwoStampEmblem": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/Uppervolta%20mods/%5buppervolta%5dNipple%20Pasties%20Emblem.zipmod"
+  ],
+  "user-workshop.Menace": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/user-workshop/%5buser-workshop%5d%20Menace%20v1.9.zipmod"
+  ],
+  "user-workshop.Menacev.2": [
+   "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack%20-%20Exclusive%20KK/user-workshop/%5buser-workshop%5d%20Menacev.2%20v2.1.zipmod"
   ],
   "uzuki_06_modpack": [
    "https://sideload.betterrepack.com/download/KKEC/Sideloader%20Modpack/JohnDoe/%5bJohnDoe%5d%20uzuki_06_modpack%20v1.0.zipmod"

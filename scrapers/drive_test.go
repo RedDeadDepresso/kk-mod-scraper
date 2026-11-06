@@ -215,7 +215,7 @@ func TestDriveEndToEnd(t *testing.T) {
 		"com.test.big": "https://drive.google.com/file/d/fileBig/view",
 		"com.test.c":   "https://drive.google.com/file/d/fileC/view", // from the sub-folder
 	}
-	if idx.GameType != "drive" || idx.Count != 3 {
+	if idx.Count != 3 {
 		t.Errorf("header: %+v", idx)
 	}
 	for g, u := range want {

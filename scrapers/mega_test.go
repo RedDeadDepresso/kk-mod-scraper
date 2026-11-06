@@ -316,7 +316,7 @@ func TestBuildMegaIndexesEndToEnd(t *testing.T) {
 	if err := json.Unmarshal(data, &idx); err != nil {
 		t.Fatal(err)
 	}
-	if idx.GameType != "mega" || idx.Count != 2 {
+	if idx.Count != 2 {
 		t.Errorf("index header: %+v", idx)
 	}
 	want := map[string][]string{
