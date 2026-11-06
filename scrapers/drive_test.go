@@ -296,3 +296,38 @@ func TestDriveKeyAndAccessProblems(t *testing.T) {
 		t.Errorf("an unshared folder should be a failure, got %d", f)
 	}
 }
+
+// Files several levels down are found, and a folder that contains one of its own ancestors
+// doesn't send the crawl into a loop.
+func TestDriveNestedFoldersAndCycles(t *testing.T) {
+	t.Setenv("GOOGLE_API_KEY", "testkey")
+	d := newFakeDrive(t)
+	const root = "1-3YtRJFeAeNHybNNQhbnLvKX-NRdxmxu"
+	d.names[root] = "pandaman"
+	d.addFile(root, &fakeDriveFile{id: "fTop", name: "Top.zipmod", content: makeZipmod(t, "com.test.top", "1.0", false)})
+	d.addFolder(root, "L1", "level 1")
+	d.addFolder("L1", "L2", "level 2")
+	d.addFolder("L2", "L3", "level 3")
+	d.addFolder("L3", "L4", "level 4")
+	d.addFile("L2", &fakeDriveFile{id: "fTwo", name: "Two.zipmod", content: makeZipmod(t, "com.test.two", "1.0", false)})
+	d.addFile("L4", &fakeDriveFile{id: "fFour", name: "Four.zipmod", content: makeZipmod(t, "com.test.four", "1.0", true)})
+	d.folders["L4"] = append(d.folders["L4"], "L1", root) // loops back to ancestors
+	d.addFile("L3", &fakeDriveFile{id: "short", name: "link to a folder.zipmod", mime: "application/vnd.google-apps.shortcut"})
+
+	dir := t.TempDir()
+	opt := hostedOptions{
+		configPath: writeConfig(t, dir, "https://drive.google.com/drive/folders/"+root),
+		indicesDir: filepath.Join(dir, "indices"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 2,
+	}
+	if newGuids, failures := buildHostedIndexes(opt, driveProvider{}); newGuids != 3 || failures != 0 {
+		t.Fatalf("newGuids=%d failures=%d, want 3 and 0", newGuids, failures)
+	}
+	data, _ := os.ReadFile(filepath.Join(dir, "indices", "drive", "pandaman.json"))
+	var idx modpackIndexFile
+	json.Unmarshal(data, &idx)
+	for _, g := range []string{"com.test.top", "com.test.two", "com.test.four"} {
+		if len(idx.Guids[g]) != 1 {
+			t.Errorf("%s missing: %v", g, idx.Guids)
+		}
+	}
+}

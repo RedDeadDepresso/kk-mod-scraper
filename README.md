@@ -29,8 +29,10 @@ Only `.zipmod` and `.zip` files are looked at.
 - **Google Drive**: uses the Drive API, which needs a free API key, and folders must be shared
   as "Anyone with the link". Create the key in the
   [Google Cloud Console](https://console.cloud.google.com/apis/credentials) (new project ->
-  enable "Google Drive API" -> Create credentials -> API key; restricting it to the Drive API is
-  a good idea), then add it as a repository secret named `GOOGLE_API_KEY`
+  enable "Google Drive API" (required) -> Create credentials -> API key). Optionally restrict
+  the key to the Drive API ("Restrict key" -> "Select APIs"; the API must be enabled first, or
+  use `gcloud services api-keys update <key id> --api-target=service=drive.googleapis.com`).
+  Don't restrict it by IP: GitHub runners' addresses change. Then add it as a repository secret named `GOOGLE_API_KEY`
   (Settings -> Secrets and variables -> Actions). To run locally:
   `GOOGLE_API_KEY=... go run .`. The key is sent in a request header and never appears in
   URLs, logs or indices.

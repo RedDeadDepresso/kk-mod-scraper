@@ -27,6 +27,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -251,7 +252,11 @@ func (c *driveClient) children(folderID string) ([]driveFile, error) {
 // walk collects the files of a folder and all its sub-folders. Any failure fails the whole
 // folder, so a partial listing never replaces a good index.
 func (c *driveClient) walk(folderID string, depth int, visited map[string]bool, out *[]driveFile) error {
-	if visited[folderID] || depth > driveMaxDepth {
+	if visited[folderID] {
+		return nil // already listed (a folder can be reachable twice, or contain its own parent)
+	}
+	if depth > driveMaxDepth {
+		slog.Warn("Google Drive folders nested too deeply; skipping this branch", "folder", folderID, "max_depth", driveMaxDepth)
 		return nil
 	}
 	visited[folderID] = true
