@@ -33,4 +33,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Run scraper
+        env:
+          # Google Drive API key for the Drive folders in config/drive.json (see README).
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: go run .

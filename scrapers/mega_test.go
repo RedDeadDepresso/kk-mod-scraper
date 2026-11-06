@@ -287,7 +287,7 @@ func TestBuildMegaIndexesEndToEnd(t *testing.T) {
 	fm := newFakeMega(t, link, small, big, dup, junk, notZip)
 
 	dir := t.TempDir()
-	opt := megaOptions{
+	opt := hostedOptions{
 		configPath: writeConfig(t, dir, linkStr, linkStr+"/file/AAAAAAAA"), // the second is the same folder
 		indicesDir: filepath.Join(dir, "indices"), cacheDir: filepath.Join(dir, "cache"),
 		maxURLs: 4, workers: 3,
@@ -386,7 +386,7 @@ func TestBuildMegaIndexesOneBadLink(t *testing.T) {
 	newFakeMega(t, link, small)
 
 	dir := t.TempDir()
-	opt := megaOptions{
+	opt := hostedOptions{
 		configPath: writeConfig(t, dir, "https://example.com/not-mega", linkStr),
 		indicesDir: filepath.Join(dir, "indices"), cacheDir: filepath.Join(dir, "cache"),
 		maxURLs: 4, workers: 2,
@@ -410,24 +410,24 @@ func TestBuildMegaIndexesOneBadLink(t *testing.T) {
 func TestMegaConfig(t *testing.T) {
 	dir := t.TempDir()
 	path := writeConfig(t, dir, " https://mega.nz/folder/HM0FSAYC#Gu2wMS8oer6bISpDzVdBWg ", "", "https://mega.nz/folder/AAAAAAAA#Gu2wMS8oer6bISpDzVdBWg")
-	links, err := loadMegaConfig(path)
+	links, err := loadLinkConfig(path)
 	if err != nil || len(links) != 2 || links[0] != "https://mega.nz/folder/HM0FSAYC#Gu2wMS8oer6bISpDzVdBWg" {
 		t.Errorf("links=%v err=%v", links, err)
 	}
-	if _, err := loadMegaConfig(filepath.Join(dir, "missing.json")); err == nil {
+	if _, err := loadLinkConfig(filepath.Join(dir, "missing.json")); err == nil {
 		t.Error("missing config accepted")
 	}
 	bad := filepath.Join(dir, "bad.json")
 	os.WriteFile(bad, []byte(`{"links": []}`), 0o644)
-	if _, err := loadMegaConfig(bad); err == nil {
+	if _, err := loadLinkConfig(bad); err == nil {
 		t.Error("an object instead of an array was accepted")
 	}
 	// An empty list is fine: nothing to do, and nothing deleted.
 	empty := writeConfig(t, t.TempDir())
-	if n, f := buildMegaIndexes(megaOptions{configPath: empty}); n != 0 || f != 0 {
+	if n, f := buildMegaIndexes(hostedOptions{configPath: empty}); n != 0 || f != 0 {
 		t.Errorf("empty config: %d %d", n, f)
 	}
-	if _, f := buildMegaIndexes(megaOptions{configPath: filepath.Join(dir, "missing.json")}); f != 1 {
+	if _, f := buildMegaIndexes(hostedOptions{configPath: filepath.Join(dir, "missing.json")}); f != 1 {
 		t.Errorf("missing config should count as a failure, got %d", f)
 	}
 }
@@ -450,16 +450,16 @@ func TestMegaFileNames(t *testing.T) {
 	}
 
 	used := map[string]string{}
-	if got := megaFileBase("Mods", "HANDLE01", used); got != "Mods" {
+	if got := uniqueFileBase("Mods", "HANDLE01", used); got != "Mods" {
 		t.Errorf("first: %q", got)
 	}
-	if got := megaFileBase("Mods", "HANDLE01", used); got != "Mods" {
+	if got := uniqueFileBase("Mods", "HANDLE01", used); got != "Mods" {
 		t.Errorf("same folder again must keep its name: %q", got)
 	}
-	if got := megaFileBase("mods", "HANDLE02", used); got != "mods (HANDLE02)" {
+	if got := uniqueFileBase("mods", "HANDLE02", used); got != "mods (HANDLE02)" {
 		t.Errorf("collision (case-insensitive): %q", got)
 	}
-	if got := megaFileBase("", "HANDLE03", used); got != "HANDLE03" {
+	if got := uniqueFileBase("", "HANDLE03", used); got != "HANDLE03" {
 		t.Errorf("unnamed: %q", got)
 	}
 }

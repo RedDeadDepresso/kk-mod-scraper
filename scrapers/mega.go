@@ -36,13 +36,10 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
-	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -51,11 +48,9 @@ import (
 )
 
 const (
-	megaUserAgent     = "kk-mod-scraper-mega-index-builder/1.0"
-	defaultMegaConfig = "config/mega.json"
-	defaultCacheDir   = "cache"
-	megaSubdir        = "mega" // <indices dir>/mega/ and <cache dir>/mega/
-	megaGameType      = "mega"
+	megaUserAgent   = "kk-mod-scraper-mega-index-builder/1.0"
+	defaultCacheDir = "cache"
+	megaGameType    = "mega"
 )
 
 var (
@@ -472,146 +467,45 @@ func (m *megaRanger) fetch(start, end int) ([]byte, error) {
 }
 
 // ---------------------------------------------------------------------------
-// Config and file names
+// Provider
 // ---------------------------------------------------------------------------
 
-// loadMegaConfig reads the list of folder links (a JSON array of strings).
-func loadMegaConfig(path string) ([]string, error) {
-	data, err := os.ReadFile(path)
+type megaProvider struct{}
+
+func (megaProvider) Kind() string { return megaGameType }
+
+func (megaProvider) ID(raw string) (string, error) {
+	link, err := parseMegaFolderLink(raw)
+	return link.Handle, err
+}
+
+func (megaProvider) Load(raw string) (*remoteFolder, error) {
+	link, err := parseMegaFolderLink(raw)
 	if err != nil {
-		return nil, fmt.Errorf("could not read the Mega config: %w", err)
+		return nil, err
 	}
-	var raw []string
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return nil, fmt.Errorf("%s must be a JSON array of Mega folder links: %w", path, err)
-	}
-	links := make([]string, 0, len(raw))
-	for _, l := range raw {
-		if l = strings.TrimSpace(l); l != "" {
-			links = append(links, l)
-		}
-	}
-	return links, nil
-}
-
-// safeFileName turns a Mega folder name into something usable as a file name on any
-// platform (keeps letters of any script, digits, spaces and common punctuation).
-func safeFileName(name string) string {
-	var sb strings.Builder
-	for _, r := range strings.TrimSpace(name) {
-		switch {
-		case r < 0x20 || r == 0x7f, strings.ContainsRune(`/\:*?"<>|`, r):
-			sb.WriteRune('_')
-		default:
-			sb.WriteRune(r)
-		}
-	}
-	out := strings.Trim(sb.String(), " .")
-	if runes := []rune(out); len(runes) > 100 {
-		out = strings.TrimRight(string(runes[:100]), " .")
-	}
-	return out
-}
-
-// megaFileBase picks the file name (without ".json") for a folder: its Mega name, or
-// "<name> (<id>)" if another folder of this run already took that name, or just the id if
-// the folder has no usable name. used maps a lowercase name to the folder handle that owns it
-// (file systems may be case-insensitive).
-func megaFileBase(name, handle string, used map[string]string) string {
-	base := safeFileName(name)
-	if base == "" {
-		base = handle
-	}
-	if owner, taken := used[strings.ToLower(base)]; taken && owner != handle {
-		base = fmt.Sprintf("%s (%s)", base, handle)
-	}
-	used[strings.ToLower(base)] = handle
-	return base
-}
-
-// removeStaleJSON deletes the *.json files of dir whose base name isn't in keep.
-func removeStaleJSON(dir string, keep map[string]bool) {
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return
-	}
-	for _, e := range entries {
-		name := e.Name()
-		if e.IsDir() || !strings.HasSuffix(name, ".json") || keep[strings.TrimSuffix(name, ".json")] {
-			continue
-		}
-		if err := os.Remove(filepath.Join(dir, name)); err != nil {
-			slog.Warn("Could not remove a stale file", "path", filepath.Join(dir, name), "err", err)
-			continue
-		}
-		slog.Info("Removed a stale file (folder no longer in the config)", "path", filepath.Join(dir, name))
-	}
-}
-
-// ---------------------------------------------------------------------------
-// Entry point
-// ---------------------------------------------------------------------------
-
-type megaOptions struct {
-	configPath  string
-	indicesDir  string // index files go to <indicesDir>/mega/
-	cacheDir    string // cache files go to <cacheDir>/mega/
-	full        bool
-	retryFailed bool
-	maxURLs     int
-	workers     int
-}
-
-func (o megaOptions) indexDir() string { return filepath.Join(o.indicesDir, megaSubdir) }
-func (o megaOptions) cacheSub() string { return filepath.Join(o.cacheDir, megaSubdir) }
-
-func isZipmodName(name string) bool {
-	l := strings.ToLower(name)
-	return strings.HasSuffix(l, ".zipmod") || strings.HasSuffix(l, ".zip")
-}
-
-// syncMegaFolder indexes one folder and returns the base name of its two files. unreachable
-// is how many files couldn't be probed this time (they are retried next run).
-func syncMegaFolder(link megaFolderLink, opt megaOptions, used map[string]string) (base string, newGuids, unreachable int, err error) {
 	client := newMegaClient(link)
-
-	slog.Info("Listing the Mega folder", "folder", link.Handle)
-	folderName, all, err := client.listFiles()
+	name, all, err := client.listFiles()
 	if err != nil {
-		return "", 0, 0, fmt.Errorf("could not list the Mega folder %s: %w", link.Handle, err)
+		return nil, err
 	}
-	base = megaFileBase(folderName, link.Handle, used)
 
 	byURL := map[string]megaFile{}
-	listing := map[string]fileSig{}
-	skipped := 0
+	folder := &remoteFolder{Name: name, Listing: map[string]fileSig{}, Labels: map[string]string{}}
 	for _, f := range all {
 		if !isZipmodName(f.Name) {
-			skipped++
 			continue
 		}
 		u := link.fileURL(f.Handle)
 		byURL[u] = f
-		listing[u] = fileSig{
+		folder.Labels[u] = f.Name
+		folder.Listing[u] = fileSig{
 			Mtime: time.Unix(f.Ts, 0).UTC().Format("2006-01-02 15:04"),
 			Size:  strconv.FormatInt(f.Size, 10),
 		}
 	}
-	slog.Info("Mega folder listed", "name", base, "zipmods", len(listing), "other_files_ignored", skipped)
-	if len(listing) == 0 {
-		return base, 0, 0, fmt.Errorf("the Mega folder %q has no .zipmod files (wrong link, or an empty folder?)", base)
-	}
 
-	cachePath := filepath.Join(opt.cacheSub(), base+".json")
-	cache := map[string]cacheEntry{}
-	if opt.full {
-		slog.Info("Full rescan requested", "name", base)
-	} else {
-		cache = loadCache(cachePath)
-		slog.Info("Cache loaded", "name", base, "files", len(cache))
-	}
-
-	probe := func(u string) (manifestInfo, error) {
+	folder.Probe = func(u string) (manifestInfo, error) {
 		f, ok := byURL[u]
 		if !ok {
 			return manifestInfo{}, permanent("file is no longer in the Mega folder")
@@ -636,107 +530,14 @@ func syncMegaFolder(link megaFolderLink, opt megaOptions, used map[string]string
 		}
 		return readManifest(r)
 	}
-
-	entries, unreachable := refreshCache(listing, cache, nil, refreshOptions{
-		full: opt.full, retryFailed: opt.retryFailed, workers: opt.workers, cachePath: cachePath,
-		probe:   probe,
-		label:   func(u string) string { return byURL[u].Name },
-		noMoves: true, // every file has its own node handle; name/date/size matching would only mislead
-	})
-
-	// All files share one "category", so buildGameIndex just orders by newest version, then
-	// newest upload, and drops identical copies.
-	index := buildGameIndex(entries, []string{""}, "", opt.maxURLs)
-	out := filepath.Join(opt.indexDir(), base+".json")
-	prev := readIndexGuids(out)
-	for guid := range index {
-		if _, ok := prev[guid]; !ok {
-			newGuids++
-		}
-	}
-	wrote, err := writeIndex(out, megaGameType, index)
-	if err != nil {
-		return base, 0, unreachable, fmt.Errorf("could not write %s: %w", out, err)
-	}
-	slog.Info("Mega index", "name", base, "guids", len(index), "path", out, "changed", wrote)
-	if unreachable > 0 {
-		slog.Warn("Some Mega files are missing from the index; the next run will try them again",
-			"name", base, "unreachable_files", unreachable)
-	}
-	return base, newGuids, unreachable, nil
+	return folder, nil
 }
 
-// buildMegaIndexes indexes every folder of the config. newGuids counts GUIDs that weren't in
-// the previous index of their folder; failures counts folders (or config problems) that
-// could not be processed at all - the other folders are still done.
-func buildMegaIndexes(opt megaOptions) (newGuids, failures int) {
-	links, err := loadMegaConfig(opt.configPath)
-	if err != nil {
-		slog.Error("Mega config problem", "err", err)
-		return 0, 1
-	}
-	if len(links) == 0 {
-		slog.Warn("No Mega folders in the config; nothing to do", "config", opt.configPath)
-		return 0, 0
-	}
+// RunMega indexes the Mega folders listed in config/mega.json and returns how many GUIDs are
+// new and how many folders failed. args are command-line style flags (nil = defaults).
+func RunMega(args []string) (newGuids, failures int) { return runHosted(megaProvider{}, args) }
 
-	seen := map[string]bool{}
-	used := map[string]string{}
-	keep := map[string]bool{}
-	for _, raw := range links {
-		link, err := parseMegaFolderLink(raw)
-		if err != nil {
-			slog.Error("Skipping an invalid Mega link in the config", "err", err)
-			failures++
-			continue
-		}
-		if seen[link.Handle] {
-			slog.Warn("Mega folder listed twice in the config; using it once", "folder", link.Handle)
-			continue
-		}
-		seen[link.Handle] = true
-
-		base, n, _, err := syncMegaFolder(link, opt, used)
-		if base != "" {
-			keep[base] = true // keep its files even if this run couldn't finish them
-		}
-		if err != nil {
-			slog.Error("Mega folder failed", "folder", link.Handle, "err", err)
-			failures++
-			continue
-		}
-		newGuids += n
-	}
-
-	// Only clean up when every folder was read: a folder that failed to list has an unknown
-	// name, and its files must not be mistaken for leftovers.
-	if failures == 0 {
-		removeStaleJSON(opt.indexDir(), keep)
-		removeStaleJSON(opt.cacheSub(), keep)
-	}
-	return newGuids, failures
-}
-
-// RunMega indexes the Mega folders listed in the config and returns how many GUIDs are new
-// and how many folders failed. args are command-line style flags (nil = defaults).
-func RunMega(args []string) (newGuids, failures int) {
-	fs := flag.NewFlagSet("mega", flag.ExitOnError)
-	config := fs.String("config", defaultMegaConfig, "JSON array of public Mega folder links")
-	indicesDir := fs.String("indices-dir", defaultIndicesDir, "index files are written to <dir>/mega/<folder name>.json")
-	cacheDir := fs.String("cache-dir", defaultCacheDir, "cache files are written to <dir>/mega/<folder name>.json")
-	full := fs.Bool("full", false, "ignore the caches and probe every file")
-	retryFailed := fs.Bool("retry-failed", false, "probe again the files recorded as not indexable")
-	maxURLs := fs.Int("max-urls", defaultMaxURLs, "most URLs kept per GUID")
-	workers := fs.Int("workers", 4, "parallel downloads (max 8; Mega rate-limits aggressively)")
-	_ = fs.Parse(args)
-
-	return buildMegaIndexes(megaOptions{
-		configPath:  *config,
-		indicesDir:  *indicesDir,
-		cacheDir:    *cacheDir,
-		full:        *full,
-		retryFailed: *retryFailed,
-		maxURLs:     max(1, *maxURLs),
-		workers:     max(1, min(*workers, 8)),
-	})
+// buildMegaIndexes is RunMega without flag parsing (used by the tests).
+func buildMegaIndexes(opt hostedOptions) (newGuids, failures int) {
+	return buildHostedIndexes(opt, megaProvider{})
 }

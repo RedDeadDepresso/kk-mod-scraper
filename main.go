@@ -53,18 +53,19 @@ func main() {
 	kkcMods := scrapers.ScrapeMods()
 	modpackMods := scrapers.RunModpack(nil)
 	megaMods, megaFailures := scrapers.RunMega(nil)
+	driveMods, driveFailures := scrapers.RunDrive(nil)
 
-	commitChanges(commitMessage(kkcMods, modpackMods, megaMods))
+	commitChanges(commitMessage(kkcMods, modpackMods, megaMods, driveMods))
 
-	// Commit what did work first, then make the run visibly fail so a broken Mega link
-	// doesn't go unnoticed.
-	if megaFailures > 0 {
-		fatal("Some Mega folders could not be indexed (see the errors above)", "folders", megaFailures)
+	// Commit what did work first, then make the run visibly fail so a broken link (or a
+	// missing API key) doesn't go unnoticed.
+	if megaFailures+driveFailures > 0 {
+		fatal("Some folders could not be indexed (see the errors above)", "mega", megaFailures, "drive", driveFailures)
 	}
 }
 
 // commitMessage lists only the sources that actually produced new mods.
-func commitMessage(kkcMods, modpackMods, megaMods int) string {
+func commitMessage(kkcMods, modpackMods, megaMods, driveMods int) string {
 	var (
 		parts []string
 		names []string
@@ -73,7 +74,7 @@ func commitMessage(kkcMods, modpackMods, megaMods int) string {
 	for _, src := range []struct {
 		n    int
 		name string
-	}{{kkcMods, "koikatsucards"}, {modpackMods, "betterrepack"}, {megaMods, "mega"}} {
+	}{{kkcMods, "koikatsucards"}, {modpackMods, "betterrepack"}, {megaMods, "mega"}, {driveMods, "drive"}} {
 		if src.n > 0 {
 			total += src.n
 			names = append(names, src.name)
