@@ -4,7 +4,9 @@ package scrapers
 // Drive). A folderProvider knows how to list one folder and how to read a file's manifest
 // with a few ranged reads; everything else is common:
 //
-//   - config/<kind>.json is a JSON array of folder links;
+//   - config/<kind>.json holds the folder links in groups (see hostedconfig.go); links of
+//     groups filled by the forum scraper that turn out to hold no mods are purged from it,
+//     and duplicates are removed;
 //   - for every folder, indices/<kind>/<folder name>.json and cache/<kind>/<folder name>.json
 //     are written (same formats as the BetterRepack scraper, via refreshCache and writeIndex);
 //   - two folders with the same name get "<name> (<id>)";
@@ -13,10 +15,11 @@ package scrapers
 //   - one broken folder doesn't stop the others; it is counted as a failure.
 
 import (
-	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -37,6 +40,46 @@ type folderProvider interface {
 	ID(raw string) (string, error)
 	// Load lists the folder.
 	Load(raw string) (*remoteFolder, error)
+}
+
+// fileProvider is implemented by providers that also accept links to single files. All the
+// file links of a config are indexed together, as one pseudo folder (singleFilesName).
+type fileProvider interface {
+	// FileID validates a single-file link and returns a stable id for the file.
+	FileID(raw string) (string, error)
+	// FileURL is the canonical URL under which the file appears in the index.
+	FileURL(raw string) (string, error)
+	// LoadFile looks at one file: the result's Listing is empty if it is not a mod archive.
+	LoadFile(raw string) (*remoteFolder, error)
+}
+
+const singleFilesName = "(single files)"
+
+// linkRef classifies a config link as a folder or a single file.
+type linkRef struct {
+	id     string // folder id, or "file:<id>"
+	isFile bool
+}
+
+func classifyLink(p folderProvider, raw string) (linkRef, error) {
+	id, ferr := p.ID(raw)
+	if ferr == nil {
+		return linkRef{id: id}, nil
+	}
+	if fp, ok := p.(fileProvider); ok {
+		if fid, err := fp.FileID(raw); err == nil {
+			return linkRef{id: "file:" + fid, isFile: true}, nil
+		}
+	}
+	return linkRef{}, ferr
+}
+
+// linkIDFunc gives the dedupe id of any link (folder or file) of a provider.
+func linkIDFunc(p folderProvider) func(string) (string, error) {
+	return func(raw string) (string, error) {
+		r, err := classifyLink(p, raw)
+		return r.id, err
+	}
 }
 
 type hostedOptions struct {
@@ -61,25 +104,6 @@ func isZipmodName(name string) bool {
 // ---------------------------------------------------------------------------
 // Config and file names
 // ---------------------------------------------------------------------------
-
-// loadLinkConfig reads the list of folder links (a JSON array of strings).
-func loadLinkConfig(path string) ([]string, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("could not read the config: %w", err)
-	}
-	var raw []string
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return nil, fmt.Errorf("%s must be a JSON array of folder links: %w", path, err)
-	}
-	links := make([]string, 0, len(raw))
-	for _, l := range raw {
-		if l = strings.TrimSpace(l); l != "" {
-			links = append(links, l)
-		}
-	}
-	return links, nil
-}
 
 // safeFileName turns a folder name into something usable as a file name on any platform
 // (keeps letters of any script, digits, spaces and common punctuation).
@@ -136,21 +160,53 @@ func removeStaleJSON(dir string, keep map[string]bool) {
 }
 
 // ---------------------------------------------------------------------------
+// Purging
+// ---------------------------------------------------------------------------
+
+// purgeError says that a link doesn't lead to any mods (and never will): the folder is gone,
+// or holds nothing that is a mod. It is only acted upon for links of scraped groups.
+type purgeError struct{ reason string }
+
+func (e *purgeError) Error() string { return e.reason }
+
+// isGoneError reports whether the host definitively said the folder doesn't exist (any more):
+// as opposed to rate limits, outages or a missing API key, which must never purge anything.
+func isGoneError(err error) bool {
+	var me megaError
+	if errors.As(err, &me) {
+		return me == -9 || me == -16 || me == -8 // not found, taken down, expired
+	}
+	var de *driveError
+	if errors.As(err, &de) {
+		return de.Status == http.StatusNotFound
+	}
+	return false
+}
+
+// ---------------------------------------------------------------------------
 // Build
 // ---------------------------------------------------------------------------
 
 // syncFolder indexes one folder and returns the base name of its two files. unreachable is
-// how many files couldn't be probed this time (they are retried next run).
-func syncFolder(p folderProvider, raw, id string, opt hostedOptions, used map[string]string) (base string, newGuids, unreachable int, err error) {
+// how many files couldn't be probed this time (they are retried next run). With purgeable
+// set (the link comes from a scraped group), a folder that is gone or holds no mods is
+// reported as a *purgeError instead of being indexed (as empty) or counted as a failure.
+func syncFolder(p folderProvider, raw, id string, opt hostedOptions, used map[string]string, purgeable bool) (base string, newGuids, unreachable int, err error) {
 	kind := p.Kind()
 	slog.Info("Listing the folder", "source", kind, "folder", id)
 	folder, err := p.Load(raw)
 	if err != nil {
+		if purgeable && isGoneError(err) {
+			return "", 0, 0, &purgeError{fmt.Sprintf("the %s folder %s no longer exists (%v)", kind, id, err)}
+		}
 		return "", 0, 0, fmt.Errorf("could not list the %s folder %s: %w", kind, id, err)
 	}
 	base = uniqueFileBase(folder.Name, id, used)
 	slog.Info("Folder listed", "source", kind, "name", base, "zipmods", len(folder.Listing))
 	if len(folder.Listing) == 0 {
+		if purgeable {
+			return "", 0, 0, &purgeError{fmt.Sprintf("the %s folder %q has no .zipmod or .zip files", kind, base)}
+		}
 		return base, 0, 0, fmt.Errorf("the %s folder %q has no .zipmod files (wrong link, or an empty folder?)", kind, base)
 	}
 
@@ -173,6 +229,10 @@ func syncFolder(p folderProvider, raw, id string, opt hostedOptions, used map[st
 	// All files share one "category", so buildGameIndex just orders by newest version, then
 	// newest upload, and drops identical copies.
 	index := buildGameIndex(entries, []string{""}, "", opt.maxURLs)
+	if purgeable && len(index) == 0 && unreachable == 0 {
+		// Every file was read and none is a mod (character cards zipped, packs of many mods...).
+		return "", 0, 0, &purgeError{fmt.Sprintf("none of the %d files of the %s folder %q is a mod", len(folder.Listing), kind, base)}
+	}
 	out := filepath.Join(opt.indexDir(), base+".json")
 	prev := readIndexGuids(out)
 	for guid := range index {
@@ -192,47 +252,216 @@ func syncFolder(p folderProvider, raw, id string, opt hostedOptions, used map[st
 	return base, newGuids, unreachable, nil
 }
 
+// fileItem is a single-file link of the config, with the group that holds it.
+type fileItem struct {
+	raw string
+	g   *linkGroup
+}
+
+// syncFiles indexes all the single-file links together. Links of scraped groups that turn
+// out not to be mods (or are gone) are returned in purge, with the reason. failures counts
+// links that could not be looked at (they are retried next run, and keep their cached data).
+func syncFiles(p folderProvider, fp fileProvider, items []fileItem, opt hostedOptions, used map[string]string) (base string, newGuids, failures int, purge map[string]string) {
+	kind := p.Kind()
+	purge = map[string]string{}
+	base = uniqueFileBase(singleFilesName, "single-files", used)
+	cachePath := filepath.Join(opt.cacheSub(), base+".json")
+	cache := map[string]cacheEntry{}
+	if !opt.full {
+		cache = loadCache(cachePath)
+	}
+
+	merged := &remoteFolder{Listing: map[string]fileSig{}, Labels: map[string]string{}}
+	probes := map[string]func(string) (manifestInfo, error){}
+	rawOf := map[string]string{}
+	slog.Info("Looking at single files", "source", kind, "files", len(items))
+	for _, it := range items {
+		f, err := fp.LoadFile(it.raw)
+		var pe *purgeError
+		switch {
+		case errors.As(err, &pe):
+			if it.g.scraped() {
+				purge[it.raw] = pe.reason
+				continue
+			}
+			slog.Error("Unusable file link", "source", kind, "group", it.g.Name, "link", it.raw, "err", err)
+			failures++
+			continue
+		case err != nil && it.g.scraped() && isGoneError(err):
+			purge[it.raw] = fmt.Sprintf("the %s file no longer exists (%v)", kind, err)
+			continue
+		case err != nil:
+			slog.Error("Could not look at a file link", "source", kind, "group", it.g.Name, "link", it.raw, "err", err)
+			failures++
+			// Keep what the cache knows, so one bad moment doesn't drop the file from the index.
+			if u, uerr := fp.FileURL(it.raw); uerr == nil {
+				if e, ok := cache[u]; ok {
+					merged.Listing[u] = fileSig{Mtime: e.Mtime, Size: e.Size}
+					merged.Labels[u] = u
+					rawOf[u] = it.raw
+				}
+			}
+			continue
+		}
+		if len(f.Listing) == 0 {
+			if it.g.scraped() {
+				purge[it.raw] = fmt.Sprintf("the %s file %q is not a .zipmod or .zip", kind, f.Name)
+				continue
+			}
+			slog.Error("File link is not a .zipmod or .zip", "source", kind, "group", it.g.Name, "link", it.raw, "name", f.Name)
+			failures++
+			continue
+		}
+		for u, sig := range f.Listing {
+			merged.Listing[u] = sig
+			merged.Labels[u] = f.Labels[u]
+			probes[u] = f.Probe
+			rawOf[u] = it.raw
+		}
+	}
+
+	groupOf := map[string]*linkGroup{}
+	for _, it := range items {
+		groupOf[it.raw] = it.g
+	}
+	entries, unreachable := refreshCache(merged.Listing, cache, nil, refreshOptions{
+		full: opt.full, retryFailed: opt.retryFailed, workers: opt.workers, cachePath: cachePath,
+		probe: func(u string) (manifestInfo, error) {
+			if pr, ok := probes[u]; ok {
+				return pr(u)
+			}
+			return manifestInfo{}, errors.New("the file could not be looked at this run")
+		},
+		label:   func(u string) string { return merged.Labels[u] },
+		noMoves: true,
+	})
+	for u, e := range entries {
+		// A recorded error is permanent: the file was read and is no mod.
+		if raw := rawOf[u]; e.Guid == "" && e.Error != "" && groupOf[raw] != nil && groupOf[raw].scraped() {
+			purge[raw] = fmt.Sprintf("the %s file is not a usable mod (%s)", kind, e.Error)
+		}
+	}
+	if unreachable > 0 {
+		slog.Warn("Some files are missing from the index; the next run will try them again", "source", kind, "unreachable_files", unreachable)
+	}
+
+	if len(merged.Listing) == 0 {
+		return "", 0, failures, purge // nothing to index: no file, and an old one gets cleaned up
+	}
+	index := buildGameIndex(entries, []string{""}, "", opt.maxURLs)
+	out := filepath.Join(opt.indexDir(), base+".json")
+	prev := readIndexGuids(out)
+	for guid := range index {
+		if _, ok := prev[guid]; !ok {
+			newGuids++
+		}
+	}
+	wrote, err := writeIndex(out, index)
+	if err != nil {
+		slog.Error("Could not write the index", "path", out, "err", err)
+		return base, 0, failures + 1, purge
+	}
+	slog.Info("Index written", "source", kind, "name", base, "guids", len(index), "path", out, "changed", wrote)
+	return base, newGuids, failures, purge
+}
+
 // buildHostedIndexes indexes every folder of the config. newGuids counts GUIDs that weren't
 // in the previous index of their folder; failures counts folders (or config problems) that
 // could not be processed at all - the other folders are still done.
+//
+// Afterwards the config is tidied: duplicate links are removed, and links of scraped groups
+// that turned out to hold no mods are purged.
 func buildHostedIndexes(opt hostedOptions, p folderProvider) (newGuids, failures int) {
 	opt.kind = p.Kind()
-	links, err := loadLinkConfig(opt.configPath)
+	cfg, err := loadHostedConfig(opt.configPath)
 	if err != nil {
 		slog.Error("Config problem", "source", opt.kind, "err", err)
 		return 0, 1
 	}
-	if len(links) == 0 {
+	changed := false
+	if n := cfg.dedupe(linkIDFunc(p)); n > 0 {
+		slog.Info("Removed duplicate links from the config", "source", opt.kind, "removed", n)
+		changed = true
+	}
+	save := func() bool {
+		if err := cfg.save(opt.configPath); err != nil {
+			slog.Error("Could not save the config", "source", opt.kind, "err", err)
+			return false
+		}
+		return true
+	}
+	if len(cfg.allLinks()) == 0 {
 		slog.Warn("No folders in the config; nothing to do", "source", opt.kind, "config", opt.configPath)
+		if changed && !save() {
+			return 0, 1
+		}
 		return 0, 0
 	}
 
-	seen := map[string]bool{}
+	fp, _ := p.(fileProvider)
 	used := map[string]string{}
 	keep := map[string]bool{}
-	for _, raw := range links {
-		id, err := p.ID(raw)
-		if err != nil {
-			slog.Error("Skipping an invalid link in the config", "source", opt.kind, "err", err)
-			failures++
-			continue
-		}
-		if seen[id] {
-			slog.Warn("Folder listed twice in the config; using it once", "source", opt.kind, "folder", id)
-			continue
-		}
-		seen[id] = true
+	purged := map[string]bool{} // links to remove from the scraped groups
+	var files []fileItem
+	for _, g := range cfg.Groups {
+		for _, raw := range g.Links {
+			ref, err := classifyLink(p, raw)
+			if err != nil {
+				slog.Error("Skipping an invalid link in the config", "source", opt.kind, "group", g.Name, "err", err)
+				failures++
+				continue
+			}
+			if ref.isFile {
+				files = append(files, fileItem{raw, g})
+				continue
+			}
 
-		base, n, _, err := syncFolder(p, raw, id, opt, used)
-		if base != "" {
-			keep[base] = true // keep its files even if this run couldn't finish them
+			base, n, _, err := syncFolder(p, raw, ref.id, opt, used, g.scraped())
+			if base != "" {
+				keep[base] = true // keep its files even if this run couldn't finish them
+			}
+			var pe *purgeError
+			if errors.As(err, &pe) {
+				slog.Info("Purging a link without mods", "source", opt.kind, "group", g.Name, "link", raw, "why", pe.reason)
+				purged[raw] = true
+				continue
+			}
+			if err != nil {
+				slog.Error("Folder failed", "source", opt.kind, "group", g.Name, "folder", ref.id, "err", err)
+				failures++
+				continue
+			}
+			newGuids += n
 		}
-		if err != nil {
-			slog.Error("Folder failed", "source", opt.kind, "folder", id, "err", err)
-			failures++
-			continue
+	}
+
+	if len(files) > 0 && fp != nil {
+		base, n, f, purge := syncFiles(p, fp, files, opt, used)
+		if base != "" {
+			keep[base] = true
 		}
 		newGuids += n
+		failures += f
+		for raw, why := range purge {
+			slog.Info("Purging a link without mods", "source", opt.kind, "link", raw, "why", why)
+			purged[raw] = true
+		}
+	}
+
+	if len(purged) > 0 {
+		for _, g := range cfg.Groups {
+			if g.scraped() { // links of hand-maintained groups are never purged
+				g.remove(purged)
+			}
+		}
+		changed = true
+	}
+	if changed {
+		if !save() {
+			failures++
+		} else if len(purged) > 0 {
+			slog.Info("Config updated", "source", opt.kind, "purged", len(purged))
+		}
 	}
 
 	// Only clean up when every folder was read: a folder that failed to list has an unknown
@@ -247,7 +476,7 @@ func buildHostedIndexes(opt hostedOptions, p folderProvider) (newGuids, failures
 // runHosted parses command-line style flags (nil = defaults) and builds the indexes.
 func runHosted(p folderProvider, args []string) (newGuids, failures int) {
 	fs := flag.NewFlagSet(p.Kind(), flag.ExitOnError)
-	config := fs.String("config", "config/"+p.Kind()+".json", "JSON array of public folder links")
+	config := fs.String("config", "config/"+p.Kind()+".json", "config of public folder links, in groups (a plain JSON array also works)")
 	indicesDir := fs.String("indices-dir", defaultIndicesDir, "index files are written to <dir>/"+p.Kind()+"/<folder name>.json")
 	cacheDir := fs.String("cache-dir", defaultCacheDir, "cache files are written to <dir>/"+p.Kind()+"/<folder name>.json")
 	full := fs.Bool("full", false, "ignore the caches and probe every file")

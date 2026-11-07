@@ -50,6 +50,10 @@ func commitChanges(message string) {
 }
 
 func main() {
+	// First collect new folder links from the forum into config/*.json, so the folder
+	// scrapers below index them in this same run.
+	_, forumFailures := scrapers.RunForum(nil)
+
 	kkcMods := scrapers.ScrapeMods()
 	modpackMods := scrapers.RunModpack(nil)
 	megaMods, megaFailures := scrapers.RunMega(nil)
@@ -59,6 +63,9 @@ func main() {
 
 	// Commit what did work first, then make the run visibly fail so a broken link (or a
 	// missing API key) doesn't go unnoticed.
+	if forumFailures > 0 {
+		fatal("The forum could not be scraped completely (see the errors above)", "groups", forumFailures)
+	}
 	if megaFailures+driveFailures > 0 {
 		fatal("Some folders could not be indexed (see the errors above)", "mega", megaFailures, "drive", driveFailures)
 	}

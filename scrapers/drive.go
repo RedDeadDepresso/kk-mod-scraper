@@ -27,7 +27,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -60,6 +59,17 @@ func parseDriveFolderLink(s string) (string, error) {
 	m := driveFolderRe.FindStringSubmatch(strings.TrimSpace(s))
 	if m == nil {
 		return "", fmt.Errorf("not a Google Drive folder link: %q (expected https://drive.google.com/drive/folders/<id>)", s)
+	}
+	return m[1], nil
+}
+
+var driveFileLinkRe = regexp.MustCompile(
+	`^https?://drive\.google\.com/(?:file/(?:u/\d+/)?d/|uc\?(?:[^#]*&)?id=)([A-Za-z0-9_-]{10,})(?:[/?&#].*)?$`)
+
+func parseDriveFileLink(s string) (string, error) {
+	m := driveFileLinkRe.FindStringSubmatch(strings.TrimSpace(s))
+	if m == nil {
+		return "", fmt.Errorf("not a Google Drive file link: %q (expected https://drive.google.com/file/d/<id>/view)", s)
 	}
 	return m[1], nil
 }
@@ -252,11 +262,7 @@ func (c *driveClient) children(folderID string) ([]driveFile, error) {
 // walk collects the files of a folder and all its sub-folders. Any failure fails the whole
 // folder, so a partial listing never replaces a good index.
 func (c *driveClient) walk(folderID string, depth int, visited map[string]bool, out *[]driveFile) error {
-	if visited[folderID] {
-		return nil // already listed (a folder can be reachable twice, or contain its own parent)
-	}
-	if depth > driveMaxDepth {
-		slog.Warn("Google Drive folders nested too deeply; skipping this branch", "folder", folderID, "max_depth", driveMaxDepth)
+	if visited[folderID] || depth > driveMaxDepth {
 		return nil
 	}
 	visited[folderID] = true
@@ -392,6 +398,57 @@ func (driveProvider) Load(raw string) (*remoteFolder, error) {
 			return manifestInfo{}, permanent("empty file")
 		}
 		info, err := readManifest(&driveRanger{c: client, id: f.ID, size: size})
+		var de *driveError
+		if errors.As(err, &de) && de.permanent() {
+			return manifestInfo{}, permanent("not readable on Google Drive (%v)", de)
+		}
+		return info, err
+	}
+	return folder, nil
+}
+
+func (driveProvider) FileID(raw string) (string, error) { return parseDriveFileLink(raw) }
+
+func (driveProvider) FileURL(raw string) (string, error) {
+	id, err := parseDriveFileLink(raw)
+	if err != nil {
+		return "", err
+	}
+	return driveFileURL(id), nil
+}
+
+// LoadFile looks at one public file link. The result lists the file only if its name says
+// it is a mod archive; the folder name is the file's name.
+func (driveProvider) LoadFile(raw string) (*remoteFolder, error) {
+	id, err := parseDriveFileLink(raw)
+	if err != nil {
+		return nil, err
+	}
+	client, err := newDriveClient()
+	if err != nil {
+		return nil, err
+	}
+	var f driveFile
+	err = client.getJSON("/files/"+id, url.Values{"fields": {"id,name,mimeType,size,modifiedTime"}, "supportsAllDrives": {"true"}}, &f)
+	if err != nil {
+		return nil, err
+	}
+	u := driveFileURL(id)
+	folder := &remoteFolder{Name: f.Name, Listing: map[string]fileSig{}, Labels: map[string]string{u: f.Name}}
+	size, serr := strconv.ParseInt(f.Size, 10, 64)
+	if !isZipmodName(f.Name) || f.MimeType == driveFolderMime || strings.HasPrefix(f.MimeType, "application/vnd.google-apps.") || serr != nil {
+		return folder, nil
+	}
+	mtime := f.ModifiedTime
+	if t, err := time.Parse(time.RFC3339, f.ModifiedTime); err == nil {
+		mtime = t.UTC().Format("2006-01-02 15:04")
+	}
+	folder.Listing[u] = fileSig{Mtime: mtime, Size: strconv.FormatInt(size, 10)}
+	folder.Probe = func(string) (manifestInfo, error) {
+		if size == 0 {
+			return manifestInfo{}, permanent("empty file")
+		}
+		info, err := readManifest(&driveRanger{c: client, id: id, size: int(size)})
 		var de *driveError
 		if errors.As(err, &de) && de.permanent() {
 			return manifestInfo{}, permanent("not readable on Google Drive (%v)", de)

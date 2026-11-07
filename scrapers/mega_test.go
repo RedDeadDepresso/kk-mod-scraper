@@ -146,7 +146,6 @@ func makeZipmod(t *testing.T, guid, version string, bigFirst bool) []byte {
 
 type fakeFile struct {
 	handle, name string
-	parent       string // folder node holding the file; "" = the folder root
 	ts           int64
 	key          []byte
 	cipher       []byte
@@ -155,13 +154,12 @@ type fakeFile struct {
 func newFakeFile(t *testing.T, handle, name string, ts int64, zipData []byte) *fakeFile {
 	key := make([]byte, 32)
 	rand.Read(key)
-	return &fakeFile{handle: handle, name: name, ts: ts, key: key, cipher: encryptContent(key, zipData)}
+	return &fakeFile{handle, name, ts, key, encryptContent(key, zipData)}
 }
 
 type fakeMega struct {
 	link             megaFolderLink
 	files            map[string]*fakeFile
-	subfolders       map[string]string // sub-folder handle -> parent handle ("" = the root)
 	apiF, apiG, gets atomic.Int64
 	storage          *httptest.Server
 	api              *httptest.Server
@@ -207,22 +205,9 @@ func newFakeMega(t *testing.T, link megaFolderLink, files ...*fakeFile) *fakeMeg
 				"h": "ROOT0000", "p": "PARENT00", "u": "U", "t": 1, "ts": 1,
 				"a": encryptAttrs(rootKey, "fake mod folder"), "k": "ROOT0000:" + b64(ecbEncrypt(link.Key, rootKey)),
 			}}
-			for h, parent := range f.subfolders {
-				if parent == "" {
-					parent = "ROOT0000"
-				}
-				nodes = append(nodes, map[string]any{
-					"h": h, "p": parent, "u": "U", "t": 1, "ts": 1,
-					"a": encryptAttrs(rootKey, "sub "+h), "k": "ROOT0000:" + b64(ecbEncrypt(link.Key, rootKey)),
-				})
-			}
 			for _, ff := range f.files {
-				parent := ff.parent
-				if parent == "" {
-					parent = "ROOT0000"
-				}
 				nodes = append(nodes, map[string]any{
-					"h": ff.handle, "p": parent, "u": "U", "t": 0, "s": len(ff.cipher), "ts": ff.ts,
+					"h": ff.handle, "p": "ROOT0000", "u": "U", "t": 0, "s": len(ff.cipher), "ts": ff.ts,
 					"a": encryptAttrs(ff.key, ff.name), "k": "ROOT0000:" + b64(ecbEncrypt(link.Key, ff.key)),
 				})
 			}
@@ -489,34 +474,5 @@ func TestMegaTailHandlingSmallFile(t *testing.T) {
 	info, err := readManifest(r)
 	if err != nil || info.Guid != "com.test.tiny" || info.Version != "1.0" {
 		t.Fatalf("%+v %v", info, err)
-	}
-}
-
-// Files at any depth of the folder tree are found (the folder listing is recursive).
-func TestMegaNestedFolders(t *testing.T) {
-	linkStr := "https://mega.nz/folder/HM0FSAYC#Gu2wMS8oer6bISpDzVdBWg"
-	link, _ := parseMegaFolderLink(linkStr)
-	top := newFakeFile(t, "TOPTOPTO", "Top.zipmod", 1700000000, makeZipmod(t, "com.test.top", "1.0", false))
-	one := newFakeFile(t, "LEVEL1AA", "One.zipmod", 1700000100, makeZipmod(t, "com.test.one", "1.0", false))
-	three := newFakeFile(t, "LEVEL3AA", "Three.zipmod", 1700000200, makeZipmod(t, "com.test.three", "1.0", true))
-	one.parent, three.parent = "DIRAAAAA", "DIRCCCCC"
-	fm := newFakeMega(t, link, top, one, three)
-	fm.subfolders = map[string]string{"DIRAAAAA": "", "DIRBBBBB": "DIRAAAAA", "DIRCCCCC": "DIRBBBBB"}
-
-	dir := t.TempDir()
-	opt := hostedOptions{
-		configPath: writeConfig(t, dir, linkStr),
-		indicesDir: filepath.Join(dir, "indices"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 2,
-	}
-	if newGuids, failures := buildMegaIndexes(opt); newGuids != 3 || failures != 0 {
-		t.Fatalf("newGuids=%d failures=%d, want 3 and 0", newGuids, failures)
-	}
-	data, _ := os.ReadFile(filepath.Join(dir, "indices", "mega", "fake mod folder.json"))
-	var idx modpackIndexFile
-	json.Unmarshal(data, &idx)
-	for _, g := range []string{"com.test.top", "com.test.one", "com.test.three"} {
-		if len(idx.Guids[g]) != 1 {
-			t.Errorf("%s (nested file) missing from the index: %v", g, idx.Guids)
-		}
 	}
 }

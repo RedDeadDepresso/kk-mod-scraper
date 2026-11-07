@@ -36,4 +36,7 @@ jobs:
         env:
           # Google Drive API key for the Drive folders in config/drive.json (see README).
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          # Optional: Cookie header of a logged in kknow.cc session, only needed if the forum
+          # refuses searches from guests (see README).
+          KKNOW_COOKIE: ${{ secrets.KKNOW_COOKIE }}
         run: go run .

@@ -10,14 +10,49 @@
 
 ### Mega and Google Drive folders
 
-`config/mega.json` and `config/drive.json` are JSON arrays of public folder links:
+`config/mega.json` and `config/drive.json` hold public folder links, divided in groups, one
+per place they came from:
 
 ```json
-["https://mega.nz/folder/<id>#<key>"]
-["https://drive.google.com/drive/folders/<id>"]
+{
+  "groups": [
+    { "name": "manual", "links": ["https://mega.nz/folder/<id>#<key>"] },
+    { "name": "kknow.cc",
+      "search": "https://kknow.cc/search/4583029/?q=https%3A%2F%2Fmega.nz&o=date",
+      "newest_post": { "id": "post-93888", "url": "https://kknow.cc/...", "time": "2026-11-06T16:37:43Z" },
+      "links": ["https://mega.nz/folder/<id>#<key>"] }
+  ]
+}
 ```
 
-Add a link to index another folder; remove one and its files are deleted on the next fully
+(Drive folders look like `https://drive.google.com/drive/folders/<id>`. A group's `links` may
+also hold single files: `https://mega.nz/file/<id>#<key>` and
+`https://drive.google.com/file/d/<id>/view`. The old format, a plain array of links, is still
+read, as one group.)
+
+Single-file links are looked at with one cheap API call (name and size); only `.zipmod` and
+`.zip` files count. All of a config's file links are indexed together, in
+`indices/<kind>/(single files).json`, instead of one index per file.
+
+- A group **without** `search` is yours: links are never removed automatically (except exact
+  duplicates of a folder listed earlier in the file).
+- A group **with** `search` is filled by the forum scraper (`scrapers/forum.go`, runs first in
+  every run): it runs that forum search, reads the result pages newest first until it reaches
+  `newest_post` (the newest post of the previous run), opens each new post, and adds the Mega
+  folder / Drive folder links and single-file links in it. Links in quotes are ignored. Add another site or query by adding another group.
+  The first run has no `newest_post` and reads everything the search returns (`-max-pages`,
+  default 30); later runs only read what is new. If a post can't be read, `newest_post`
+  doesn't move and the run fails after committing the rest, so nothing is skipped.
+- When a folder of such a group is indexed and turns out to be gone, empty, or to contain no
+  mods (no `.zipmod`/`.zip`, or none that has a `manifest.xml`; for a file link: not a zipmod,
+  or not readable as one), its link is purged from the
+  config. Network errors, rate limits and a missing API key never purge anything.
+- Forum flags: `go run . ` uses defaults; `-max-pages`, `-delay` (pause between requests,
+  default 1.5s), `-mega-config`, `-drive-config` (via `scrapers.RunForum(args)`). If the forum
+  doesn't let guests search, set the `KKNOW_COOKIE` environment variable / repository secret to
+  the `Cookie` header of a logged-in browser session (sent to kknow.cc only).
+
+Add a link to a group to index another folder; remove one and its files are deleted on the next fully
 successful run. Each folder gets an index and a cache named after the folder as it is called
 on the host (`<name> (<id>)` if two folders share a name). One broken folder doesn't stop the
 others, but makes the run fail after everything else has been committed. Only the zip tail and
@@ -29,10 +64,8 @@ Only `.zipmod` and `.zip` files are looked at.
 - **Google Drive**: uses the Drive API, which needs a free API key, and folders must be shared
   as "Anyone with the link". Create the key in the
   [Google Cloud Console](https://console.cloud.google.com/apis/credentials) (new project ->
-  enable "Google Drive API" (required) -> Create credentials -> API key). Optionally restrict
-  the key to the Drive API ("Restrict key" -> "Select APIs"; the API must be enabled first, or
-  use `gcloud services api-keys update <key id> --api-target=service=drive.googleapis.com`).
-  Don't restrict it by IP: GitHub runners' addresses change. Then add it as a repository secret named `GOOGLE_API_KEY`
+  enable "Google Drive API" -> Create credentials -> API key; restricting it to the Drive API is
+  a good idea), then add it as a repository secret named `GOOGLE_API_KEY`
   (Settings -> Secrets and variables -> Actions). To run locally:
   `GOOGLE_API_KEY=... go run .`. The key is sent in a request header and never appears in
   URLs, logs or indices.

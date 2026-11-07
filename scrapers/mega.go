@@ -197,8 +197,9 @@ func (e megaError) Error() string {
 func (e megaError) retryable() bool { return e == -3 || e == -4 || e == -18 }
 
 type megaClient struct {
-	link megaFolderLink
-	seq  atomic.Int64
+	link       megaFolderLink
+	publicFile bool // calls are about public file links, not about a folder (no "n" parameter)
+	seq        atomic.Int64
 }
 
 func newMegaClient(link megaFolderLink) *megaClient {
@@ -231,7 +232,10 @@ func (c *megaClient) call(req map[string]any, out any) error {
 }
 
 func (c *megaClient) callOnce(body []byte, out any) error {
-	u := fmt.Sprintf("%s?id=%d&n=%s", megaAPIURL, c.seq.Add(1), c.link.Handle)
+	u := fmt.Sprintf("%s?id=%d", megaAPIURL, c.seq.Add(1))
+	if !c.publicFile {
+		u += "&n=" + c.link.Handle
+	}
 	req, err := http.NewRequest(http.MethodPost, u, strings.NewReader(string(body)))
 	if err != nil {
 		return err
@@ -382,6 +386,58 @@ func (c *megaClient) downloadURL(handle string) (string, int64, error) {
 }
 
 // ---------------------------------------------------------------------------
+// Single files (https://mega.nz/file/<id>#<key>)
+// ---------------------------------------------------------------------------
+
+type megaFileLink struct {
+	Handle, KeyB64 string
+	Key            []byte // 32 bytes
+}
+
+var (
+	megaFileRe       = regexp.MustCompile(`^https?://mega\.(?:nz|io|co\.nz)/file/([A-Za-z0-9_-]{8})#([A-Za-z0-9_-]{43})(?:[/?].*)?$`)
+	megaLegacyFileRe = regexp.MustCompile(`^https?://mega\.(?:nz|io|co\.nz)/#!([A-Za-z0-9_-]{8})!([A-Za-z0-9_-]{43})(?:[!/?].*)?$`)
+)
+
+func parseMegaFileLink(s string) (megaFileLink, error) {
+	s = strings.TrimSpace(s)
+	m := megaFileRe.FindStringSubmatch(s)
+	if m == nil {
+		m = megaLegacyFileRe.FindStringSubmatch(s)
+	}
+	if m == nil {
+		return megaFileLink{}, fmt.Errorf("not a Mega file link: %q (expected https://mega.nz/file/<id>#<key>)", s)
+	}
+	key, err := megaB64Decode(m[2])
+	if err != nil || len(key) != 32 {
+		return megaFileLink{}, errors.New("the Mega file key in the link is invalid")
+	}
+	return megaFileLink{Handle: m[1], KeyB64: m[2], Key: key}, nil
+}
+
+func (l megaFileLink) url() string {
+	return fmt.Sprintf("https://mega.nz/file/%s#%s", l.Handle, l.KeyB64)
+}
+
+// publicFileInfo asks Mega about a public file link: a temporary download URL, the size and
+// the still encrypted attributes (which hold the name).
+func (c *megaClient) publicFileInfo(handle string) (dl string, size int64, attrs string, err error) {
+	var resp struct {
+		G  string `json:"g"`
+		S  int64  `json:"s"`
+		At string `json:"at"`
+		E  int    `json:"e"`
+	}
+	if err := c.call(map[string]any{"a": "g", "g": 1, "ssl": 1, "p": handle}, &resp); err != nil {
+		return "", 0, "", err
+	}
+	if resp.E != 0 {
+		return "", 0, "", megaError(resp.E)
+	}
+	return resp.G, resp.S, resp.At, nil
+}
+
+// ---------------------------------------------------------------------------
 // Decrypting range reader
 // ---------------------------------------------------------------------------
 
@@ -525,6 +581,62 @@ func (megaProvider) Load(raw string) (*remoteFolder, error) {
 			size = f.Size
 		}
 		r, err := newMegaRanger(dl, int(size), f.Key)
+		if err != nil {
+			return manifestInfo{}, permanent("%v", err)
+		}
+		return readManifest(r)
+	}
+	return folder, nil
+}
+
+func (megaProvider) FileID(raw string) (string, error) {
+	l, err := parseMegaFileLink(raw)
+	return l.Handle, err
+}
+
+func (megaProvider) FileURL(raw string) (string, error) {
+	l, err := parseMegaFileLink(raw)
+	return l.url(), err
+}
+
+// LoadFile looks at one public file link. The result lists the file only if its name says
+// it is a mod archive; the folder name is the file's name.
+func (megaProvider) LoadFile(raw string) (*remoteFolder, error) {
+	l, err := parseMegaFileLink(raw)
+	if err != nil {
+		return nil, err
+	}
+	client := &megaClient{publicFile: true}
+	client.seq.Store(time.Now().UnixNano() % 1_000_000_000)
+	_, size, attrs, err := client.publicFileInfo(l.Handle)
+	if err != nil {
+		return nil, err
+	}
+	name, err := megaDecryptName(l.Key, attrs)
+	if err != nil {
+		return nil, &purgeError{fmt.Sprintf("the Mega file link is unusable (%v)", err)}
+	}
+	u := l.url()
+	folder := &remoteFolder{Name: name, Listing: map[string]fileSig{}, Labels: map[string]string{u: name}}
+	if isZipmodName(name) {
+		folder.Listing[u] = fileSig{Size: strconv.FormatInt(size, 10)} // a public link has no upload date
+	}
+	folder.Probe = func(string) (manifestInfo, error) {
+		if size == 0 {
+			return manifestInfo{}, permanent("empty file")
+		}
+		dl, size2, _, err := client.publicFileInfo(l.Handle)
+		if err != nil {
+			var me megaError
+			if errors.As(err, &me) && (me == -9 || me == -16 || me == -8) {
+				return manifestInfo{}, permanent("unavailable on Mega (%v)", err)
+			}
+			return manifestInfo{}, err
+		}
+		if size2 <= 0 {
+			size2 = size
+		}
+		r, err := newMegaRanger(dl, int(size2), l.Key)
 		if err != nil {
 			return manifestInfo{}, permanent("%v", err)
 		}
