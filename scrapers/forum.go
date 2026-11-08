@@ -566,13 +566,21 @@ func RunForum(args []string) (added, failures int) {
 	driveCfg := fs.String("drive-config", "config/drive.json", "Google Drive config (groups with a search URL are scraped)")
 	maxPages := fs.Int("max-pages", 30, "most result pages read per search")
 	delay := fs.Duration("delay", 1500*time.Millisecond, "pause between requests to the forum")
+	kinds := fs.String("kinds", "mega,drive", "which links to collect: mega, drive, or both (comma separated)")
 	_ = fs.Parse(args)
+	want := map[string]bool{}
+	for _, k := range strings.Split(*kinds, ",") {
+		want[strings.TrimSpace(k)] = true
+	}
 
 	s := newForumScraper(*delay, max(1, *maxPages))
 	for _, c := range []struct {
 		path string
 		kind forumKind
 	}{{*megaCfg, forumMega}, {*driveCfg, forumDrive}} {
+		if !want[c.kind.name] {
+			continue
+		}
 		n, f := s.runForumConfig(c.path, c.kind)
 		added += n
 		failures += f

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log/slog"
 	"os"
@@ -49,39 +50,131 @@ func commitChanges(message string) {
 	slog.Info("Changes pushed")
 }
 
+// source is one thing the scraper can update. To add a website, add an entry to sources():
+// its name is what -sources / SCRAPE_SOURCES refers to. run returns the new mods it found and
+// how many of its items failed.
+type source struct {
+	name string
+	run  func() (newMods, failures int)
+}
+
+func sources() []source {
+	return []source{
+		{"koikatsucards", func() (int, int) { return scrapers.ScrapeMods(), 0 }},
+		{"betterrepack", func() (int, int) { return scrapers.RunModpack(nil), 0 }},
+		{"mega", func() (int, int) { return scrapers.RunMega(nil) }},
+		{"drive", func() (int, int) { return scrapers.RunDrive(nil) }},
+	}
+}
+
+// forumKinds are the sources whose links are collected from the forum (see scrapers/forum.go):
+// the forum is only searched for the kinds of links whose source is enabled.
+var forumKinds = []string{"mega", "drive"}
+
+// enabledSources decides which sources run: the -sources flag, else the SCRAPE_SOURCES
+// environment variable (in GitHub Actions: the repository variable of that name), else all.
+// The value is a comma separated list of source names, or "all". A typo is an error: silently
+// running nothing would look like a working run.
+func enabledSources(all []source) (map[string]bool, error) {
+	spec := flag.String("sources", os.Getenv("SCRAPE_SOURCES"), "comma separated sources to run (default: all)")
+	flag.Parse()
+	known := map[string]bool{}
+	var names []string
+	for _, s := range all {
+		known[s.name] = true
+		names = append(names, s.name)
+	}
+	enabled := map[string]bool{}
+	if strings.TrimSpace(*spec) == "" || strings.TrimSpace(*spec) == "all" {
+		for _, n := range names {
+			enabled[n] = true
+		}
+		return enabled, nil
+	}
+	for _, n := range strings.Split(*spec, ",") {
+		if n = strings.ToLower(strings.TrimSpace(n)); n == "" {
+			continue
+		}
+		if !known[n] {
+			return nil, fmt.Errorf("unknown source %q (valid: %s)", n, strings.Join(names, ", "))
+		}
+		enabled[n] = true
+	}
+	if len(enabled) == 0 {
+		return nil, fmt.Errorf("no source selected (valid: %s)", strings.Join(names, ", "))
+	}
+	return enabled, nil
+}
+
 func main() {
+	all := sources()
+	enabled, err := enabledSources(all)
+	if err != nil {
+		fatal("Bad source selection", "err", err)
+	}
+	var on, off []string
+	for _, s := range all {
+		if enabled[s.name] {
+			on = append(on, s.name)
+		} else {
+			off = append(off, s.name)
+		}
+	}
+	slog.Info("Sources", "enabled", strings.Join(on, ","), "disabled", strings.Join(off, ","))
+
 	// First collect new folder links from the forum into config/*.json, so the folder
 	// scrapers below index them in this same run.
-	_, forumFailures := scrapers.RunForum(nil)
+	var kinds []string
+	for _, k := range forumKinds {
+		if enabled[k] {
+			kinds = append(kinds, k)
+		}
+	}
+	forumFailures := 0
+	if len(kinds) > 0 {
+		_, forumFailures = scrapers.RunForum([]string{"-kinds", strings.Join(kinds, ",")})
+	}
 
-	kkcMods := scrapers.ScrapeMods()
-	modpackMods := scrapers.RunModpack(nil)
-	megaMods, megaFailures := scrapers.RunMega(nil)
-	driveMods, driveFailures := scrapers.RunDrive(nil)
+	var (
+		results  []result
+		failures []any
+	)
+	for _, s := range all {
+		if !enabled[s.name] {
+			continue
+		}
+		n, f := s.run()
+		results = append(results, result{s.name, n})
+		if f > 0 {
+			failures = append(failures, s.name, f)
+		}
+	}
 
-	commitChanges(commitMessage(kkcMods, modpackMods, megaMods, driveMods))
+	commitChanges(commitMessage(results))
 
 	// Commit what did work first, then make the run visibly fail so a broken link (or a
 	// missing API key) doesn't go unnoticed.
 	if forumFailures > 0 {
 		fatal("The forum could not be scraped completely (see the errors above)", "groups", forumFailures)
 	}
-	if megaFailures+driveFailures > 0 {
-		fatal("Some folders could not be indexed (see the errors above)", "mega", megaFailures, "drive", driveFailures)
+	if len(failures) > 0 {
+		fatal("Some items could not be processed (see the errors above)", failures...)
 	}
 }
 
+type result struct {
+	name string
+	n    int
+}
+
 // commitMessage lists only the sources that actually produced new mods.
-func commitMessage(kkcMods, modpackMods, megaMods, driveMods int) string {
+func commitMessage(results []result) string {
 	var (
 		parts []string
 		names []string
 		total int
 	)
-	for _, src := range []struct {
-		n    int
-		name string
-	}{{kkcMods, "koikatsucards"}, {modpackMods, "betterrepack"}, {megaMods, "mega"}, {driveMods, "drive"}} {
+	for _, src := range results {
 		if src.n > 0 {
 			total += src.n
 			names = append(names, src.name)
@@ -90,10 +183,10 @@ func commitMessage(kkcMods, modpackMods, megaMods, driveMods int) string {
 	}
 	switch len(parts) {
 	case 0:
-		return "Update indices"
+		return "Update data"
 	case 1:
-		return fmt.Sprintf("Update indices (%d new mods from %s)", total, names[0])
+		return fmt.Sprintf("Update data (%d new mods from %s)", total, names[0])
 	default:
-		return fmt.Sprintf("Update indices (%d new mods, %s)", total, strings.Join(parts, ", "))
+		return fmt.Sprintf("Update data (%d new mods, %s)", total, strings.Join(parts, ", "))
 	}
 }

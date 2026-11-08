@@ -75,6 +75,17 @@ Only `.zipmod` and `.zip` files are looked at.
 Flags (all optional) for both: `-config`, `-data-dir`, `-cache-dir`, `-full`,
 `-retry-failed`, `-max-urls`, `-workers`.
 
+### Choosing which sources run
+
+Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`. By default all run. To run only some,
+pass `-sources mega,koikatsucards` (`go run . -sources ...`) or set the `SCRAPE_SOURCES`
+environment variable. In GitHub Actions, set the repository variable `SCRAPE_SOURCES`
+(Settings > Secrets and variables > Actions > Variables); the next run uses it, no commit needed.
+Empty or unset means all. An unknown name stops the run, so a typo can't silently disable
+everything. A disabled source is skipped completely: its files in `data/` and its config stay as
+they are (and stay published), and the forum isn't searched for its links. To add a website, add
+an entry to `sources()` in `main.go`.
+
 ### Published site
 
 The index files live in `data/`; the Pages site publishes them under `/indices/` (so the URLs
