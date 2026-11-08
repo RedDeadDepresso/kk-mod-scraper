@@ -94,23 +94,12 @@ func (e *driveError) Error() string {
 	return fmt.Sprintf("Google Drive API error %d: %s", e.Status, e.Message)
 }
 
-// Reasons of a 403 that are about limits rather than about the file: they pass with time.
-var driveTransientReasons = map[string]bool{
-	"userRateLimitExceeded": true, "rateLimitExceeded": true, "dailyLimitExceeded": true,
-	"downloadQuotaExceeded": true, "quotaExceeded": true, "sharingRateLimitExceeded": true,
-	"backendError": true,
-}
-
-// permanent reports whether the file itself can't be read (gone, or not downloadable), as
-// opposed to a limit, a server problem or a bad range, which a later run may get past.
+// permanent reports whether the file is gone (404). A 403 is deliberately not permanent, even
+// with a reason like cannotDownloadFile: the browser can often open files the API refuses
+// (a bare 403 can also be Google throttling a script), so a 403 file is retried on the next
+// run, its link is kept, and it never makes a folder look empty.
 func (e *driveError) permanent() bool {
-	switch e.Status {
-	case http.StatusNotFound:
-		return true
-	case http.StatusForbidden:
-		return !driveTransientReasons[e.Reason]
-	}
-	return false
+	return e.Status == http.StatusNotFound
 }
 
 func (e *driveError) retryable() bool {

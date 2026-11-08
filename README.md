@@ -46,7 +46,9 @@ Single-file links are looked at with one cheap API call (name and size); only `.
 - When a folder of such a group is indexed and turns out to be gone, empty, or to contain no
   mods (no `.zipmod`/`.zip`, or none that has a `manifest.xml`; for a file link: not a zipmod,
   or not readable as one), its link is purged from the
-  config. Network errors, rate limits and a missing API key never purge anything.
+  config. Only "not found" counts as gone: network errors, rate limits, a missing API key and Google Drive
+  403 (Forbidden) answers never purge anything. A file that answers 403 keeps its link and is
+  tried again on every run.
 - Forum flags: `go run . ` uses defaults; `-max-pages`, `-delay` (pause between requests,
   default 1.5s), `-mega-config`, `-drive-config` (via `scrapers.RunForum(args)`). If the forum
   doesn't let guests search, set the `KKNOW_COOKIE` environment variable / repository secret to

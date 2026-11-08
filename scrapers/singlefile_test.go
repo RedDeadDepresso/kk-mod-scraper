@@ -154,3 +154,33 @@ func TestDriveFileLinks(t *testing.T) {
 		t.Errorf("index: %s %v", data, err)
 	}
 }
+
+// A 403 keeps the link: a blocked file link, and a folder whose files are all blocked, must
+// not be purged from a scraped group (only "not found" purges).
+func TestDrive403KeepsLinks(t *testing.T) {
+	t.Setenv("GOOGLE_API_KEY", "testkey")
+	d := newFakeDrive(t)
+	const (
+		blockedFile = "1BlockBlockBlockBlockBlockBlock01"
+		folder      = "1FoldFoldFoldFoldFoldFoldFold01"
+		missing     = "1MissMissMissMissMissMissMiss01"
+	)
+	d.addFile("x", &fakeDriveFile{id: blockedFile, name: "Blocked.zipmod", content: make([]byte, 100), status: 403, reason: "cannotDownloadFile"})
+	d.names[folder] = "locked folder"
+	d.addFile(folder, &fakeDriveFile{id: "lockedA", name: "A.zipmod", content: make([]byte, 100), status: 403, reason: "cannotDownloadFile"})
+
+	fileLink := "https://drive.google.com/file/d/" + blockedFile + "/view"
+	folderLink := "https://drive.google.com/drive/folders/" + folder
+	goneLink := "https://drive.google.com/file/d/" + missing + "/view" // the API answers 404
+	dir := t.TempDir()
+	path := filepath.Join(dir, "config", "drive.json")
+	writeGrouped(t, path, fmt.Sprintf(`{"groups":[{"name":"kknow.cc","search":"https://kknow.cc/search/?q=x","links":[%q,%q,%q]}]}`, fileLink, folderLink, goneLink))
+	_, failures := buildHostedIndexes(hostedOptions{configPath: path, indicesDir: filepath.Join(dir, "i"), cacheDir: filepath.Join(dir, "c"), maxURLs: 4, workers: 2}, driveProvider{})
+	if failures != 0 {
+		t.Fatalf("failures=%d", failures)
+	}
+	cfg, _ := loadHostedConfig(path)
+	if got := cfg.Groups[0].Links; len(got) != 2 || got[0] != fileLink || got[1] != folderLink {
+		t.Errorf("links: %v (the 403 file and folder must stay, only the 404 file is purged)", got)
+	}
+}

@@ -36,8 +36,11 @@ func TestParseDriveError(t *testing.T) {
 	if e := parseDriveError(403, body); e.Reason != "downloadQuotaExceeded" || e.permanent() {
 		t.Errorf("quota: %+v permanent=%v", e, e.permanent())
 	}
-	if e := parseDriveError(403, []byte(`{"error":{"message":"no","errors":[{"reason":"cannotDownloadFile"}]}}`)); !e.permanent() {
-		t.Error("cannotDownloadFile should be permanent")
+	if e := parseDriveError(403, []byte(`{"error":{"message":"no","errors":[{"reason":"cannotDownloadFile"}]}}`)); e.permanent() {
+		t.Error("a 403 must not be permanent: the file is retried and its link kept")
+	}
+	if e := parseDriveError(403, []byte("Forbidden")); e.permanent() {
+		t.Error("a bare 403 must not be permanent")
 	}
 	if e := parseDriveError(404, []byte("<html>")); !e.permanent() || e.Message == "" {
 		t.Errorf("404: %+v", e)
@@ -236,7 +239,7 @@ func TestDriveEndToEnd(t *testing.T) {
 	}
 
 	cache := loadCache(cachePath)
-	for _, id := range []string{"fileGone", "fileBlocked", "fileBad"} {
+	for _, id := range []string{"fileGone", "fileBad"} {
 		if e := cache[driveFileURL(id)]; e.Error == "" || e.Guid != "" {
 			t.Errorf("%s should be recorded as unindexable: %+v", id, e)
 		}
@@ -260,12 +263,12 @@ func TestDriveEndToEnd(t *testing.T) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	for id, n := range d.mediaGets {
-		if id != "fileQuota" {
+		if id != "fileQuota" && id != "fileBlocked" { // both are retried: a 403 is not permanent
 			t.Errorf("second run downloaded %s again (%d requests)", id, n)
 		}
 	}
-	if d.mediaGets["fileQuota"] == 0 {
-		t.Error("the quota-limited file was not retried")
+	if d.mediaGets["fileQuota"] == 0 || d.mediaGets["fileBlocked"] == 0 {
+		t.Error("the quota-limited and the 403 files were not retried")
 	}
 }
 
