@@ -289,17 +289,17 @@ func TestBuildMegaIndexesEndToEnd(t *testing.T) {
 	dir := t.TempDir()
 	opt := hostedOptions{
 		configPath: writeConfig(t, dir, linkStr, linkStr+"/file/AAAAAAAA"), // the second is the same folder
-		indicesDir: filepath.Join(dir, "indices"), cacheDir: filepath.Join(dir, "cache"),
+		dataDir:    filepath.Join(dir, "data"), cacheDir: filepath.Join(dir, "cache"),
 		maxURLs: 4, workers: 3,
 	}
-	indexPath := filepath.Join(dir, "indices", "mega", "fake mod folder.json")
+	indexPath := filepath.Join(dir, "data", "mega", "fake mod folder.json")
 	cachePath := filepath.Join(dir, "cache", "mega", "fake mod folder.json")
 
 	// Leftovers of a folder that is not in the config (and a non-json file that must be left alone).
 	for _, f := range []string{
-		filepath.Join(dir, "indices", "mega", "removed folder.json"),
+		filepath.Join(dir, "data", "mega", "removed folder.json"),
 		filepath.Join(dir, "cache", "mega", "removed folder.json"),
-		filepath.Join(dir, "indices", "mega", "notes.txt"),
+		filepath.Join(dir, "data", "mega", "notes.txt"),
 	} {
 		os.MkdirAll(filepath.Dir(f), 0o755)
 		os.WriteFile(f, []byte("{}"), 0o644)
@@ -338,14 +338,14 @@ func TestBuildMegaIndexesEndToEnd(t *testing.T) {
 		t.Errorf("first run probed %d files, want 4", fm.apiG.Load())
 	}
 	for _, gone := range []string{
-		filepath.Join(dir, "indices", "mega", "removed folder.json"),
+		filepath.Join(dir, "data", "mega", "removed folder.json"),
 		filepath.Join(dir, "cache", "mega", "removed folder.json"),
 	} {
 		if _, err := os.Stat(gone); err == nil {
 			t.Errorf("stale file not removed: %s", gone)
 		}
 	}
-	if _, err := os.Stat(filepath.Join(dir, "indices", "mega", "notes.txt")); err != nil {
+	if _, err := os.Stat(filepath.Join(dir, "data", "mega", "notes.txt")); err != nil {
 		t.Error("a non-json file was deleted")
 	}
 
@@ -388,10 +388,10 @@ func TestBuildMegaIndexesOneBadLink(t *testing.T) {
 	dir := t.TempDir()
 	opt := hostedOptions{
 		configPath: writeConfig(t, dir, "https://example.com/not-mega", linkStr),
-		indicesDir: filepath.Join(dir, "indices"), cacheDir: filepath.Join(dir, "cache"),
+		dataDir:    filepath.Join(dir, "data"), cacheDir: filepath.Join(dir, "cache"),
 		maxURLs: 4, workers: 2,
 	}
-	stale := filepath.Join(dir, "indices", "mega", "maybe the failed one.json")
+	stale := filepath.Join(dir, "data", "mega", "maybe the failed one.json")
 	os.MkdirAll(filepath.Dir(stale), 0o755)
 	os.WriteFile(stale, []byte("{}"), 0o644)
 
@@ -399,7 +399,7 @@ func TestBuildMegaIndexesOneBadLink(t *testing.T) {
 	if newGuids != 1 || failures != 1 {
 		t.Errorf("newGuids=%d failures=%d, want 1 and 1", newGuids, failures)
 	}
-	if _, err := os.Stat(filepath.Join(dir, "indices", "mega", "fake mod folder.json")); err != nil {
+	if _, err := os.Stat(filepath.Join(dir, "data", "mega", "fake mod folder.json")); err != nil {
 		t.Errorf("the good folder was not indexed: %v", err)
 	}
 	if _, err := os.Stat(stale); err != nil {

@@ -15,7 +15,7 @@ package scrapers
 // must be shared as "Anyone with the link".
 //
 // config/drive.json is a JSON array of folder links (https://drive.google.com/drive/folders/<id>).
-// Output per folder, named after the folder: indices/drive/<name>.json and
+// Output per folder, named after the folder: data/drive/<name>.json and
 // cache/drive/<name>.json (see hosted.go). The URLs in the index are
 // https://drive.google.com/file/d/<file id>/view.
 //

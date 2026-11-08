@@ -3,10 +3,10 @@
 
 | Source | Scraper | Config | Index | Cache |
 |---|---|---|---|---|
-| Telegram archive (via koikatsucards.com) | `scrapers/telegram.go` | - | `indices/telegram.json` | - |
-| BetterRepack | `scrapers/modpack.go` | - | `indices/modpack.json` (KK and KKS folders together) | `cache/modpack.json` |
-| Mega folders | `scrapers/mega.go` | `config/mega.json` | `indices/mega/<folder name>.json` | `cache/mega/<folder name>.json` |
-| Google Drive folders | `scrapers/drive.go` | `config/drive.json` | `indices/drive/<folder name>.json` | `cache/drive/<folder name>.json` |
+| Telegram archive (via koikatsucards.com) | `scrapers/telegram.go` | - | `data/telegram.json` | - |
+| BetterRepack | `scrapers/modpack.go` | - | `data/modpack.json` (KK and KKS folders together) | `cache/modpack.json` |
+| Mega folders | `scrapers/mega.go` | `config/mega.json` | `data/mega/<folder name>.json` | `cache/mega/<folder name>.json` |
+| Google Drive folders | `scrapers/drive.go` | `config/drive.json` | `data/drive/<folder name>.json` | `cache/drive/<folder name>.json` |
 
 ### Mega and Google Drive folders
 
@@ -32,7 +32,7 @@ read, as one group.)
 
 Single-file links are looked at with one cheap API call (name and size); only `.zipmod` and
 `.zip` files count. All of a config's file links are indexed together, in
-`indices/<kind>/(single files).json`, instead of one index per file.
+`data/<kind>/(single files).json`, instead of one index per file.
 
 - A group **without** `search` is yours: links are never removed automatically (except exact
   duplicates of a folder listed earlier in the file).
@@ -72,13 +72,16 @@ Only `.zipmod` and `.zip` files are looked at.
   `GOOGLE_API_KEY=... go run .`. The key is sent in a request header and never appears in
   URLs, logs or indices.
 
-Flags (all optional) for both: `-config`, `-indices-dir`, `-cache-dir`, `-full`,
+Flags (all optional) for both: `-config`, `-data-dir`, `-cache-dir`, `-full`,
 `-retry-failed`, `-max-urls`, `-workers`.
 
 ### Published site
 
+The index files live in `data/`; the Pages site publishes them under `/indices/` (so the URLs
+are `<site>/indices/mod.json` and `<site>/indices/modpack.json`, as before).
+
 The Pages workflow publishes `modpack.json` and a merged `mod.json`
-built from `telegram.json`, every `indices/mega/*.json` and every `indices/drive/*.json`:
+built from `telegram.json`, every `data/mega/*.json` and every `data/drive/*.json`:
 
 ```json
 { "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "telegram": ["https://t.me/..."] } }

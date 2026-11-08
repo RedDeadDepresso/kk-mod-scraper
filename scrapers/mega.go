@@ -20,7 +20,7 @@ package scrapers
 //
 // Output, one pair of files per folder, named after the folder as it is called on Mega:
 //
-//	indices/mega/<folder name>.json   {"generated": "...", "count": 123,
+//	data/mega/<folder name>.json   {"generated": "...", "count": 123,
 //	                                   "guids": {"com.example.mod": ["https://mega.nz/folder/<id>#<key>/file/<node>", ...]}}
 //	cache/mega/<folder name>.json     incremental-update cache ({url: {mtime, size, guid, version, error}})
 //

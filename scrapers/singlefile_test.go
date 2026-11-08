@@ -84,7 +84,7 @@ func TestMegaFileLinks(t *testing.T) {
 	 {"name":"kknow.cc","search":"https://kknow.cc/search/1/?q=x","links":[%q,%q,%q,%q,%q]}]}`,
 		fileLink(manualPng), fileLink(good), fileLink(card), fileLink(broken), fileLink(gone), fileLink(good)+"/")
 	writeGrouped(t, path, cfgJSON)
-	opt := hostedOptions{configPath: path, indicesDir: filepath.Join(dir, "i"), cacheDir: filepath.Join(dir, "c"), maxURLs: 4, workers: 2}
+	opt := hostedOptions{configPath: path, dataDir: filepath.Join(dir, "i"), cacheDir: filepath.Join(dir, "c"), maxURLs: 4, workers: 2}
 
 	newGuids, failures := buildMegaIndexes(opt)
 	// The png in the hand-maintained group is not a mod: that is an error there, not a purge.
@@ -141,7 +141,7 @@ func TestDriveFileLinks(t *testing.T) {
 	path := filepath.Join(dir, "config", "drive.json")
 	writeGrouped(t, path, fmt.Sprintf(`{"groups":[{"name":"kknow.cc","search":"https://kknow.cc/search/?q=x","links":[%q,%q,%q,%q,%q]}]}`,
 		link(good), link(card), link(broken), link(gone), "https://drive.google.com/file/d/"+good+"/view"))
-	newGuids, failures := buildHostedIndexes(hostedOptions{configPath: path, indicesDir: filepath.Join(dir, "i"), cacheDir: filepath.Join(dir, "c"), maxURLs: 4, workers: 2}, driveProvider{})
+	newGuids, failures := buildHostedIndexes(hostedOptions{configPath: path, dataDir: filepath.Join(dir, "i"), cacheDir: filepath.Join(dir, "c"), maxURLs: 4, workers: 2}, driveProvider{})
 	if newGuids != 1 || failures != 0 {
 		t.Fatalf("newGuids=%d failures=%d", newGuids, failures)
 	}
@@ -175,7 +175,7 @@ func TestDrive403KeepsLinks(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "config", "drive.json")
 	writeGrouped(t, path, fmt.Sprintf(`{"groups":[{"name":"kknow.cc","search":"https://kknow.cc/search/?q=x","links":[%q,%q,%q]}]}`, fileLink, folderLink, goneLink))
-	_, failures := buildHostedIndexes(hostedOptions{configPath: path, indicesDir: filepath.Join(dir, "i"), cacheDir: filepath.Join(dir, "c"), maxURLs: 4, workers: 2}, driveProvider{})
+	_, failures := buildHostedIndexes(hostedOptions{configPath: path, dataDir: filepath.Join(dir, "i"), cacheDir: filepath.Join(dir, "c"), maxURLs: 4, workers: 2}, driveProvider{})
 	if failures != 0 {
 		t.Fatalf("failures=%d", failures)
 	}

@@ -21,7 +21,7 @@ package scrapers
 // release) and the EmotionCreators categories. Edit kkCategories / kksCategories below to
 // change what the index contains.
 //
-// Output (indices/modpack.json):
+// Output (data/modpack.json):
 //
 //	{
 //	  "generated": "2025-01-01T12:00:00",
@@ -73,7 +73,7 @@ const (
 	cacheFormat    = 1
 
 	defaultModpackCache = "cache/modpack.json"
-	defaultIndicesDir   = "indices"
+	defaultDataDir      = "data"
 )
 
 // Server folders (first level under the base URL) of each game, in ranking order: the main
@@ -1084,7 +1084,7 @@ func writeIndex(path string, index map[string][]string) (bool, error) {
 
 type modpackOptions struct {
 	baseURL     string
-	indicesDir  string
+	dataDir     string
 	cachePath   string
 	full        bool
 	retryFailed bool
@@ -1094,7 +1094,7 @@ type modpackOptions struct {
 
 const modpackIndexName = "modpack.json"
 
-// buildModpackIndex crawls the server and writes <indicesDir>/modpack.json. problems is how
+// buildModpackIndex crawls the server and writes <dataDir>/modpack.json. problems is how
 // many listings/files could not be read (those mods are missing from the index until a later
 // run picks them up); newGuids is how many GUIDs were not in the previous index file.
 func buildModpackIndex(opt modpackOptions) (problems, newGuids int, err error) {
@@ -1127,7 +1127,7 @@ func buildModpackIndex(opt modpackOptions) (problems, newGuids int, err error) {
 	})
 
 	index := buildGameIndex(entries, modpackCategories, baseURL, opt.maxURLs)
-	out := filepath.Join(opt.indicesDir, modpackIndexName)
+	out := filepath.Join(opt.dataDir, modpackIndexName)
 	prev := readIndexGuids(out)
 	for guid := range index {
 		if _, ok := prev[guid]; !ok {
@@ -1156,7 +1156,7 @@ func buildModpackIndex(opt modpackOptions) (problems, newGuids int, err error) {
 // command-line style flags (nil = defaults).
 func RunModpack(args []string) int {
 	fs := flag.NewFlagSet("modpack", flag.ExitOnError)
-	indicesDir := fs.String("indices-dir", defaultIndicesDir, "where modpack.json is written")
+	dataDir := fs.String("data-dir", defaultDataDir, "where modpack.json is written")
 	cachePath := fs.String("cache", defaultModpackCache, "incremental-update cache")
 	baseURL := fs.String("base-url", defaultModpackBaseURL, "BetterRepack download server")
 	full := fs.Bool("full", false, "ignore the cache and probe every file")
@@ -1167,7 +1167,7 @@ func RunModpack(args []string) int {
 
 	_, newGuids, err := buildModpackIndex(modpackOptions{
 		baseURL:     *baseURL,
-		indicesDir:  *indicesDir,
+		dataDir:     *dataDir,
 		cachePath:   *cachePath,
 		full:        *full,
 		retryFailed: *retryFailed,

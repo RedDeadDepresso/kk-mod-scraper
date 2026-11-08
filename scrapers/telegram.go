@@ -21,7 +21,7 @@ type Mod map[string]string
 
 const (
 	// TelegramIndexFile is where the koikatsucards.com / Telegram archive mod index is stored.
-	TelegramIndexFile = "indices/telegram.json"
+	TelegramIndexFile = "data/telegram.json"
 	kkcBaseURL        = "https://koikatsucards.com"
 	telegramPrefix    = "https://t.me/KK_archive_modlibrary/"
 )

@@ -300,7 +300,7 @@ func TestPurgeOnlyScrapedGroups(t *testing.T) {
 			search = `"search":"https://kknow.cc/search/1/?q=x",`
 		}
 		writeGrouped(t, path, `{"groups":[{"name":"g",`+search+`"links":["`+linkStr+`"]}]}`)
-		_, failures := buildMegaIndexes(hostedOptions{configPath: path, indicesDir: filepath.Join(dir, "i"), cacheDir: filepath.Join(dir, "c"), maxURLs: 4, workers: 2})
+		_, failures := buildMegaIndexes(hostedOptions{configPath: path, dataDir: filepath.Join(dir, "i"), cacheDir: filepath.Join(dir, "c"), maxURLs: 4, workers: 2})
 		cfg, _ := loadHostedConfig(path)
 		if scraped && (failures != 0 || len(cfg.Groups[0].Links) != 0) {
 			t.Errorf("scraped group: failures=%d links=%v (link should have been purged silently)", failures, cfg.Groups[0].Links)

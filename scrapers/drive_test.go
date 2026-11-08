@@ -207,9 +207,9 @@ func TestDriveEndToEnd(t *testing.T) {
 	dir := t.TempDir()
 	opt := hostedOptions{
 		configPath: writeConfig(t, dir, "https://drive.google.com/drive/folders/"+root+"?usp=sharing"),
-		indicesDir: filepath.Join(dir, "indices"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 3,
+		dataDir:    filepath.Join(dir, "data"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 3,
 	}
-	indexPath := filepath.Join(dir, "indices", "drive", "pandaman.json")
+	indexPath := filepath.Join(dir, "data", "drive", "pandaman.json")
 	cachePath := filepath.Join(dir, "cache", "drive", "pandaman.json")
 
 	newGuids, failures := buildHostedIndexes(opt, driveProvider{})
@@ -281,9 +281,9 @@ func TestDriveKeyAndAccessProblems(t *testing.T) {
 	dir := t.TempDir()
 	opt := hostedOptions{
 		configPath: writeConfig(t, dir, "https://drive.google.com/drive/folders/"+root),
-		indicesDir: filepath.Join(dir, "indices"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 2,
+		dataDir:    filepath.Join(dir, "data"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 2,
 	}
-	stale := filepath.Join(dir, "indices", "drive", "keep me.json")
+	stale := filepath.Join(dir, "data", "drive", "keep me.json")
 	os.MkdirAll(filepath.Dir(stale), 0o755)
 	os.WriteFile(stale, []byte("{}"), 0o644)
 

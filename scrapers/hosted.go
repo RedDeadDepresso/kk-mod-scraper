@@ -7,7 +7,7 @@ package scrapers
 //   - config/<kind>.json holds the folder links in groups (see hostedconfig.go); links of
 //     groups filled by the forum scraper that turn out to hold no mods are purged from it,
 //     and duplicates are removed;
-//   - for every folder, indices/<kind>/<folder name>.json and cache/<kind>/<folder name>.json
+//   - for every folder, data/<kind>/<folder name>.json and cache/<kind>/<folder name>.json
 //     are written (same formats as the BetterRepack scraper, via refreshCache and writeIndex);
 //   - two folders with the same name get "<name> (<id>)";
 //   - files of folders that were removed from the config (or renamed on the host) are deleted
@@ -85,7 +85,7 @@ func linkIDFunc(p folderProvider) func(string) (string, error) {
 type hostedOptions struct {
 	kind        string
 	configPath  string
-	indicesDir  string // index files go to <indicesDir>/<kind>/
+	dataDir     string // index files go to <dataDir>/<kind>/
 	cacheDir    string // cache files go to <cacheDir>/<kind>/
 	full        bool
 	retryFailed bool
@@ -93,7 +93,7 @@ type hostedOptions struct {
 	workers     int
 }
 
-func (o hostedOptions) indexDir() string { return filepath.Join(o.indicesDir, o.kind) }
+func (o hostedOptions) indexDir() string { return filepath.Join(o.dataDir, o.kind) }
 func (o hostedOptions) cacheSub() string { return filepath.Join(o.cacheDir, o.kind) }
 
 func isZipmodName(name string) bool {
@@ -477,7 +477,7 @@ func buildHostedIndexes(opt hostedOptions, p folderProvider) (newGuids, failures
 func runHosted(p folderProvider, args []string) (newGuids, failures int) {
 	fs := flag.NewFlagSet(p.Kind(), flag.ExitOnError)
 	config := fs.String("config", "config/"+p.Kind()+".json", "config of public folder links, in groups (a plain JSON array also works)")
-	indicesDir := fs.String("indices-dir", defaultIndicesDir, "index files are written to <dir>/"+p.Kind()+"/<folder name>.json")
+	dataDir := fs.String("data-dir", defaultDataDir, "index files are written to <dir>/"+p.Kind()+"/<folder name>.json")
 	cacheDir := fs.String("cache-dir", defaultCacheDir, "cache files are written to <dir>/"+p.Kind()+"/<folder name>.json")
 	full := fs.Bool("full", false, "ignore the caches and probe every file")
 	retryFailed := fs.Bool("retry-failed", false, "probe again the files recorded as not indexable")
@@ -487,7 +487,7 @@ func runHosted(p folderProvider, args []string) (newGuids, failures int) {
 
 	return buildHostedIndexes(hostedOptions{
 		configPath:  *config,
-		indicesDir:  *indicesDir,
+		dataDir:     *dataDir,
 		cacheDir:    *cacheDir,
 		full:        *full,
 		retryFailed: *retryFailed,
