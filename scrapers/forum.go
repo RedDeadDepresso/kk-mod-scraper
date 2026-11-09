@@ -1,8 +1,8 @@
 package scrapers
 
-// Collects Mega, Google Drive, Pixeldrain, Dropbox, MediaFire and Catbox links from the posts of a XenForo forum
+// Collects Mega, Google Drive, Pixeldrain, Dropbox, MediaFire, Catbox and Gofile links from the posts of a XenForo forum
 // (kknow.cc) and files them in the config of the folder scrapers (config/mega.json,
-// config/drive.json, config/pixeldrain.json, config/dropbox.json, config/mediafire.json, config/catbox.json).
+// config/drive.json, config/pixeldrain.json, config/dropbox.json, config/mediafire.json, config/catbox.json, config/gofile.json).
 //
 // Per config, for every group that has a "search" URL (see hostedconfig.go):
 //
@@ -20,7 +20,7 @@ package scrapers
 // (hosted.go), which purges the links of these groups that don't lead to any.
 //
 // Folder links (https://mega.nz/folder/<id>#<key>, https://drive.google.com/drive/folders/<id>,
-// https://pixeldrain.com/l/<id>, https://www.dropbox.com/scl/fo/<id>/<key>?rlkey=..., https://www.mediafire.com/folder/<key>, https://catbox.moe/c/<id>) and single-file links (https://mega.nz/file/<id>#<key>,
+// https://pixeldrain.com/l/<id>, https://www.dropbox.com/scl/fo/<id>/<key>?rlkey=..., https://www.mediafire.com/folder/<key>, https://catbox.moe/c/<id>, https://gofile.io/d/<code>) and single-file links (https://mega.nz/file/<id>#<key>,
 // https://drive.google.com/file/d/<id>, https://pixeldrain.com/u/<id>, https://www.dropbox.com/scl/fi/<id>/<name>?rlkey=..., https://www.mediafire.com/file/<key>, https://files.catbox.moe/<id>.zip) are both collected; whether a file link is a mod is checked at indexing time.
 //
 // If the forum wants a login for searching, put the Cookie header value of a logged in
@@ -109,6 +109,7 @@ var (
 	forumDropbox    = forumKind{name: dropboxKind, find: findDropboxLinks, id: linkIDFunc(dropboxProvider{})}
 	forumMediaFire  = forumKind{name: mediafireKind, find: findMediaFireLinks, id: linkIDFunc(mediafireProvider{})}
 	forumCatbox     = forumKind{name: catboxKind, find: findCatboxLinks, id: linkIDFunc(catboxProvider{})}
+	forumGofile     = forumKind{name: gofileKind, find: findGofileLinks, id: linkIDFunc(gofileProvider{})}
 )
 
 // linksIn finds the folder links in the candidate strings of a post (hrefs and text). A
@@ -563,7 +564,7 @@ func (s *forumScraper) runForumConfig(path string, kind forumKind) (added, failu
 }
 
 // RunForum collects links from the forum searches configured in config/mega.json,
-// config/drive.json, config/pixeldrain.json, config/dropbox.json, config/mediafire.json and config/catbox.json. It returns how many links were added and how many groups failed.
+// config/drive.json, config/pixeldrain.json, config/dropbox.json, config/mediafire.json, config/catbox.json and config/gofile.json. It returns how many links were added and how many groups failed.
 // args are command-line style flags (nil = defaults).
 func RunForum(args []string) (added, failures int) {
 	fs := flag.NewFlagSet("forum", flag.ExitOnError)
@@ -575,7 +576,8 @@ func RunForum(args []string) (added, failures int) {
 	dropboxCfg := fs.String("dropbox-config", "config/dropbox.json", "Dropbox config (groups with a search URL are scraped)")
 	mediafireCfg := fs.String("mediafire-config", "config/mediafire.json", "MediaFire config (groups with a search URL are scraped)")
 	catboxCfg := fs.String("catbox-config", "config/catbox.json", "Catbox config (groups with a search URL are scraped)")
-	kinds := fs.String("kinds", "mega,drive,pixeldrain,dropbox,mediafire,catbox", "which links to collect: mega, drive, pixeldrain, dropbox, mediafire, catbox (comma separated)")
+	gofileCfg := fs.String("gofile-config", "config/gofile.json", "Gofile config (groups with a search URL are scraped)")
+	kinds := fs.String("kinds", "mega,drive,pixeldrain,dropbox,mediafire,catbox,gofile", "which links to collect: mega, drive, pixeldrain, dropbox, mediafire, catbox, gofile (comma separated)")
 	_ = fs.Parse(args)
 	want := map[string]bool{}
 	for _, k := range strings.Split(*kinds, ",") {
@@ -586,7 +588,7 @@ func RunForum(args []string) (added, failures int) {
 	for _, c := range []struct {
 		path string
 		kind forumKind
-	}{{*megaCfg, forumMega}, {*driveCfg, forumDrive}, {*pixeldrainCfg, forumPixeldrain}, {*dropboxCfg, forumDropbox}, {*mediafireCfg, forumMediaFire}, {*catboxCfg, forumCatbox}} {
+	}{{*megaCfg, forumMega}, {*driveCfg, forumDrive}, {*pixeldrainCfg, forumPixeldrain}, {*dropboxCfg, forumDropbox}, {*mediafireCfg, forumMediaFire}, {*catboxCfg, forumCatbox}, {*gofileCfg, forumGofile}} {
 		if !want[c.kind.name] {
 			continue
 		}

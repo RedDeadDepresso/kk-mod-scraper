@@ -11,8 +11,9 @@
 | Dropbox folders and files | `scrapers/dropbox.go` | `config/dropbox.json` | `data/dropbox/<folder name>.json` | `cache/dropbox/<folder name>.json` |
 | MediaFire folders and files | `scrapers/mediafire.go` | `config/mediafire.json` | `data/mediafire/<folder name>.json` | `cache/mediafire/<folder name>.json` |
 | Catbox albums and files | `scrapers/catbox.go` | `config/catbox.json` | `data/catbox/<album title>.json` | `cache/catbox/<album title>.json` |
+| Gofile shares | `scrapers/gofile.go`, `scrapers/gofilewt.go` | `config/gofile.json` | `data/gofile/<folder name>.json` | `cache/gofile/<folder name>.json` |
 
-### Mega, Google Drive, Pixeldrain, Dropbox, MediaFire and Catbox folders
+### Mega, Google Drive, Pixeldrain, Dropbox, MediaFire, Catbox and Gofile folders
 
 `config/mega.json`, `config/drive.json` and the other configs hold public folder links, divided in groups, one
 per place they came from:
@@ -131,12 +132,28 @@ Only `.zipmod` and `.zip` files are looked at.
   searches the forum for `catbox.moe`. Only 404/410
   answers purge a link. Litterbox (temporary files) is not covered.
 
+- **Gofile**: share links like `https://gofile.io/d/<code>` (the older `https://gofile.io/?c=<code>` also
+  works); shares are walked recursively. Gofile has no anonymous listing: the scraper creates a guest
+  account and signs each API request with an `X-Website-Token`, a SHA-256 over the user agent, language,
+  account token, a 4-hour time slot and a secret. That secret is baked into Gofile's obfuscated script
+  `https://gofile.io/js/wt.obf.js` and rotates, so it is **read out of that script** (the string table is
+  RC4/base64-decoded without running any JavaScript; adapted from
+  [HeapLeach](https://github.com/JohanLindvall/HeapLeach)). The extraction only answers when the whole
+  script decodes and exactly one string has the shape of a secret; otherwise a pinned fallback is used,
+  and the `GOFILE_SECRET` environment variable / repository secret overrides both. Gofile blocks addresses
+  that sign badly, so the first refused signature **stops the Gofile run** (it is reported as a failure)
+  rather than being repeated for every link. Files are read with ranged downloads from the storage
+  servers (a few KB each). A file has no link of its own, so the index URL is the share's link plus the
+  file's id as a fragment: `https://gofile.io/d/<code>#<file id>`. Password protected shares are
+  skipped (and purged from scraped groups). Only "not found" and "expired" answers purge a link.
+  `config/gofile.json` ships with a `kknow.cc` group that searches the forum for `https://gofile.io`.
+
 Flags (all optional) for all of them: `-config`, `-data-dir`, `-cache-dir`, `-full`,
 `-retry-failed`, `-max-urls`, `-workers`.
 
 ### Choosing which sources run
 
-Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`, `mediafire`, `catbox`. By default all run. To run only some,
+Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`, `mediafire`, `catbox`, `gofile`. By default all run. To run only some,
 pass `-sources mega,koikatsucards` (`go run . -sources ...`) or set the `SCRAPE_SOURCES`
 environment variable. In GitHub Actions, set the repository variable `SCRAPE_SOURCES`
 (Settings > Secrets and variables > Actions > Variables); the next run uses it, no commit needed.
@@ -152,10 +169,10 @@ are `<site>/indices/mod.json` and `<site>/indices/modpack.json`, as before).
 
 The Pages workflow publishes `modpack.json` and a merged `mod.json`
 built from `telegram.json`, every `data/mega/*.json`, every `data/drive/*.json`, every
-`data/pixeldrain/*.json`, every `data/dropbox/*.json` and every `data/mediafire/*.json` and every `data/catbox/*.json`:
+`data/pixeldrain/*.json`, every `data/dropbox/*.json` and every `data/mediafire/*.json` every `data/catbox/*.json` and every `data/gofile/*.json`:
 
 ```json
-{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "pixeldrain": ["https://pixeldrain.com/u/..."], "dropbox": ["https://www.dropbox.com/scl/fi/..."], "mediafire": ["https://www.mediafire.com/file/..."], "catbox": ["https://files.catbox.moe/..."], "telegram": ["https://t.me/..."] } }
+{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "pixeldrain": ["https://pixeldrain.com/u/..."], "dropbox": ["https://www.dropbox.com/scl/fi/..."], "mediafire": ["https://www.mediafire.com/file/..."], "catbox": ["https://files.catbox.moe/..."], "gofile": ["https://gofile.io/d/...#..."], "telegram": ["https://t.me/..."] } }
 ```
 
 All the lists are always present (empty if the GUID isn't known from that source);

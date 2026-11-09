@@ -1,0 +1,13 @@
+{
+  "groups": [
+    {
+      "name": "manual",
+      "links": []
+    },
+    {
+      "name": "kknow.cc",
+      "search": "https://kknow.cc/search/?q=https%3A%2F%2Fgofile.io&o=date",
+      "links": []
+    }
+  ]
+}
