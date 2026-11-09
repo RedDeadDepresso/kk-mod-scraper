@@ -72,7 +72,7 @@ Only `.zipmod` and `.zip` files are looked at.
   enable "Google Drive API" -> Create credentials -> API key; restricting it to the Drive API is
   a good idea), then add it as a repository secret named `GOOGLE_API_KEY`
   (Settings -> Secrets and variables -> Actions). To run locally:
-  `GOOGLE_API_KEY=... go run .`. The key is sent in a request header and never appears in
+  `GOOGLE_API_KEY=... go run .`, or put it in a `.env` file (see below). The key is sent in a request header and never appears in
   URLs, logs or indices.
 
 - **Pixeldrain**: files are not encrypted and the public API honours Range requests, so the
@@ -136,3 +136,10 @@ built from `telegram.json`, every `data/mega/*.json`, every `data/drive/*.json` 
 
 All four lists are always present (empty if the GUID isn't known from that source);
 telegram links are newest first.
+
+## Local configuration (.env)
+
+When run locally, the scraper reads a `.env` file from the working directory (or the file named by
+`DOTENV_FILE`). Copy `.env.example` to `.env` and fill it in; `.env` is git-ignored. Variables already
+set in the real environment (e.g. GitHub Actions secrets) take precedence over the file, and a missing
+file is fine.

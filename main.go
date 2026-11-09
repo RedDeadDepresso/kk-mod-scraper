@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/joho/godotenv"
+
 	"kk-mod-scraper/scrapers"
 )
 
@@ -108,7 +110,26 @@ func enabledSources(all []source) (map[string]bool, error) {
 	return enabled, nil
 }
 
+// loadDotEnv reads variables from a .env file in the working directory (or the file named by
+// DOTENV_FILE). Variables already set in the real environment win over the file, so GitHub
+// Actions secrets and shell exports keep working. A missing file is fine; an unreadable or
+// malformed one is an error.
+func loadDotEnv() {
+	path := ".env"
+	if p := os.Getenv("DOTENV_FILE"); p != "" {
+		path = p
+	}
+	if err := godotenv.Load(path); err != nil {
+		if os.IsNotExist(err) {
+			return
+		}
+		fatal("Could not read env file", "file", path, "err", err)
+	}
+	slog.Info("Loaded environment file", "file", path)
+}
+
 func main() {
+	loadDotEnv()
 	all := sources()
 	enabled, err := enabledSources(all)
 	if err != nil {
