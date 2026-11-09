@@ -108,3 +108,19 @@ func TestWriteIndexDropsLegacyGameType(t *testing.T) {
 		t.Error("rewritten again although nothing changed")
 	}
 }
+
+func TestParseManifestUTF16(t *testing.T) {
+	const doc = "<manifest schema-ver=\"1\">\r\n  <guid>com.test.utf16</guid>\r\n  <version>1.0</version>\r\n</manifest>"
+	le := []byte{0xFF, 0xFE}
+	be := []byte{0xFE, 0xFF}
+	for _, r := range doc {
+		le = append(le, byte(r), byte(r>>8))
+		be = append(be, byte(r>>8), byte(r))
+	}
+	for name, raw := range map[string][]byte{"LE with BOM": le, "BE with BOM": be, "LE without BOM": le[2:]} {
+		info, err := parseManifest(raw)
+		if err != nil || info.Guid != "com.test.utf16" || info.Version != "1.0" {
+			t.Errorf("%s: %+v, %v", name, info, err)
+		}
+	}
+}

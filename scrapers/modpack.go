@@ -58,6 +58,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf16"
 
 	"golang.org/x/net/html"
 )
@@ -423,10 +424,39 @@ func readManifest(r rangeReader) (manifestInfo, error) {
 	return info, nil
 }
 
+// decodeUTF16 converts a UTF-16 document (some mod makers save manifest.xml that way, which
+// Go's XML parser can't read) to UTF-8. It is recognised by its byte order mark, or, without
+// one, by "<" followed or preceded by a zero byte. Anything else is returned unchanged.
+func decodeUTF16(raw []byte) []byte {
+	var le bool
+	switch {
+	case len(raw) >= 2 && raw[0] == 0xFF && raw[1] == 0xFE:
+		le, raw = true, raw[2:]
+	case len(raw) >= 2 && raw[0] == 0xFE && raw[1] == 0xFF:
+		le, raw = false, raw[2:]
+	case len(raw) >= 2 && raw[0] == '<' && raw[1] == 0:
+		le = true
+	case len(raw) >= 2 && raw[0] == 0 && raw[1] == '<':
+		le = false
+	default:
+		return raw
+	}
+	u := make([]uint16, 0, len(raw)/2)
+	for i := 0; i+1 < len(raw); i += 2 {
+		if le {
+			u = append(u, uint16(raw[i])|uint16(raw[i+1])<<8)
+		} else {
+			u = append(u, uint16(raw[i])<<8|uint16(raw[i+1]))
+		}
+	}
+	return []byte(string(utf16.Decode(u)))
+}
+
 // parseManifest returns the text of the first <guid> and <version> elements anywhere in the
 // document (tag names compared case-insensitively, namespaces ignored). The whole document
 // must be well-formed XML.
 func parseManifest(raw []byte) (manifestInfo, error) {
+	raw = decodeUTF16(raw)
 	raw = bytes.TrimPrefix(raw, []byte("\xef\xbb\xbf"))
 	text := strings.ToValidUTF8(string(raw), "\uFFFD")
 	dec := xml.NewDecoder(strings.NewReader(text))
