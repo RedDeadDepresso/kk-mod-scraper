@@ -7,8 +7,9 @@
 | BetterRepack | `scrapers/modpack.go` | - | `data/modpack.json` (KK and KKS folders together) | `cache/modpack.json` |
 | Mega folders | `scrapers/mega.go` | `config/mega.json` | `data/mega/<folder name>.json` | `cache/mega/<folder name>.json` |
 | Google Drive folders | `scrapers/drive.go` | `config/drive.json` | `data/drive/<folder name>.json` | `cache/drive/<folder name>.json` |
+| Pixeldrain lists and files | `scrapers/pixeldrain.go` | `config/pixeldrain.json` | `data/pixeldrain/<list title>.json` | `cache/pixeldrain/<list title>.json` |
 
-### Mega and Google Drive folders
+### Mega, Google Drive and Pixeldrain folders
 
 `config/mega.json` and `config/drive.json` hold public folder links, divided in groups, one
 per place they came from:
@@ -25,9 +26,10 @@ per place they came from:
 }
 ```
 
-(Drive folders look like `https://drive.google.com/drive/folders/<id>`. A group's `links` may
-also hold single files: `https://mega.nz/file/<id>#<key>` and
-`https://drive.google.com/file/d/<id>/view`. The old format, a plain array of links, is still
+(Drive folders look like `https://drive.google.com/drive/folders/<id>`; Pixeldrain lists like
+`https://pixeldrain.com/l/<id>`. A group's `links` may
+also hold single files: `https://mega.nz/file/<id>#<key>`,
+`https://drive.google.com/file/d/<id>/view` and `https://pixeldrain.com/u/<id>`. The old format, a plain array of links, is still
 read, as one group.)
 
 Single-file links are looked at with one cheap API call (name and size); only `.zipmod` and
@@ -39,7 +41,7 @@ Single-file links are looked at with one cheap API call (name and size); only `.
 - A group **with** `search` is filled by the forum scraper (`scrapers/forum.go`, runs first in
   every run): it runs that forum search, reads the result pages newest first until it reaches
   `newest_post` (the newest post of the previous run), opens each new post, and adds the Mega
-  folder / Drive folder links and single-file links in it. Links in quotes are ignored. Add another site or query by adding another group.
+  folder / Drive folder / Pixeldrain list links and single-file links in it. Links in quotes are ignored. Add another site or query by adding another group.
   The first run has no `newest_post` and reads everything the search returns (`-max-pages`,
   default 30); later runs only read what is new. If a post can't be read, `newest_post`
   doesn't move and the run fails after committing the rest, so nothing is skipped.
@@ -50,7 +52,7 @@ Single-file links are looked at with one cheap API call (name and size); only `.
   403 (Forbidden) answers never purge anything. A file that answers 403 keeps its link and is
   tried again on every run.
 - Forum flags: `go run . ` uses defaults; `-max-pages`, `-delay` (pause between requests,
-  default 1.5s), `-mega-config`, `-drive-config` (via `scrapers.RunForum(args)`). If the forum
+  default 1.5s), `-mega-config`, `-drive-config`, `-pixeldrain-config` (via `scrapers.RunForum(args)`). If the forum
   doesn't let guests search, set the `KKNOW_COOKIE` environment variable / repository secret to
   the `Cookie` header of a logged-in browser session (sent to kknow.cc only).
 
@@ -72,12 +74,24 @@ Only `.zipmod` and `.zip` files are looked at.
   `GOOGLE_API_KEY=... go run .`. The key is sent in a request header and never appears in
   URLs, logs or indices.
 
-Flags (all optional) for both: `-config`, `-data-dir`, `-cache-dir`, `-full`,
+- **Pixeldrain**: files are not encrypted and the public API honours Range requests, so the
+  same ranged reads work. No account needed: `/api/list/<id>` lists a list, `/api/file/<id>/info`
+  describes a single file. `config/pixeldrain.json` ships with a `kknow.cc` group that searches
+  the forum for `https://pixeldrain.com`; links on the alternative domains (`pixeldrain.net`,
+  `pixeldrain.dev`, `pixeldra.in`) are recognised in posts, but the forum only finds them if you add a
+  group with its own search query for that domain. Pixeldrain sometimes throttles anonymous
+  downloads with a captcha answer (403/429); such files are not purged and are retried on
+  the next run. If it happens a lot, create an
+  [API key](https://pixeldrain.com/user/api_keys) and set it as the `PIXELDRAIN_API_KEY`
+  environment variable / repository secret (sent as HTTP Basic auth, never in URLs or logs).
+  Only lists (`/l/`) and single files (`/u/`) are supported, not the newer `/d/` file-system shares.
+
+Flags (all optional) for all three: `-config`, `-data-dir`, `-cache-dir`, `-full`,
 `-retry-failed`, `-max-urls`, `-workers`.
 
 ### Choosing which sources run
 
-Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`. By default all run. To run only some,
+Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`. By default all run. To run only some,
 pass `-sources mega,koikatsucards` (`go run . -sources ...`) or set the `SCRAPE_SOURCES`
 environment variable. In GitHub Actions, set the repository variable `SCRAPE_SOURCES`
 (Settings > Secrets and variables > Actions > Variables); the next run uses it, no commit needed.
@@ -92,11 +106,12 @@ The index files live in `data/`; the Pages site publishes them under `/indices/`
 are `<site>/indices/mod.json` and `<site>/indices/modpack.json`, as before).
 
 The Pages workflow publishes `modpack.json` and a merged `mod.json`
-built from `telegram.json`, every `data/mega/*.json` and every `data/drive/*.json`:
+built from `telegram.json`, every `data/mega/*.json`, every `data/drive/*.json` and every
+`data/pixeldrain/*.json`:
 
 ```json
-{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "telegram": ["https://t.me/..."] } }
+{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "pixeldrain": ["https://pixeldrain.com/u/..."], "telegram": ["https://t.me/..."] } }
 ```
 
-All three lists are always present (empty if the GUID isn't known from that source);
+All four lists are always present (empty if the GUID isn't known from that source);
 telegram links are newest first.

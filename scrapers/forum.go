@@ -1,7 +1,8 @@
 package scrapers
 
-// Collects Mega and Google Drive folder links from the posts of a XenForo forum (kknow.cc)
-// and files them in the config of the folder scrapers (config/mega.json, config/drive.json).
+// Collects Mega, Google Drive and Pixeldrain links from the posts of a XenForo forum
+// (kknow.cc) and files them in the config of the folder scrapers (config/mega.json,
+// config/drive.json, config/pixeldrain.json).
 //
 // Per config, for every group that has a "search" URL (see hostedconfig.go):
 //
@@ -18,9 +19,9 @@ package scrapers
 // Nothing here checks that a folder holds mods. That is done when the folder is indexed
 // (hosted.go), which purges the links of these groups that don't lead to any.
 //
-// Folder links (https://mega.nz/folder/<id>#<key>, https://drive.google.com/drive/folders/<id>)
-// and single-file links (https://mega.nz/file/<id>#<key>, https://drive.google.com/file/d/<id>)
-// are both collected; whether a file link is a mod is checked at indexing time.
+// Folder links (https://mega.nz/folder/<id>#<key>, https://drive.google.com/drive/folders/<id>,
+// https://pixeldrain.com/l/<id>) and single-file links (https://mega.nz/file/<id>#<key>,
+// https://drive.google.com/file/d/<id>, https://pixeldrain.com/u/<id>) are both collected; whether a file link is a mod is checked at indexing time.
 //
 // If the forum wants a login for searching, put the Cookie header value of a logged in
 // browser session in the KKNOW_COOKIE environment variable (it is only sent to kknow.cc).
@@ -102,8 +103,9 @@ func findDriveLinks(text string) []string {
 }
 
 var (
-	forumMega  = forumKind{name: megaKind, find: findMegaLinks, id: linkIDFunc(megaProvider{})}
-	forumDrive = forumKind{name: driveKind, find: findDriveLinks, id: linkIDFunc(driveProvider{})}
+	forumMega       = forumKind{name: megaKind, find: findMegaLinks, id: linkIDFunc(megaProvider{})}
+	forumDrive      = forumKind{name: driveKind, find: findDriveLinks, id: linkIDFunc(driveProvider{})}
+	forumPixeldrain = forumKind{name: pixeldrainKind, find: findPixeldrainLinks, id: linkIDFunc(pixeldrainProvider{})}
 )
 
 // linksIn finds the folder links in the candidate strings of a post (hrefs and text). A
@@ -557,8 +559,8 @@ func (s *forumScraper) runForumConfig(path string, kind forumKind) (added, failu
 	return added, failures
 }
 
-// RunForum collects links from the forum searches configured in config/mega.json and
-// config/drive.json. It returns how many links were added and how many groups failed.
+// RunForum collects links from the forum searches configured in config/mega.json,
+// config/drive.json and config/pixeldrain.json. It returns how many links were added and how many groups failed.
 // args are command-line style flags (nil = defaults).
 func RunForum(args []string) (added, failures int) {
 	fs := flag.NewFlagSet("forum", flag.ExitOnError)
@@ -566,7 +568,8 @@ func RunForum(args []string) (added, failures int) {
 	driveCfg := fs.String("drive-config", "config/drive.json", "Google Drive config (groups with a search URL are scraped)")
 	maxPages := fs.Int("max-pages", 30, "most result pages read per search")
 	delay := fs.Duration("delay", 1500*time.Millisecond, "pause between requests to the forum")
-	kinds := fs.String("kinds", "mega,drive", "which links to collect: mega, drive, or both (comma separated)")
+	pixeldrainCfg := fs.String("pixeldrain-config", "config/pixeldrain.json", "Pixeldrain config (groups with a search URL are scraped)")
+	kinds := fs.String("kinds", "mega,drive,pixeldrain", "which links to collect: mega, drive, pixeldrain (comma separated)")
 	_ = fs.Parse(args)
 	want := map[string]bool{}
 	for _, k := range strings.Split(*kinds, ",") {
@@ -577,7 +580,7 @@ func RunForum(args []string) (added, failures int) {
 	for _, c := range []struct {
 		path string
 		kind forumKind
-	}{{*megaCfg, forumMega}, {*driveCfg, forumDrive}} {
+	}{{*megaCfg, forumMega}, {*driveCfg, forumDrive}, {*pixeldrainCfg, forumPixeldrain}} {
 		if !want[c.kind.name] {
 			continue
 		}

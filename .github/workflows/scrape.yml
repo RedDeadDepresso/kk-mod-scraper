@@ -35,12 +35,14 @@ jobs:
       - name: Run scraper
         env:
           # Which sources to run: a comma separated list of koikatsucards, betterrepack, mega,
-          # drive. Set it as a repository variable (Settings > Secrets and variables > Actions >
+          # drive, pixeldrain. Set it as a repository variable (Settings > Secrets and variables > Actions >
           # Variables > SCRAPE_SOURCES) to switch sources on and off without editing code.
           # Empty or unset = all of them.
           SCRAPE_SOURCES: ${{ vars.SCRAPE_SOURCES }}
           # Google Drive API key for the Drive folders in config/drive.json (see README).
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          # Optional: Pixeldrain API key; raises Pixeldrain's download limits (see README).
+          PIXELDRAIN_API_KEY: ${{ secrets.PIXELDRAIN_API_KEY }}
           # Optional: Cookie header of a logged in kknow.cc session, only needed if the forum
           # refuses searches from guests (see README).
           KKNOW_COOKIE: ${{ secrets.KKNOW_COOKIE }}
