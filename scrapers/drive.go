@@ -27,12 +27,14 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -130,6 +132,33 @@ func parseDriveError(status int, body []byte) *driveError {
 	return e
 }
 
+// driveStop remembers that Google answered 403 during this run. From then on every Drive
+// request fails at once and the Drive run ends (the other sources are not affected).
+var driveStop struct {
+	mu  sync.Mutex
+	err *driveError
+}
+
+func driveStopped() *driveError {
+	driveStop.mu.Lock()
+	defer driveStop.mu.Unlock()
+	return driveStop.err
+}
+
+func driveTripStop(e *driveError) {
+	driveStop.mu.Lock()
+	defer driveStop.mu.Unlock()
+	if driveStop.err == nil {
+		driveStop.err = e
+	}
+}
+
+func driveResetStop() {
+	driveStop.mu.Lock()
+	driveStop.err = nil
+	driveStop.mu.Unlock()
+}
+
 type driveClient struct{ key string }
 
 func newDriveClient() (*driveClient, error) {
@@ -143,6 +172,9 @@ func newDriveClient() (*driveClient, error) {
 // do sends one request. 2xx responses are returned (the caller closes the body); anything
 // else becomes a *driveError.
 func (c *driveClient) do(rawURL string, headers map[string]string) (*http.Response, error) {
+	if e := driveStopped(); e != nil {
+		return nil, e
+	}
 	req, err := http.NewRequest(http.MethodGet, rawURL, nil)
 	if err != nil {
 		return nil, err
@@ -160,7 +192,12 @@ func (c *driveClient) do(rawURL string, headers map[string]string) (*http.Respon
 	if res.StatusCode < 200 || res.StatusCode > 299 {
 		body, _ := io.ReadAll(io.LimitReader(res.Body, 64<<10))
 		res.Body.Close()
-		return nil, parseDriveError(res.StatusCode, body)
+		de := parseDriveError(res.StatusCode, body)
+		if de.Status == http.StatusForbidden {
+			slog.Error("Google Drive answered 403; stopping the Drive scraper for this run (other sources keep running)", "err", de)
+			driveTripStop(de)
+		}
+		return nil, de
 	}
 	return res, nil
 }
@@ -332,6 +369,17 @@ func (d *driveRanger) Range(start, end int) ([]byte, error) {
 type driveProvider struct{}
 
 func (driveProvider) Kind() string { return driveKind }
+
+// Begin clears the stop flag at the start of a Drive run.
+func (driveProvider) Begin() { driveResetStop() }
+
+// Aborted is non-nil once Google has answered 403 in this run.
+func (driveProvider) Aborted() error {
+	if e := driveStopped(); e != nil {
+		return e
+	}
+	return nil
+}
 
 func (driveProvider) ID(raw string) (string, error) { return parseDriveFolderLink(raw) }
 

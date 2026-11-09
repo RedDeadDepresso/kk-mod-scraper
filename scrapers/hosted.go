@@ -82,6 +82,21 @@ func linkIDFunc(p folderProvider) func(string) (string, error) {
 	}
 }
 
+// abortable is implemented by providers that must end their whole run early (e.g. Drive after
+// its first 403). Begin resets the state; Aborted is non-nil once the run must stop. Other
+// providers are never affected.
+type abortable interface {
+	Begin()
+	Aborted() error
+}
+
+func providerAborted(p folderProvider) error {
+	if a, ok := p.(abortable); ok {
+		return a.Aborted()
+	}
+	return nil
+}
+
 type hostedOptions struct {
 	kind        string
 	configPath  string
@@ -240,7 +255,12 @@ func syncFolder(p folderProvider, raw, id string, opt hostedOptions, used map[st
 		probe:   folder.Probe,
 		label:   func(u string) string { return folder.Labels[u] },
 		noMoves: true, // every file has its own id; name/date/size matching would only mislead
+		abort:   func() bool { return providerAborted(p) != nil },
 	})
+	if aerr := providerAborted(p); aerr != nil {
+		// Incomplete probing: keep the previous index untouched.
+		return base, 0, unreachable, fmt.Errorf("stopped the %s folder %q: %w", kind, base, aerr)
+	}
 
 	// All files share one "category", so buildGameIndex just orders by newest version, then
 	// newest upload, and drops identical copies.
@@ -350,7 +370,12 @@ func syncFiles(p folderProvider, fp fileProvider, items []fileItem, opt hostedOp
 		},
 		label:   func(u string) string { return merged.Labels[u] },
 		noMoves: true,
+		abort:   func() bool { return providerAborted(p) != nil },
 	})
+	if aerr := providerAborted(p); aerr != nil {
+		slog.Error("Stopped the single-file index", "source", kind, "err", aerr)
+		return base, 0, failures + 1, purge
+	}
 	for u, e := range entries {
 		// A recorded error is permanent: the file was read and is no mod.
 		if raw := rawOf[u]; e.Guid == "" && e.Error != "" && groupOf[raw] != nil && groupOf[raw].scraped() {
@@ -414,13 +439,25 @@ func buildHostedIndexes(opt hostedOptions, p folderProvider) (newGuids, failures
 		return 0, 0
 	}
 
+	if a, ok := p.(abortable); ok {
+		a.Begin()
+	}
 	fp, _ := p.(fileProvider)
 	used := map[string]string{}
 	keep := map[string]bool{}
 	purged := map[string]bool{} // links to remove from the scraped groups
 	var files []fileItem
+	stopped := false
 	for _, g := range cfg.Groups {
+		if stopped {
+			break
+		}
 		for _, raw := range g.Links {
+			if aerr := providerAborted(p); aerr != nil {
+				slog.Error("Stopping this source for the rest of the run", "source", opt.kind, "err", aerr)
+				stopped = true
+				break
+			}
 			ref, err := classifyLink(p, raw)
 			if err != nil {
 				slog.Error("Skipping an invalid link in the config", "source", opt.kind, "group", g.Name, "err", err)
@@ -451,7 +488,7 @@ func buildHostedIndexes(opt hostedOptions, p folderProvider) (newGuids, failures
 		}
 	}
 
-	if len(files) > 0 && fp != nil {
+	if len(files) > 0 && fp != nil && providerAborted(p) == nil {
 		base, n, f, purge := syncFiles(p, fp, files, opt, used)
 		if base != "" {
 			keep[base] = true
@@ -464,6 +501,9 @@ func buildHostedIndexes(opt hostedOptions, p folderProvider) (newGuids, failures
 		}
 	}
 
+	if stopped {
+		failures++ // the run was cut short; also keeps the stale-file cleanup from running
+	}
 	if len(purged) > 0 {
 		for _, g := range cfg.Groups {
 			if g.scraped() { // links of hand-maintained groups are never purged

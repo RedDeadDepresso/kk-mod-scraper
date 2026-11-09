@@ -799,6 +799,7 @@ type refreshOptions struct {
 	probe   func(url string) (manifestInfo, error) // reads GUID/version (default readRemoteManifest)
 	label   func(url string) string                // human-readable name for log lines
 	noMoves bool                                   // don't match new files to vanished ones by name/date/size
+	abort   func() bool                            // optional: once true, no further files are probed
 }
 
 // refreshCache brings the cache in line with the listing, probing only new/changed files.
@@ -901,6 +902,9 @@ func refreshCache(listing map[string]fileSig, cache map[string]cacheEntry, faile
 	}
 	go func() {
 		for _, u := range toProbe {
+			if opt.abort != nil && opt.abort() {
+				break
+			}
 			jobs <- u
 		}
 		close(jobs)

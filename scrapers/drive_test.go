@@ -198,8 +198,6 @@ func TestDriveEndToEnd(t *testing.T) {
 	d.addFolder(root, "SUBFOLDER1", "sub")
 	d.addFile(root, &fakeDriveFile{id: "fileBig", name: "Big.zipmod", content: makeZipmod(t, "com.test.big", "2.0", true)})
 	d.addFile(root, &fakeDriveFile{id: "fileGone", name: "Gone.zipmod", content: make([]byte, 100), status: 404, reason: "notFound"})
-	d.addFile(root, &fakeDriveFile{id: "fileQuota", name: "Quota.zipmod", content: make([]byte, 100), status: 403, reason: "downloadQuotaExceeded"})
-	d.addFile(root, &fakeDriveFile{id: "fileBlocked", name: "Blocked.zipmod", content: make([]byte, 100), status: 403, reason: "cannotDownloadFile"})
 	d.addFile("SUBFOLDER1", &fakeDriveFile{id: "fileC", name: "C.ZIPMOD", content: makeZipmod(t, "com.test.c", "1.5", false)})
 	d.addFile("SUBFOLDER1", &fakeDriveFile{id: "fileTxt", name: "readme.txt", content: []byte("hi")})
 	d.addFile("SUBFOLDER1", &fakeDriveFile{id: "fileBad", name: "NotAZip.zip", content: []byte("this is not a zip file at all")})
@@ -244,16 +242,13 @@ func TestDriveEndToEnd(t *testing.T) {
 			t.Errorf("%s should be recorded as unindexable: %+v", id, e)
 		}
 	}
-	if _, ok := cache[driveFileURL("fileQuota")]; ok {
-		t.Error("a quota error must not be cached (it should be retried next run)")
-	}
 	for _, id := range []string{"doc1", "fileTxt"} {
 		if _, ok := cache[driveFileURL(id)]; ok {
 			t.Errorf("%s should have been ignored", id)
 		}
 	}
 
-	// Second run: only the quota-limited file is tried again.
+	// Second run: nothing is downloaded again.
 	d.mu.Lock()
 	d.mediaGets = map[string]int{}
 	d.mu.Unlock()
@@ -263,12 +258,50 @@ func TestDriveEndToEnd(t *testing.T) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	for id, n := range d.mediaGets {
-		if id != "fileQuota" && id != "fileBlocked" { // both are retried: a 403 is not permanent
-			t.Errorf("second run downloaded %s again (%d requests)", id, n)
-		}
+		t.Errorf("second run downloaded %s again (%d requests)", id, n)
 	}
-	if d.mediaGets["fileQuota"] == 0 || d.mediaGets["fileBlocked"] == 0 {
-		t.Error("the quota-limited and the 403 files were not retried")
+}
+
+// The first 403 from Google ends the Drive run: no further folders are listed, no partial
+// index is written over the old one, and the next run starts fresh.
+func TestDriveStopsAtFirst403(t *testing.T) {
+	t.Setenv("GOOGLE_API_KEY", "testkey")
+	d := newFakeDrive(t)
+	const first, second = "1-3YtRJFeAeNHybNNQhbnLvKX-NRdxmxu", "1E8TRD5lSUBrbeb_M4BSHPgMPqHYo8dLl"
+	d.names[first], d.names[second] = "first", "second"
+	d.addFile(first, &fakeDriveFile{id: "fileA", name: "A.zipmod", content: makeZipmod(t, "com.test.a", "1.0", false)})
+	d.addFile(first, &fakeDriveFile{id: "fileQuota", name: "Quota.zipmod", content: make([]byte, 100), status: 403, reason: "downloadQuotaExceeded"})
+	d.addFile(second, &fakeDriveFile{id: "fileB", name: "B.zipmod", content: makeZipmod(t, "com.test.b", "1.0", false)})
+
+	dir := t.TempDir()
+	opt := hostedOptions{
+		configPath: writeConfig(t, dir, "https://drive.google.com/drive/folders/"+first, "https://drive.google.com/drive/folders/"+second),
+		dataDir:    filepath.Join(dir, "data"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 1,
+	}
+	oldIndex := filepath.Join(dir, "data", "drive", "first.json")
+	os.MkdirAll(filepath.Dir(oldIndex), 0o755)
+	os.WriteFile(oldIndex, []byte("old"), 0o644)
+
+	if _, f := buildHostedIndexes(opt, driveProvider{}); f == 0 {
+		t.Error("a 403 should be reported as a failure")
+	}
+	if b, _ := os.ReadFile(oldIndex); string(b) != "old" {
+		t.Error("the previous index was overwritten by an incomplete run")
+	}
+	if _, err := os.Stat(filepath.Join(dir, "data", "drive", "second.json")); err == nil {
+		t.Error("the second folder was indexed after the 403")
+	}
+	d.mu.Lock()
+	if d.mediaGets["fileB"] != 0 {
+		t.Error("files of the second folder were downloaded after the 403")
+	}
+	d.mu.Unlock()
+
+	// The stop only lasts for one run.
+	d.files["fileQuota"].status = 0
+	d.files["fileQuota"].content = makeZipmod(t, "com.test.q", "1.0", false)
+	if n, f := buildHostedIndexes(opt, driveProvider{}); f != 0 || n != 3 {
+		t.Errorf("next run: newGuids=%d failures=%d", n, f)
 	}
 }
 
