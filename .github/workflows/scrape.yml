@@ -35,7 +35,7 @@ jobs:
       - name: Run scraper
         env:
           # Which sources to run: a comma separated list of koikatsucards, betterrepack, mega,
-          # drive, pixeldrain. Set it as a repository variable (Settings > Secrets and variables > Actions >
+          # drive, pixeldrain, dropbox. Set it as a repository variable (Settings > Secrets and variables > Actions >
           # Variables > SCRAPE_SOURCES) to switch sources on and off without editing code.
           # Empty or unset = all of them.
           SCRAPE_SOURCES: ${{ vars.SCRAPE_SOURCES }}
@@ -43,6 +43,12 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           # Optional: Pixeldrain API key; raises Pixeldrain's download limits (see README).
           PIXELDRAIN_API_KEY: ${{ secrets.PIXELDRAIN_API_KEY }}
+          # Dropbox API credentials for config/dropbox.json (see README): a refresh token plus the
+          # app key and secret of your Dropbox app (recommended), or just an access token.
+          DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+          DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+          DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+          DROPBOX_ACCESS_TOKEN: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
           # Optional: Cookie header of a logged in kknow.cc session, only needed if the forum
           # refuses searches from guests (see README).
           KKNOW_COOKIE: ${{ secrets.KKNOW_COOKIE }}

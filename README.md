@@ -8,8 +8,9 @@
 | Mega folders | `scrapers/mega.go` | `config/mega.json` | `data/mega/<folder name>.json` | `cache/mega/<folder name>.json` |
 | Google Drive folders | `scrapers/drive.go` | `config/drive.json` | `data/drive/<folder name>.json` | `cache/drive/<folder name>.json` |
 | Pixeldrain lists and files | `scrapers/pixeldrain.go` | `config/pixeldrain.json` | `data/pixeldrain/<list title>.json` | `cache/pixeldrain/<list title>.json` |
+| Dropbox folders and files | `scrapers/dropbox.go` | `config/dropbox.json` | `data/dropbox/<folder name>.json` | `cache/dropbox/<folder name>.json` |
 
-### Mega, Google Drive and Pixeldrain folders
+### Mega, Google Drive, Pixeldrain and Dropbox folders
 
 `config/mega.json` and `config/drive.json` hold public folder links, divided in groups, one
 per place they came from:
@@ -52,7 +53,7 @@ Single-file links are looked at with one cheap API call (name and size); only `.
   403 (Forbidden) answers never purge anything. A file that answers 403 keeps its link and is
   tried again on every run.
 - Forum flags: `go run . ` uses defaults; `-max-pages`, `-delay` (pause between requests,
-  default 1.5s), `-mega-config`, `-drive-config`, `-pixeldrain-config` (via `scrapers.RunForum(args)`). If the forum
+  default 1.5s), `-mega-config`, `-drive-config`, `-pixeldrain-config`, `-dropbox-config` (via `scrapers.RunForum(args)`). If the forum
   doesn't let guests search, set the `KKNOW_COOKIE` environment variable / repository secret to
   the `Cookie` header of a logged-in browser session (sent to kknow.cc only).
 
@@ -89,12 +90,29 @@ Only `.zipmod` and `.zip` files are looked at.
   sub-directory indexes every `.zipmod`/`.zip` below it (a `/d/` link to one file works as well).
   Their index URLs look like `https://pixeldrain.com/d/<id>/<path to file>`.
 
-Flags (all optional) for all three: `-config`, `-data-dir`, `-cache-dir`, `-full`,
+- **Dropbox**: shared links (folders `https://www.dropbox.com/scl/fo/<id>/<key>?rlkey=...` or the
+  older `/sh/<id>/<key>`, files `/scl/fi/<id>/<name>?rlkey=...` or `/s/<id>/<name>`). Dropbox's API
+  refuses anonymous requests, so unlike the other sources this one **needs credentials**: create a
+  free app at <https://www.dropbox.com/developers/apps> (scoped access, "App folder" is fine, no
+  extra permissions needed, since the shared-link calls work on any public link), then set either
+  `DROPBOX_REFRESH_TOKEN` + `DROPBOX_APP_KEY` + `DROPBOX_APP_SECRET` (recommended; the refresh
+  token does not expire) or just `DROPBOX_ACCESS_TOKEN` (expires after about four hours, so only
+  for trying it out) as environment variables / repository secrets. They are only sent in request
+  headers, never in URLs, logs or indices. Folders are walked recursively through
+  `files/list_folder` with the link as `shared_link`, and zips are read with ranged
+  `sharing/get_shared_link_file` calls. `config/dropbox.json` ships with a `kknow.cc` group that
+  searches the forum for `https://www.dropbox.com`. Only the `rlkey` of a link is kept. A file
+  inside a folder has no link of its own, so its index URL goes through the folder link: `/sh/`
+  links get the path appended, `/scl/fo/` links get the directory appended plus
+  `?preview=<file>&rlkey=...`. Only "not found" answers purge a link; a bad token, rate limits
+  and access-denied answers never do.
+
+Flags (all optional) for all four: `-config`, `-data-dir`, `-cache-dir`, `-full`,
 `-retry-failed`, `-max-urls`, `-workers`.
 
 ### Choosing which sources run
 
-Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`. By default all run. To run only some,
+Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`. By default all run. To run only some,
 pass `-sources mega,koikatsucards` (`go run . -sources ...`) or set the `SCRAPE_SOURCES`
 environment variable. In GitHub Actions, set the repository variable `SCRAPE_SOURCES`
 (Settings > Secrets and variables > Actions > Variables); the next run uses it, no commit needed.
@@ -113,7 +131,7 @@ built from `telegram.json`, every `data/mega/*.json`, every `data/drive/*.json` 
 `data/pixeldrain/*.json`:
 
 ```json
-{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "pixeldrain": ["https://pixeldrain.com/u/..."], "telegram": ["https://t.me/..."] } }
+{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "pixeldrain": ["https://pixeldrain.com/u/..."], "dropbox": ["https://www.dropbox.com/scl/fi/..."], "telegram": ["https://t.me/..."] } }
 ```
 
 All four lists are always present (empty if the GUID isn't known from that source);
