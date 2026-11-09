@@ -27,7 +27,7 @@ per place they came from:
 ```
 
 (Drive folders look like `https://drive.google.com/drive/folders/<id>`; Pixeldrain lists like
-`https://pixeldrain.com/l/<id>`. A group's `links` may
+`https://pixeldrain.com/l/<id>` (or `https://pixeldrain.com/d/<id>` for file-system shares). A group's `links` may
 also hold single files: `https://mega.nz/file/<id>#<key>`,
 `https://drive.google.com/file/d/<id>/view` and `https://pixeldrain.com/u/<id>`. The old format, a plain array of links, is still
 read, as one group.)
@@ -84,7 +84,10 @@ Only `.zipmod` and `.zip` files are looked at.
   the next run. If it happens a lot, create an
   [API key](https://pixeldrain.com/user/api_keys) and set it as the `PIXELDRAIN_API_KEY`
   environment variable / repository secret (sent as HTTP Basic auth, never in URLs or logs).
-  Only lists (`/l/`) and single files (`/u/`) are supported, not the newer `/d/` file-system shares.
+  The newer file-system shares (`https://pixeldrain.com/d/<id>[/<path>]`) are supported too: they are
+  read through `/api/filesystem/<path>?stat` and walked recursively, so a link to a share or to any
+  sub-directory indexes every `.zipmod`/`.zip` below it (a `/d/` link to one file works as well).
+  Their index URLs look like `https://pixeldrain.com/d/<id>/<path to file>`.
 
 Flags (all optional) for all three: `-config`, `-data-dir`, `-cache-dir`, `-full`,
 `-retry-failed`, `-max-urls`, `-workers`.

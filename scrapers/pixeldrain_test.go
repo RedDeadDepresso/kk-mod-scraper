@@ -78,6 +78,92 @@ func TestFindPixeldrainLinks(t *testing.T) {
 	}
 }
 
+func TestParsePixeldrainDirLinks(t *testing.T) {
+	for s, want := range map[string]string{
+		"https://pixeldrain.com/d/AbCd1234":                      "AbCd1234|",
+		"https://pixeldrain.com/d/AbCd1234/":                     "AbCd1234|",
+		"https://www.pixeldrain.net/d/AbCd1234/My%20Mods/sub?x=1": "AbCd1234|/My Mods/sub",
+		"https://pixeldrain.com/api/filesystem/AbCd1234/a.zipmod": "AbCd1234|/a.zipmod",
+	} {
+		share, sub, err := parsePixeldrainDirLink(s)
+		if err != nil || share+"|"+sub != want {
+			t.Errorf("%q: %q %q %v, want %s", s, share, sub, err, want)
+		}
+		if _, err := parsePixeldrainListLink(s); err == nil {
+			t.Errorf("%q is a directory, not a list", s)
+		}
+		if _, err := (pixeldrainProvider{}).ID(s); err != nil {
+			t.Errorf("%q should be a folder link: %v", s, err)
+		}
+	}
+	for _, s := range []string{"", "https://pixeldrain.com/d/", "https://pixeldrain.com/u/Zy9x8w7v", "https://example.com/d/AbCd1234"} {
+		if _, _, err := parsePixeldrainDirLink(s); err == nil {
+			t.Errorf("%q should be rejected as a directory", s)
+		}
+	}
+	got := findPixeldrainLinks("see https://pixeldrain.com/d/AbCd1234/My%20Mods/a.zipmod, and (https://pixeldrain.com/d/Zz9988xx).")
+	want := []string{"https://pixeldrain.com/d/AbCd1234/My%20Mods/a.zipmod", "https://pixeldrain.com/d/Zz9988xx"}
+	if strings.Join(got, " ") != strings.Join(want, " ") {
+		t.Errorf("got %v want %v", got, want)
+	}
+}
+
+func TestPixeldrainDirectoryShare(t *testing.T) {
+	p := newFakePixeldrain(t)
+	add := func(path string, f *fakePDFile) {
+		p.fsFiles[path] = f
+		dir := path[:strings.LastIndex(path, "/")]
+		p.dirs[dir] = append(p.dirs[dir], path)
+	}
+	p.dirs["/ShareId01"] = []string{"/ShareId01/Mods Pack"}
+	p.dirs["/ShareId01/Mods Pack"] = []string{"/ShareId01/Mods Pack/Deep"}
+	p.dirs["/ShareId01/Mods Pack/Deep"] = nil
+	add("/ShareId01/top.zipmod", &fakePDFile{name: "top.zipmod", content: makeZipmod(t, "com.test.top", "1.0", false)})
+	add("/ShareId01/readme.txt", &fakePDFile{name: "readme.txt", content: []byte("hi")})
+	add("/ShareId01/Mods Pack/inner.zipmod", &fakePDFile{name: "inner.zipmod", content: makeZipmod(t, "com.test.inner", "1.0", false)})
+	add("/ShareId01/Mods Pack/Deep/deep.zipmod", &fakePDFile{name: "deep.zipmod", content: makeZipmod(t, "com.test.deep", "1.0", true)})
+
+	dir := t.TempDir()
+	opt := hostedOptions{
+		configPath: writePixeldrainConfig(t, dir, &linkGroup{Name: "manual", Links: []string{
+			"https://pixeldrain.com/d/ShareId01",
+			"https://pixeldrain.com/d/ShareId01/Mods%20Pack/Deep/deep.zipmod", // a file behind a /d/ link
+		}}),
+		dataDir: filepath.Join(dir, "data"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 2,
+	}
+	n, f := buildHostedIndexes(opt, pixeldrainProvider{})
+	if n != 4 || f != 0 { // 3 from the share, plus deep.zipmod again as its own folder
+		t.Fatalf("newGuids=%d failures=%d", n, f)
+	}
+	read := func(name string) modpackIndexFile {
+		data, err := os.ReadFile(filepath.Join(dir, "data", "pixeldrain", name+".json"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		var idx modpackIndexFile
+		if err := json.Unmarshal(data, &idx); err != nil {
+			t.Fatal(err)
+		}
+		return idx
+	}
+	idx := read("ShareId01")
+	for g, u := range map[string]string{
+		"com.test.top":   "https://pixeldrain.com/d/ShareId01/top.zipmod",
+		"com.test.inner": "https://pixeldrain.com/d/ShareId01/Mods%20Pack/inner.zipmod",
+		"com.test.deep":  "https://pixeldrain.com/d/ShareId01/Mods%20Pack/Deep/deep.zipmod",
+	} {
+		if len(idx.Guids[g]) != 1 || idx.Guids[g][0] != u {
+			t.Errorf("%s: %v want %s", g, idx.Guids[g], u)
+		}
+	}
+	if len(idx.Guids) != 3 {
+		t.Errorf("guids: %v", idx.Guids)
+	}
+	if one := read("deep.zipmod"); len(one.Guids["com.test.deep"]) != 1 {
+		t.Errorf("single-file /d/ link: %v", one.Guids)
+	}
+}
+
 func TestParsePixeldrainError(t *testing.T) {
 	if e := parsePixeldrainError(404, []byte(`{"success":false,"value":"file_not_found","message":"The file was not found"}`)); !e.permanent() || e.Value != "file_not_found" {
 		t.Errorf("404: %+v", e)
@@ -108,11 +194,13 @@ type fakePixeldrain struct {
 	lists     map[string][]string // list id -> file ids
 	titles    map[string]string
 	downloads map[string]int
+	dirs      map[string][]string // file-system directory path -> child paths
+	fsFiles   map[string]*fakePDFile // file-system file path -> file
 	srv       *httptest.Server
 }
 
 func newFakePixeldrain(t *testing.T) *fakePixeldrain {
-	p := &fakePixeldrain{files: map[string]*fakePDFile{}, lists: map[string][]string{}, titles: map[string]string{}, downloads: map[string]int{}}
+	p := &fakePixeldrain{files: map[string]*fakePDFile{}, lists: map[string][]string{}, titles: map[string]string{}, downloads: map[string]int{}, dirs: map[string][]string{}, fsFiles: map[string]*fakePDFile{}}
 	p.srv = httptest.NewServer(http.HandlerFunc(p.serve))
 	pixeldrainAPIBase = p.srv.URL + "/api"
 	t.Cleanup(p.srv.Close)
@@ -147,6 +235,8 @@ func (p *fakePixeldrain) serve(w http.ResponseWriter, r *http.Request) {
 	}
 	path := strings.TrimPrefix(r.URL.Path, "/api/")
 	switch {
+	case strings.HasPrefix(path, "filesystem/"):
+		p.serveFS(w, r, "/"+strings.TrimPrefix(path, "filesystem/"))
 	case strings.HasPrefix(path, "list/"):
 		id := strings.TrimPrefix(path, "list/")
 		ids, ok := p.lists[id]
@@ -189,6 +279,52 @@ func (p *fakePixeldrain) serve(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.NotFound(w, r)
 	}
+}
+
+func fsNode(path string, isDir bool, f *fakePDFile) map[string]any {
+	n := map[string]any{"type": "dir", "path": path, "name": path[strings.LastIndex(path, "/")+1:], "modified": "2024-03-01T10:00:00Z"}
+	if !isDir {
+		n["type"], n["name"], n["file_size"] = "file", f.name, len(f.content)
+	}
+	return n
+}
+
+func (p *fakePixeldrain) serveFS(w http.ResponseWriter, r *http.Request, path string) {
+	path = strings.TrimRight(path, "/")
+	if f, ok := p.fsFiles[path]; ok {
+		if _, stat := r.URL.Query()["stat"]; stat {
+			json.NewEncoder(w).Encode(map[string]any{"path": []any{fsNode(path, false, f)}, "base_index": 0})
+			return
+		}
+		p.downloads[path]++
+		if f.status != 0 {
+			p.fail(w, f.status, f.value)
+			return
+		}
+		var s, e int
+		if _, err := fmt.Sscanf(r.Header.Get("Range"), "bytes=%d-%d", &s, &e); err != nil || s > e || e >= len(f.content) {
+			p.fail(w, 416, "bad_range")
+			return
+		}
+		w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", s, e, len(f.content)))
+		w.WriteHeader(http.StatusPartialContent)
+		w.Write(f.content[s : e+1])
+		return
+	}
+	kids, ok := p.dirs[path]
+	if !ok {
+		p.fail(w, 404, "path_not_found")
+		return
+	}
+	var children []any
+	for _, k := range kids {
+		if f, isFile := p.fsFiles[k]; isFile {
+			children = append(children, fsNode(k, false, f))
+		} else {
+			children = append(children, fsNode(k, true, nil))
+		}
+	}
+	json.NewEncoder(w).Encode(map[string]any{"path": []any{fsNode(path, true, nil)}, "base_index": 0, "children": children})
 }
 
 func writePixeldrainConfig(t *testing.T, dir string, groups ...*linkGroup) string {
