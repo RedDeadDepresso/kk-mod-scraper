@@ -35,7 +35,7 @@ jobs:
       - name: Run scraper
         env:
           # Which sources to run: a comma separated list of koikatsucards, betterrepack, mega,
-          # drive, pixeldrain, dropbox. Set it as a repository variable (Settings > Secrets and variables > Actions >
+          # drive, pixeldrain, dropbox, mediafire. Set it as a repository variable (Settings > Secrets and variables > Actions >
           # Variables > SCRAPE_SOURCES) to switch sources on and off without editing code.
           # Empty or unset = all of them.
           SCRAPE_SOURCES: ${{ vars.SCRAPE_SOURCES }}

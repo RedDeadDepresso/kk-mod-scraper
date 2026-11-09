@@ -9,10 +9,11 @@
 | Google Drive folders | `scrapers/drive.go` | `config/drive.json` | `data/drive/<folder name>.json` | `cache/drive/<folder name>.json` |
 | Pixeldrain lists and files | `scrapers/pixeldrain.go` | `config/pixeldrain.json` | `data/pixeldrain/<list title>.json` | `cache/pixeldrain/<list title>.json` |
 | Dropbox folders and files | `scrapers/dropbox.go` | `config/dropbox.json` | `data/dropbox/<folder name>.json` | `cache/dropbox/<folder name>.json` |
+| MediaFire folders and files | `scrapers/mediafire.go` | `config/mediafire.json` | `data/mediafire/<folder name>.json` | `cache/mediafire/<folder name>.json` |
 
-### Mega, Google Drive, Pixeldrain and Dropbox folders
+### Mega, Google Drive, Pixeldrain, Dropbox and MediaFire folders
 
-`config/mega.json` and `config/drive.json` hold public folder links, divided in groups, one
+`config/mega.json`, `config/drive.json` and the other configs hold public folder links, divided in groups, one
 per place they came from:
 
 ```json
@@ -30,7 +31,8 @@ per place they came from:
 (Drive folders look like `https://drive.google.com/drive/folders/<id>`; Pixeldrain lists like
 `https://pixeldrain.com/l/<id>` (or `https://pixeldrain.com/d/<id>` for file-system shares). A group's `links` may
 also hold single files: `https://mega.nz/file/<id>#<key>`,
-`https://drive.google.com/file/d/<id>/view` and `https://pixeldrain.com/u/<id>`. The old format, a plain array of links, is still
+`https://drive.google.com/file/d/<id>/view` and `https://pixeldrain.com/u/<id>`; MediaFire folders like `https://www.mediafire.com/folder/<key>` and files like
+`https://www.mediafire.com/file/<key>`. The old format, a plain array of links, is still
 read, as one group.)
 
 Single-file links are looked at with one cheap API call (name and size); only `.zipmod` and
@@ -107,12 +109,22 @@ Only `.zipmod` and `.zip` files are looked at.
   `?preview=<file>&rlkey=...`. Only "not found" answers purge a link; a bad token, rate limits
   and access-denied answers never do.
 
-Flags (all optional) for all four: `-config`, `-data-dir`, `-cache-dir`, `-full`,
+- **MediaFire**: uses MediaFire's public API (`folder/get_info`, `folder/get_content`,
+  `file/get_info`), which needs no account or key for public content. Folders are walked
+  recursively. A file's download link is read from its page (`https://www.mediafire.com/file/<key>`),
+  resolved again if the server refuses it (the links expire), and zips are read with Range
+  requests, so only a few KB per file are downloaded. `config/mediafire.json` ships with a
+  `kknow.cc` group that searches the forum for `https://www.mediafire.com`. Password protected
+  files are skipped. Only "unknown key" and 404 answers purge a link; captchas, rate limits and
+  outages never do (those files are tried again next run). The URLs in the index are
+  `https://www.mediafire.com/file/<key>`.
+
+Flags (all optional) for all of them: `-config`, `-data-dir`, `-cache-dir`, `-full`,
 `-retry-failed`, `-max-urls`, `-workers`.
 
 ### Choosing which sources run
 
-Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`. By default all run. To run only some,
+Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`, `mediafire`. By default all run. To run only some,
 pass `-sources mega,koikatsucards` (`go run . -sources ...`) or set the `SCRAPE_SOURCES`
 environment variable. In GitHub Actions, set the repository variable `SCRAPE_SOURCES`
 (Settings > Secrets and variables > Actions > Variables); the next run uses it, no commit needed.
@@ -127,14 +139,14 @@ The index files live in `data/`; the Pages site publishes them under `/indices/`
 are `<site>/indices/mod.json` and `<site>/indices/modpack.json`, as before).
 
 The Pages workflow publishes `modpack.json` and a merged `mod.json`
-built from `telegram.json`, every `data/mega/*.json`, every `data/drive/*.json` and every
-`data/pixeldrain/*.json`:
+built from `telegram.json`, every `data/mega/*.json`, every `data/drive/*.json`, every
+`data/pixeldrain/*.json`, every `data/dropbox/*.json` and every `data/mediafire/*.json`:
 
 ```json
-{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "pixeldrain": ["https://pixeldrain.com/u/..."], "dropbox": ["https://www.dropbox.com/scl/fi/..."], "telegram": ["https://t.me/..."] } }
+{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "pixeldrain": ["https://pixeldrain.com/u/..."], "dropbox": ["https://www.dropbox.com/scl/fi/..."], "mediafire": ["https://www.mediafire.com/file/..."], "telegram": ["https://t.me/..."] } }
 ```
 
-All four lists are always present (empty if the GUID isn't known from that source);
+All the lists are always present (empty if the GUID isn't known from that source);
 telegram links are newest first.
 
 ## Local configuration (.env)
