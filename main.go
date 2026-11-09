@@ -60,16 +60,34 @@ type source struct {
 	run  func() (newMods, failures int)
 }
 
+// Flags passed on to every scraper that supports them (all but koikatsucards).
+var (
+	retryFailedFlag = flag.Bool("retry-failed", false, "probe again the files recorded as not indexable")
+	fullFlag        = flag.Bool("full", false, "ignore the caches and probe every file")
+)
+
+// runArgs turns the flags above into the command-line style args the scrapers take.
+func runArgs() []string {
+	var args []string
+	if *retryFailedFlag {
+		args = append(args, "-retry-failed")
+	}
+	if *fullFlag {
+		args = append(args, "-full")
+	}
+	return args
+}
+
 func sources() []source {
 	return []source{
 		{"koikatsucards", func() (int, int) { return scrapers.ScrapeMods(), 0 }},
-		{"betterrepack", func() (int, int) { return scrapers.RunModpack(nil), 0 }},
-		{"mega", func() (int, int) { return scrapers.RunMega(nil) }},
-		{"drive", func() (int, int) { return scrapers.RunDrive(nil) }},
-		{"pixeldrain", func() (int, int) { return scrapers.RunPixeldrain(nil) }},
-		{"dropbox", func() (int, int) { return scrapers.RunDropbox(nil) }},
-		{"mediafire", func() (int, int) { return scrapers.RunMediaFire(nil) }},
-		{"catbox", func() (int, int) { return scrapers.RunCatbox(nil) }},
+		{"betterrepack", func() (int, int) { return scrapers.RunModpack(runArgs()), 0 }},
+		{"mega", func() (int, int) { return scrapers.RunMega(runArgs()) }},
+		{"drive", func() (int, int) { return scrapers.RunDrive(runArgs()) }},
+		{"pixeldrain", func() (int, int) { return scrapers.RunPixeldrain(runArgs()) }},
+		{"dropbox", func() (int, int) { return scrapers.RunDropbox(runArgs()) }},
+		{"mediafire", func() (int, int) { return scrapers.RunMediaFire(runArgs()) }},
+		{"catbox", func() (int, int) { return scrapers.RunCatbox(runArgs()) }},
 	}
 }
 
