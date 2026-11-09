@@ -143,6 +143,7 @@ type fakeGofile struct {
 	accounts  int
 	contents  int
 	badSig    bool // answer every content request as wrongly signed
+	limit     int  // answer this many content requests with 429 first
 	files     map[string][]byte
 	srv       *httptest.Server
 	downloads map[string]int
@@ -184,6 +185,12 @@ func (g *fakeGofile) serve(w http.ResponseWriter, r *http.Request) {
 		g.json(w, 200, map[string]any{"status": "ok", "data": map[string]any{"token": "guest" + strconv.Itoa(g.accounts)}})
 	case strings.HasPrefix(path, "/api/contents/"):
 		g.contents++
+		if g.limit > 0 {
+			g.limit--
+			w.Header().Set("Retry-After", "0")
+			g.json(w, 429, map[string]any{"status": "error-rateLimit"})
+			return
+		}
 		token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 		want := gofileWebsiteToken(gofileUserAgent, gofileLanguage, token, g.secret, time.Now())
 		if g.badSig || r.Header.Get("X-Website-Token") != want {
@@ -383,5 +390,61 @@ func TestGofilePurgeAndPasswords(t *testing.T) {
 	}
 	if got := cfg.Groups[1].Links; len(got) != 0 {
 		t.Errorf("the password protected link of a scraped group should be purged: %v", got)
+	}
+}
+
+func TestGofileRetryAfter(t *testing.T) {
+	h := http.Header{}
+	if gofileRetryAfter(h) != 0 {
+		t.Error("no header, no wait")
+	}
+	h.Set("Retry-After", "7")
+	if got := gofileRetryAfter(h); got != 7*time.Second {
+		t.Errorf("got %v", got)
+	}
+	h.Set("Retry-After", time.Now().Add(30*time.Second).UTC().Format(http.TimeFormat))
+	if got := gofileRetryAfter(h); got <= 0 || got > 31*time.Second {
+		t.Errorf("date form: %v", got)
+	}
+	e := &gofileError{Status: 429, RetryAfter: time.Hour}
+	if got := gofileBackoff(e, 0); got != gofileMaxWait {
+		t.Errorf("an hour-long Retry-After must be capped, got %v", got)
+	}
+}
+
+func TestGofileSlowsDownOn429AndRecovers(t *testing.T) {
+	gofileMinInterval = 100 * time.Millisecond
+	gofileInterval = 0
+	t.Cleanup(func() { gofileInterval = 0 })
+	gofileSlowDown()
+	if gofileInterval != 500*time.Millisecond {
+		t.Errorf("after one 429: %v", gofileInterval)
+	}
+	gofileSlowDown()
+	if gofileInterval != time.Second {
+		t.Errorf("after two 429s: %v", gofileInterval)
+	}
+	for i := 0; i < 20; i++ {
+		gofileSpeedUp()
+	}
+	if gofileInterval != 0 {
+		t.Errorf("should be back to the base, got %v", gofileInterval)
+	}
+}
+
+func TestGofile429IsRetriedAndNeverPurges(t *testing.T) {
+	t.Setenv(gofileSecretEnv, "")
+	g := newFakeGofile(t)
+	g.secret = gofileFallbackSecret
+	g.limit = 2 // the first two content requests are answered 429
+	g.files["f1"] = makeZipmod(t, "com.test.a", "1.0", false)
+	g.files["f4"] = makeZipmod(t, "com.test.big", "2.0", true)
+	opt, _ := gofileOpts(t, "https://gofile.io/d/AbCd12")
+	n, f := buildHostedIndexes(opt, gofileProvider{})
+	if n != 2 || f != 0 {
+		t.Fatalf("newGuids=%d failures=%d", n, f)
+	}
+	if (&gofileError{Status: 429}).permanent() {
+		t.Error("a 429 must never purge a link")
 	}
 }

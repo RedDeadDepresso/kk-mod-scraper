@@ -145,7 +145,10 @@ Only `.zipmod` and `.zip` files are looked at.
   rather than being repeated for every link. Files are read with ranged downloads from the storage
   servers (a few KB each). A file has no link of its own, so the index URL is the share's link plus the
   file's id as a fragment: `https://gofile.io/d/<code>#<file id>`. Password protected shares are
-  skipped (and purged from scraped groups). Only "not found" and "expired" answers purge a link.
+  skipped (and purged from scraped groups). Gofile does not publish its rate limits (only "per
+  endpoint, 429 when exceeded"), so requests are spaced at least 300 ms apart (`GOFILE_MIN_INTERVAL`,
+  e.g. `1s`, changes that), `Retry-After` is honoured (at most 2 minutes), and every 429 doubles the
+  spacing (up to 10 s) until successes ease it back. A 429 is retried and never purges a link. Only "not found" and "expired" answers purge a link.
   `config/gofile.json` ships with a `kknow.cc` group that searches the forum for `https://gofile.io`.
 
 Flags (all optional) for all of them: `-config`, `-data-dir`, `-cache-dir`, `-full`,

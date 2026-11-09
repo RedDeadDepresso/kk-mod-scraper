@@ -51,6 +51,7 @@ const (
 	gofileLanguage       = "en-US"
 	gofileRoot           = "https://gofile.io"
 	gofileSecretEnv      = "GOFILE_SECRET"
+	gofileIntervalEnv    = "GOFILE_MIN_INTERVAL"
 	gofileFallbackSecret = "12af056dacea0b" // what the script held when this was written
 	gofileCookie         = "accountToken"
 	gofileSlot           = 4 * time.Hour
@@ -76,8 +77,13 @@ var (
 		CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse },
 	}
 
-	gofileMinInterval = 300 * time.Millisecond // between requests to Gofile's API
+	// Gofile doesn't publish its limits ("per endpoint", 429 when exceeded), so requests to
+	// its API are spaced out, the spacing doubles after every 429 and eases back after
+	// successes, and Retry-After is honoured. GOFILE_MIN_INTERVAL (e.g. "1s") sets the base.
+	gofileMinInterval = 300 * time.Millisecond
 	gofileRetryPause  = 500 * time.Millisecond
+	gofileMaxInterval = 10 * time.Second
+	gofileMaxWait     = 2 * time.Minute // longest Retry-After that is waited for
 )
 
 // ---------------------------------------------------------------------------
@@ -121,9 +127,10 @@ func findGofileLinks(text string) []string {
 // gofileError is an error answer from Gofile: an HTTP status, and/or the API's own status
 // string ("error-notFound", "error-notPremium", "error-wrongToken", ...).
 type gofileError struct {
-	Status int
-	Code   string
-	Msg    string
+	Status     int
+	Code       string
+	Msg        string
+	RetryAfter time.Duration // from a Retry-After header, if there was one
 }
 
 func (e *gofileError) Error() string {
@@ -154,8 +161,23 @@ func (e *gofileError) retryable() bool {
 
 var gofileErrCodeRe = regexp.MustCompile(`error-[A-Za-z]+`)
 
-func gofileParseError(status int, body []byte) *gofileError {
-	e := &gofileError{Status: status, Msg: http.StatusText(status)}
+// gofileRetryAfter reads a Retry-After header (seconds or an HTTP date); 0 if absent.
+func gofileRetryAfter(h http.Header) time.Duration {
+	v := strings.TrimSpace(h.Get("Retry-After"))
+	if v == "" {
+		return 0
+	}
+	if n, err := strconv.Atoi(v); err == nil {
+		return time.Duration(max(n, 0)) * time.Second
+	}
+	if t, err := http.ParseTime(v); err == nil {
+		return max(time.Until(t), 0)
+	}
+	return 0
+}
+
+func gofileParseError(status int, body []byte, h http.Header) *gofileError {
+	e := &gofileError{Status: status, Msg: http.StatusText(status), RetryAfter: gofileRetryAfter(h)}
 	var doc struct {
 		Status string `json:"status"`
 	}
@@ -167,21 +189,41 @@ func gofileParseError(status int, body []byte) *gofileError {
 	return e
 }
 
+// gofileBackoff is how long to wait before retry number attempt+1: the server's Retry-After
+// if it gave one (capped), else a growing pause.
+func gofileBackoff(err error, attempt int) time.Duration {
+	var ge *gofileError
+	if errors.As(err, &ge) && ge.RetryAfter > 0 {
+		return min(ge.RetryAfter, gofileMaxWait)
+	}
+	return time.Duration(attempt+1) * gofileRetryPause
+}
+
+// gofileRetry runs fn up to four times, retrying network errors, 429 and 5xx. A 429 also
+// slows the pace of all later API requests; a success eases it back.
 func gofileRetry[T any](fn func() (T, error)) (T, error) {
 	var (
 		v   T
 		err error
 	)
-	for attempt := 0; attempt < 3; attempt++ {
+	for attempt := 0; attempt < 4; attempt++ {
 		if v, err = fn(); err == nil {
+			gofileSpeedUp()
 			return v, nil
 		}
 		var ge *gofileError
-		if errors.As(err, &ge) && !ge.retryable() {
-			return v, err
+		if errors.As(err, &ge) {
+			if ge.Status == http.StatusTooManyRequests {
+				gofileSlowDown()
+			}
+			if !ge.retryable() {
+				return v, err
+			}
 		}
-		if attempt < 2 {
-			time.Sleep(time.Duration(attempt+1) * gofileRetryPause)
+		if attempt < 3 {
+			wait := gofileBackoff(err, attempt)
+			slog.Warn("Gofile asked to slow down or failed; waiting before retrying", "wait", wait.String(), "err", err)
+			time.Sleep(wait)
 		}
 	}
 	return v, err
@@ -204,6 +246,7 @@ var (
 	gofileState    = &gofileSession{}
 	gofileThrottle sync.Mutex
 	gofileLastReq  time.Time
+	gofileInterval time.Duration // current spacing after 429s; 0 = the base gofileMinInterval
 )
 
 func (s *gofileSession) reset() {
@@ -212,6 +255,17 @@ func (s *gofileSession) reset() {
 	s.token, s.tokenUntil = "", time.Time{}
 	s.secret, s.secretUntil = "", time.Time{}
 	s.stop = nil
+
+	gofileThrottle.Lock()
+	gofileInterval = 0
+	gofileThrottle.Unlock()
+	if v := strings.TrimSpace(os.Getenv(gofileIntervalEnv)); v != "" {
+		if d, err := time.ParseDuration(v); err == nil && d >= 0 {
+			gofileMinInterval = d
+		} else {
+			slog.Warn("Ignoring an invalid "+gofileIntervalEnv, "value", v)
+		}
+	}
 }
 
 func (s *gofileSession) stopped() error {
@@ -229,15 +283,35 @@ func (s *gofileSession) halt(err error) {
 	s.secret, s.secretUntil = "", time.Time{}
 }
 
-// gofilePace spaces requests to Gofile's API out.
+// gofilePace spaces requests to Gofile's API out by the current interval.
 func gofilePace() {
 	gofileThrottle.Lock()
-	wait := max(gofileMinInterval-time.Since(gofileLastReq), 0)
+	wait := max(max(gofileMinInterval, gofileInterval)-time.Since(gofileLastReq), 0)
 	gofileLastReq = time.Now().Add(wait)
 	gofileThrottle.Unlock()
 	if wait > 0 {
 		time.Sleep(wait)
 	}
+}
+
+// gofileSlowDown doubles the spacing between requests (up to gofileMaxInterval).
+func gofileSlowDown() {
+	gofileThrottle.Lock()
+	defer gofileThrottle.Unlock()
+	cur := max(gofileMinInterval, gofileInterval, 250*time.Millisecond)
+	gofileInterval = min(cur*2, gofileMaxInterval)
+	slog.Warn("Gofile is rate limiting; spacing requests out", "interval", gofileInterval.String())
+}
+
+// gofileSpeedUp eases the spacing back towards the base after a success.
+func gofileSpeedUp() {
+	gofileThrottle.Lock()
+	defer gofileThrottle.Unlock()
+	if gofileInterval <= gofileMinInterval {
+		gofileInterval = 0
+		return
+	}
+	gofileInterval = max(gofileInterval*3/4, gofileMinInterval)
 }
 
 // currentSecret returns the secret to sign with: GOFILE_SECRET if set, else the one read from
@@ -334,7 +408,7 @@ func gofileMintAccount() (string, error) {
 			return "", err
 		}
 		if res.StatusCode < 200 || res.StatusCode > 299 {
-			return "", gofileParseError(res.StatusCode, body)
+			return "", gofileParseError(res.StatusCode, body, res.Header)
 		}
 		var env struct {
 			Status string `json:"status"`
@@ -485,7 +559,7 @@ func gofileFetchPage(id, token string, page int) (*gofileEnvelope, error) {
 			return nil, err
 		}
 		if res.StatusCode < 200 || res.StatusCode > 299 {
-			return nil, gofileParseError(res.StatusCode, body)
+			return nil, gofileParseError(res.StatusCode, body, res.Header)
 		}
 		var env gofileEnvelope
 		if err := json.Unmarshal(body, &env); err != nil {
@@ -648,7 +722,7 @@ func (r *gofileRanger) Range(start, end int) ([]byte, error) {
 			return nil, err
 		}
 		if attempt < 2 {
-			time.Sleep(time.Duration(attempt+1) * gofileRetryPause)
+			time.Sleep(gofileBackoff(err, attempt))
 		}
 	}
 	return nil, err
@@ -673,7 +747,7 @@ func gofileReadRange(rawURL, token string, start, end int) ([]byte, error) {
 	case res.StatusCode >= 300 && res.StatusCode < 400:
 		return nil, &gofileError{Status: res.StatusCode, Code: "redirect", Msg: "the storage server sent us to the web page instead of the file"}
 	case res.StatusCode < 200 || res.StatusCode > 299:
-		return nil, &gofileError{Status: res.StatusCode, Msg: http.StatusText(res.StatusCode)}
+		return nil, &gofileError{Status: res.StatusCode, Msg: http.StatusText(res.StatusCode), RetryAfter: gofileRetryAfter(res.Header)}
 	case strings.HasPrefix(strings.ToLower(res.Header.Get("Content-Type")), "text/html"):
 		return nil, &gofileError{Status: res.StatusCode, Code: "webpage", Msg: "the storage server answered with a web page instead of the file"}
 	case res.StatusCode != http.StatusPartialContent && !(res.StatusCode == http.StatusOK && start == 0):
