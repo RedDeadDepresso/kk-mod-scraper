@@ -322,7 +322,13 @@ func writeMediaFireConfig(t *testing.T, dir string, groups ...*linkGroup) string
 
 func readMediaFireIndex(t *testing.T, dir, name string) modpackIndexFile {
 	t.Helper()
-	data, err := os.ReadFile(filepath.Join(dir, "data", "mediafire", name+".json"))
+	return readMediaFireIndexKind(t, dir, "mediafire", name)
+}
+
+// readMediaFireIndexKind reads data/<kind>/<name>.json (shared by the hosted-source tests).
+func readMediaFireIndexKind(t *testing.T, dir, kind, name string) modpackIndexFile {
+	t.Helper()
+	data, err := os.ReadFile(filepath.Join(dir, "data", kind, name+".json"))
 	if err != nil {
 		t.Fatal(err)
 	}

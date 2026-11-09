@@ -38,15 +38,15 @@ jobs:
           mkdir -p _site/indices
           # The folder is called data/ in the repo, but the site keeps publishing it under /indices/.
           cp -r data/. _site/indices/
-          # telegram.json, data/mega/*.json, data/drive/*.json and data/pixeldrain/*.json, data/dropbox/*.json and data/mediafire/*.json are
+          # telegram.json, data/mega/*.json, data/drive/*.json and data/pixeldrain/*.json, data/dropbox/*.json, data/mediafire/*.json and data/catbox/*.json are
           # published merged, as mod.json, rather than as separate files.
-          rm -rf _site/indices/telegram.json _site/indices/mega _site/indices/drive _site/indices/pixeldrain _site/indices/dropbox _site/indices/mediafire
+          rm -rf _site/indices/telegram.json _site/indices/mega _site/indices/drive _site/indices/pixeldrain _site/indices/dropbox _site/indices/mediafire _site/indices/catbox
 
-          # mod.json: {"<guid>": {"mega": [link, ...], "drive": [link, ...], "pixeldrain": [link, ...], "dropbox": [link, ...], "mediafire": [link, ...], "telegram": [link, ...]}, ...}
+          # mod.json: {"<guid>": {"mega": [link, ...], "drive": [link, ...], "pixeldrain": [link, ...], "dropbox": [link, ...], "mediafire": [link, ...], "catbox": [link, ...], "telegram": [link, ...]}, ...}
           #  - telegram: telegram.json is a newest-first list of mods; every link of a GUID
           #    is kept, newest first.
-          #  - mega / drive / pixeldrain / dropbox / mediafire: the "guids" maps of every folder in data/mega/,
-          #    data/drive/, data/pixeldrain/, data/dropbox/ and data/mediafire/ (best link of each folder first, folders in
+          #  - mega / drive / pixeldrain / dropbox / mediafire / catbox: the "guids" maps of every folder in data/mega/,
+          #    data/drive/, data/pixeldrain/, data/dropbox/, data/mediafire/ and data/catbox/ (best link of each folder first, folders in
           #    file-name order).
           #  - Links are de-duplicated; a GUID known from only some sources gets an empty
           #    list for the others.
@@ -57,7 +57,8 @@ jobs:
             --slurpfile d <(cat /dev/null data/drive/*.json) \
             --slurpfile p <(cat /dev/null data/pixeldrain/*.json) \
             --slurpfile x <(cat /dev/null data/dropbox/*.json) \
-            --slurpfile f <(cat /dev/null data/mediafire/*.json) '
+            --slurpfile f <(cat /dev/null data/mediafire/*.json) \
+            --slurpfile c <(cat /dev/null data/catbox/*.json) '
             def uniq: reduce .[] as $x ([]; if any(.[]; . == $x) then . else . + [$x] end);
             def folders: reduce (.[] | (.guids // {}) | to_entries[]) as $e ({}; .[$e.key] += $e.value) | map_values(uniq);
             ($t[0] | reduce .[] as $mod ({}; .[$mod.Guid] += [$mod.Link]) | map_values(uniq)) as $telegram
@@ -66,8 +67,9 @@ jobs:
             | ($p | folders) as $pixeldrain
             | ($x | folders) as $dropbox
             | ($f | folders) as $mediafire
-            | reduce (($telegram | keys) + ($mega | keys) + ($drive | keys) + ($pixeldrain | keys) + ($dropbox | keys) + ($mediafire | keys) | unique)[] as $guid
-                ({}; .[$guid] = {mega: ($mega[$guid] // []), drive: ($drive[$guid] // []), pixeldrain: ($pixeldrain[$guid] // []), dropbox: ($dropbox[$guid] // []), mediafire: ($mediafire[$guid] // []), telegram: ($telegram[$guid] // [])})
+            | ($c | folders) as $catbox
+            | reduce (($telegram | keys) + ($mega | keys) + ($drive | keys) + ($pixeldrain | keys) + ($dropbox | keys) + ($mediafire | keys) + ($catbox | keys) | unique)[] as $guid
+                ({}; .[$guid] = {mega: ($mega[$guid] // []), drive: ($drive[$guid] // []), pixeldrain: ($pixeldrain[$guid] // []), dropbox: ($dropbox[$guid] // []), mediafire: ($mediafire[$guid] // []), catbox: ($catbox[$guid] // []), telegram: ($telegram[$guid] // [])})
           ' > _site/indices/mod.json
           echo "Generated $(jq 'length' _site/indices/mod.json) mod entries" \
             "($(jq '[.[] | select(.mega | length > 0)] | length' _site/indices/mod.json) with mega links," \
@@ -75,6 +77,7 @@ jobs:
             "$(jq '[.[] | select(.pixeldrain | length > 0)] | length' _site/indices/mod.json) with pixeldrain links," \
             "$(jq '[.[] | select(.dropbox | length > 0)] | length' _site/indices/mod.json) with dropbox links," \
             "$(jq '[.[] | select(.mediafire | length > 0)] | length' _site/indices/mod.json) with mediafire links," \
+            "$(jq '[.[] | select(.catbox | length > 0)] | length' _site/indices/mod.json) with catbox links," \
             "$(jq '[.[] | select(.telegram | length > 0)] | length' _site/indices/mod.json) with telegram links)"
           ls -lR _site
 

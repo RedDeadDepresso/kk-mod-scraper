@@ -1,7 +1,7 @@
 package scrapers
 
 // Shared plumbing for sources that are "folders of zipmods on a file host" (Mega, Google
-// Drive, Pixeldrain, Dropbox, MediaFire). A folderProvider knows how to list one folder and how to read a file's manifest
+// Drive, Pixeldrain, Dropbox, MediaFire, Catbox). A folderProvider knows how to list one folder and how to read a file's manifest
 // with a few ranged reads; everything else is common:
 //
 //   - config/<kind>.json holds the folder links in groups (see hostedconfig.go); links of
@@ -34,7 +34,7 @@ type remoteFolder struct {
 }
 
 type folderProvider interface {
-	// Kind is "mega", "drive", "pixeldrain", "dropbox" or "mediafire": the sub-directory of the output.
+	// Kind is "mega", "drive", "pixeldrain", "dropbox", "mediafire" or "catbox": the sub-directory of the output.
 	Kind() string
 	// ID validates a link from the config and returns a stable id for the folder.
 	ID(raw string) (string, error)
@@ -191,6 +191,10 @@ func isGoneError(err error) bool {
 	var fe *mediafireError
 	if errors.As(err, &fe) {
 		return fe.permanent()
+	}
+	var ce *catboxError
+	if errors.As(err, &ce) {
+		return ce.permanent()
 	}
 	return false
 }

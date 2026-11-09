@@ -1,8 +1,8 @@
 package scrapers
 
-// Collects Mega, Google Drive, Pixeldrain, Dropbox and MediaFire links from the posts of a XenForo forum
+// Collects Mega, Google Drive, Pixeldrain, Dropbox, MediaFire and Catbox links from the posts of a XenForo forum
 // (kknow.cc) and files them in the config of the folder scrapers (config/mega.json,
-// config/drive.json, config/pixeldrain.json, config/dropbox.json, config/mediafire.json).
+// config/drive.json, config/pixeldrain.json, config/dropbox.json, config/mediafire.json, config/catbox.json).
 //
 // Per config, for every group that has a "search" URL (see hostedconfig.go):
 //
@@ -20,8 +20,8 @@ package scrapers
 // (hosted.go), which purges the links of these groups that don't lead to any.
 //
 // Folder links (https://mega.nz/folder/<id>#<key>, https://drive.google.com/drive/folders/<id>,
-// https://pixeldrain.com/l/<id>, https://www.dropbox.com/scl/fo/<id>/<key>?rlkey=..., https://www.mediafire.com/folder/<key>) and single-file links (https://mega.nz/file/<id>#<key>,
-// https://drive.google.com/file/d/<id>, https://pixeldrain.com/u/<id>, https://www.dropbox.com/scl/fi/<id>/<name>?rlkey=..., https://www.mediafire.com/file/<key>) are both collected; whether a file link is a mod is checked at indexing time.
+// https://pixeldrain.com/l/<id>, https://www.dropbox.com/scl/fo/<id>/<key>?rlkey=..., https://www.mediafire.com/folder/<key>, https://catbox.moe/c/<id>) and single-file links (https://mega.nz/file/<id>#<key>,
+// https://drive.google.com/file/d/<id>, https://pixeldrain.com/u/<id>, https://www.dropbox.com/scl/fi/<id>/<name>?rlkey=..., https://www.mediafire.com/file/<key>, https://files.catbox.moe/<id>.zip) are both collected; whether a file link is a mod is checked at indexing time.
 //
 // If the forum wants a login for searching, put the Cookie header value of a logged in
 // browser session in the KKNOW_COOKIE environment variable (it is only sent to kknow.cc).
@@ -108,6 +108,7 @@ var (
 	forumPixeldrain = forumKind{name: pixeldrainKind, find: findPixeldrainLinks, id: linkIDFunc(pixeldrainProvider{})}
 	forumDropbox    = forumKind{name: dropboxKind, find: findDropboxLinks, id: linkIDFunc(dropboxProvider{})}
 	forumMediaFire  = forumKind{name: mediafireKind, find: findMediaFireLinks, id: linkIDFunc(mediafireProvider{})}
+	forumCatbox     = forumKind{name: catboxKind, find: findCatboxLinks, id: linkIDFunc(catboxProvider{})}
 )
 
 // linksIn finds the folder links in the candidate strings of a post (hrefs and text). A
@@ -562,7 +563,7 @@ func (s *forumScraper) runForumConfig(path string, kind forumKind) (added, failu
 }
 
 // RunForum collects links from the forum searches configured in config/mega.json,
-// config/drive.json, config/pixeldrain.json, config/dropbox.json and config/mediafire.json. It returns how many links were added and how many groups failed.
+// config/drive.json, config/pixeldrain.json, config/dropbox.json, config/mediafire.json and config/catbox.json. It returns how many links were added and how many groups failed.
 // args are command-line style flags (nil = defaults).
 func RunForum(args []string) (added, failures int) {
 	fs := flag.NewFlagSet("forum", flag.ExitOnError)
@@ -573,7 +574,8 @@ func RunForum(args []string) (added, failures int) {
 	pixeldrainCfg := fs.String("pixeldrain-config", "config/pixeldrain.json", "Pixeldrain config (groups with a search URL are scraped)")
 	dropboxCfg := fs.String("dropbox-config", "config/dropbox.json", "Dropbox config (groups with a search URL are scraped)")
 	mediafireCfg := fs.String("mediafire-config", "config/mediafire.json", "MediaFire config (groups with a search URL are scraped)")
-	kinds := fs.String("kinds", "mega,drive,pixeldrain,dropbox,mediafire", "which links to collect: mega, drive, pixeldrain, dropbox, mediafire (comma separated)")
+	catboxCfg := fs.String("catbox-config", "config/catbox.json", "Catbox config (groups with a search URL are scraped)")
+	kinds := fs.String("kinds", "mega,drive,pixeldrain,dropbox,mediafire,catbox", "which links to collect: mega, drive, pixeldrain, dropbox, mediafire, catbox (comma separated)")
 	_ = fs.Parse(args)
 	want := map[string]bool{}
 	for _, k := range strings.Split(*kinds, ",") {
@@ -584,7 +586,7 @@ func RunForum(args []string) (added, failures int) {
 	for _, c := range []struct {
 		path string
 		kind forumKind
-	}{{*megaCfg, forumMega}, {*driveCfg, forumDrive}, {*pixeldrainCfg, forumPixeldrain}, {*dropboxCfg, forumDropbox}, {*mediafireCfg, forumMediaFire}} {
+	}{{*megaCfg, forumMega}, {*driveCfg, forumDrive}, {*pixeldrainCfg, forumPixeldrain}, {*dropboxCfg, forumDropbox}, {*mediafireCfg, forumMediaFire}, {*catboxCfg, forumCatbox}} {
 		if !want[c.kind.name] {
 			continue
 		}

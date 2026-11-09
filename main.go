@@ -69,12 +69,13 @@ func sources() []source {
 		{"pixeldrain", func() (int, int) { return scrapers.RunPixeldrain(nil) }},
 		{"dropbox", func() (int, int) { return scrapers.RunDropbox(nil) }},
 		{"mediafire", func() (int, int) { return scrapers.RunMediaFire(nil) }},
+		{"catbox", func() (int, int) { return scrapers.RunCatbox(nil) }},
 	}
 }
 
 // forumKinds are the sources whose links are collected from the forum (see scrapers/forum.go):
 // the forum is only searched for the kinds of links whose source is enabled.
-var forumKinds = []string{"mega", "drive", "pixeldrain", "dropbox", "mediafire"}
+var forumKinds = []string{"mega", "drive", "pixeldrain", "dropbox", "mediafire", "catbox"}
 
 // enabledSources decides which sources run: the -sources flag, else the SCRAPE_SOURCES
 // environment variable (in GitHub Actions: the repository variable of that name), else all.

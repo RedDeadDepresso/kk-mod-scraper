@@ -10,8 +10,9 @@
 | Pixeldrain lists and files | `scrapers/pixeldrain.go` | `config/pixeldrain.json` | `data/pixeldrain/<list title>.json` | `cache/pixeldrain/<list title>.json` |
 | Dropbox folders and files | `scrapers/dropbox.go` | `config/dropbox.json` | `data/dropbox/<folder name>.json` | `cache/dropbox/<folder name>.json` |
 | MediaFire folders and files | `scrapers/mediafire.go` | `config/mediafire.json` | `data/mediafire/<folder name>.json` | `cache/mediafire/<folder name>.json` |
+| Catbox albums and files | `scrapers/catbox.go` | `config/catbox.json` | `data/catbox/<album title>.json` | `cache/catbox/<album title>.json` |
 
-### Mega, Google Drive, Pixeldrain, Dropbox and MediaFire folders
+### Mega, Google Drive, Pixeldrain, Dropbox, MediaFire and Catbox folders
 
 `config/mega.json`, `config/drive.json` and the other configs hold public folder links, divided in groups, one
 per place they came from:
@@ -32,7 +33,8 @@ per place they came from:
 `https://pixeldrain.com/l/<id>` (or `https://pixeldrain.com/d/<id>` for file-system shares). A group's `links` may
 also hold single files: `https://mega.nz/file/<id>#<key>`,
 `https://drive.google.com/file/d/<id>/view` and `https://pixeldrain.com/u/<id>`; MediaFire folders like `https://www.mediafire.com/folder/<key>` and files like
-`https://www.mediafire.com/file/<key>`. The old format, a plain array of links, is still
+`https://www.mediafire.com/file/<key>`; Catbox albums like `https://catbox.moe/c/<id>` and files like
+`https://files.catbox.moe/<id>.zip`. The old format, a plain array of links, is still
 read, as one group.)
 
 Single-file links are looked at with one cheap API call (name and size); only `.zipmod` and
@@ -119,12 +121,22 @@ Only `.zipmod` and `.zip` files are looked at.
   outages never do (those files are tried again next run). The URLs in the index are
   `https://www.mediafire.com/file/<key>`.
 
+- **Catbox**: has no listing API, but serves files from `files.catbox.moe` with Range support, so
+  zips are read the same way as elsewhere (a few KB per file). A file link is
+  `https://files.catbox.moe/<id>.zip`; an album link is `https://catbox.moe/c/<id>`, whose page is
+  read and its `files.catbox.moe` links are the album's files (the album's title names the index).
+  A file's content never changes under its id, so each file is read once and remembered. The
+  forum scraper only collects Catbox links to `.zip`/`.zipmod` files (forum posts are full of
+  Catbox images), plus all albums. `config/catbox.json` ships with a `kknow.cc` group that
+  searches the forum for `catbox.moe`. Only 404/410
+  answers purge a link. Litterbox (temporary files) is not covered.
+
 Flags (all optional) for all of them: `-config`, `-data-dir`, `-cache-dir`, `-full`,
 `-retry-failed`, `-max-urls`, `-workers`.
 
 ### Choosing which sources run
 
-Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`, `mediafire`. By default all run. To run only some,
+Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`, `mediafire`, `catbox`. By default all run. To run only some,
 pass `-sources mega,koikatsucards` (`go run . -sources ...`) or set the `SCRAPE_SOURCES`
 environment variable. In GitHub Actions, set the repository variable `SCRAPE_SOURCES`
 (Settings > Secrets and variables > Actions > Variables); the next run uses it, no commit needed.
@@ -140,10 +152,10 @@ are `<site>/indices/mod.json` and `<site>/indices/modpack.json`, as before).
 
 The Pages workflow publishes `modpack.json` and a merged `mod.json`
 built from `telegram.json`, every `data/mega/*.json`, every `data/drive/*.json`, every
-`data/pixeldrain/*.json`, every `data/dropbox/*.json` and every `data/mediafire/*.json`:
+`data/pixeldrain/*.json`, every `data/dropbox/*.json` and every `data/mediafire/*.json` and every `data/catbox/*.json`:
 
 ```json
-{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "pixeldrain": ["https://pixeldrain.com/u/..."], "dropbox": ["https://www.dropbox.com/scl/fi/..."], "mediafire": ["https://www.mediafire.com/file/..."], "telegram": ["https://t.me/..."] } }
+{ "com.example.mod": { "mega": ["https://mega.nz/folder/..."], "drive": ["https://drive.google.com/file/d/.../view"], "pixeldrain": ["https://pixeldrain.com/u/..."], "dropbox": ["https://www.dropbox.com/scl/fi/..."], "mediafire": ["https://www.mediafire.com/file/..."], "catbox": ["https://files.catbox.moe/..."], "telegram": ["https://t.me/..."] } }
 ```
 
 All the lists are always present (empty if the GUID isn't known from that source);
