@@ -24,7 +24,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    # Deploy after a scrape that failed too: the scraper commits what worked before it reports
+    # failures, and a failed folder keeps its previous index. Only a cancelled run is skipped.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'cancelled'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
