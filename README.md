@@ -62,6 +62,18 @@ Single-file links are looked at with one cheap API call (name and size); only `.
   doesn't let guests search, set the `KKNOW_COOKIE` environment variable / repository secret to
   the `Cookie` header of a logged-in browser session (sent to kknow.cc only).
 
+- A group with `"source": "db.bepis.moe"` is filled by the Bepis scraper (`scrapers/bepis.go`, runs
+  right after the forum scraper). It fetches every card of [db.bepis.moe](https://db.bepis.moe) that
+  isn't cached yet into `cache/bepis/cards.json` (a JSON array, one card per line, so a daily commit only
+  adds lines; a card is fetched once, so later comments on old cards are not seen), then adds the
+  Mega / Drive / Pixeldrain / Dropbox / MediaFire / Catbox / Gofile links found in the bios and
+  comments to this group in each config (created if missing). It is purged like a forum group.
+  `newest_card` is how far the cached cards were read; only newer cards are read, so a purged link
+  isn't added and probed again every run. Cards the site refuses are stored with `"failed": true` and
+  skipped. Flags: `-retry-failed` (fetch refused cards again), `-full` (read every cached card again),
+  `-rps` (default 5), `-workers` (4), `-max-cards` (30000 per run; the rest follows next run),
+  `-bepis-dir`, `-config-dir`.
+
 Add a link to a group to index another folder; remove one and its files are deleted on the next fully
 successful run. Each folder gets an index and a cache named after the folder as it is called
 on the host (`<name> (<id>)` if two folders share a name). One broken folder doesn't stop the
@@ -156,13 +168,13 @@ Flags (all optional) for all of them: `-config`, `-data-dir`, `-cache-dir`, `-fu
 
 ### Choosing which sources run
 
-Sources: `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`, `mediafire`, `catbox`, `gofile`. By default all run. To run only some,
+Sources: `bepis`, `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`, `mediafire`, `catbox`, `gofile`. By default all run. To run only some,
 pass `-sources mega,koikatsucards` (`go run . -sources ...`) or set the `SCRAPE_SOURCES`
 environment variable. In GitHub Actions, set the repository variable `SCRAPE_SOURCES`
 (Settings > Secrets and variables > Actions > Variables); the next run uses it, no commit needed.
 Empty or unset means all. An unknown name stops the run, so a typo can't silently disable
 everything. A disabled source is skipped completely: its files in `data/` and its config stay as
-they are (and stay published), and the forum isn't searched for its links. To add a website, add
+they are (and stay published), and the forum and Bepis aren't searched for its links (`bepis` itself only collects links: enable it together with the host sources you want filled). To add a website, add
 an entry to `sources()` in `main.go`.
 
 ### Published site

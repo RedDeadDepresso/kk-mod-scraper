@@ -16,6 +16,10 @@ package scrapers
 // indexer: links without mods are purged from it. A group without one is hand-maintained and
 // never loses links automatically. "newest_post" is where the forum scraper stops next time.
 //
+// A group with a "source" (db.bepis.moe) is filled by the Bepis scraper (bepis.go) and is
+// tidied up the same way. "newest_card" is the newest cached card whose bio and comments were
+// read for it.
+//
 // The old format, a plain JSON array of links, is still read (as one group named "manual").
 
 import (
@@ -39,11 +43,17 @@ type linkGroup struct {
 	Name       string      `json:"name"`
 	Search     string      `json:"search,omitempty"`
 	NewestPost *postMarker `json:"newest_post,omitempty"`
+	Source     string      `json:"source,omitempty"`      // filled by another scraper than the forum one: "db.bepis.moe"
+	NewestCard int         `json:"newest_card,omitempty"` // Bepis groups: how far the cached cards were read
 	Links      []string    `json:"links"`
 }
 
-// scraped reports whether the group is maintained automatically.
-func (g *linkGroup) scraped() bool { return g.Search != "" }
+// scraped reports whether the group is maintained automatically (filled by a scraper, and
+// purged of links without mods by the indexer).
+func (g *linkGroup) scraped() bool { return g.Search != "" || g.Source != "" }
+
+// searched reports whether the group is filled by a forum search.
+func (g *linkGroup) searched() bool { return g.Search != "" }
 
 type hostedConfig struct {
 	Groups []*linkGroup `json:"groups"`

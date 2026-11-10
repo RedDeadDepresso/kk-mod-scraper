@@ -527,7 +527,7 @@ func (s *forumScraper) runForumConfig(path string, kind forumKind) (added, failu
 	}
 	scrapedAny := false
 	for _, g := range cfg.Groups {
-		if g.scraped() {
+		if g.searched() {
 			scrapedAny = true
 		}
 	}
@@ -543,7 +543,7 @@ func (s *forumScraper) runForumConfig(path string, kind forumKind) (added, failu
 		}
 	}
 	for _, g := range cfg.Groups {
-		if !g.scraped() {
+		if !g.searched() {
 			continue
 		}
 		n, err := s.scrapeGroup(g, kind, known)

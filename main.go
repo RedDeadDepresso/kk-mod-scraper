@@ -54,7 +54,8 @@ func commitChanges(message string) {
 
 // source is one thing the scraper can update. To add a website, add an entry to sources():
 // its name is what -sources / SCRAPE_SOURCES refers to. run returns the new mods it found and
-// how many of its items failed.
+// how many of its items failed. A source without run is a link collector (see main): it only
+// files links in config/*.json, which the folder scrapers then index in the same run.
 type source struct {
 	name string
 	run  func() (newMods, failures int)
@@ -80,6 +81,7 @@ func runArgs() []string {
 
 func sources() []source {
 	return []source{
+		{"bepis", nil}, // collector: cards of db.bepis.moe, their links go to config/*.json
 		{"koikatsucards", func() (int, int) { return scrapers.ScrapeMods(), 0 }},
 		{"betterrepack", func() (int, int) { return scrapers.RunModpack(runArgs()), 0 }},
 		{"mega", func() (int, int) { return scrapers.RunMega(runArgs()) }},
@@ -92,8 +94,9 @@ func sources() []source {
 	}
 }
 
-// forumKinds are the sources whose links are collected from the forum (see scrapers/forum.go):
-// the forum is only searched for the kinds of links whose source is enabled.
+// forumKinds are the sources whose links are collected from the forum (see scrapers/forum.go)
+// and from the Bepis cards (see scrapers/bepis.go): they are only collected for the kinds of
+// links whose source is enabled.
 var forumKinds = []string{"mega", "drive", "pixeldrain", "dropbox", "mediafire", "catbox", "gofile"}
 
 // enabledSources decides which sources run: the -sources flag, else the SCRAPE_SOURCES
@@ -174,9 +177,12 @@ func main() {
 			kinds = append(kinds, k)
 		}
 	}
-	forumFailures := 0
+	forumFailures, bepisFailures := 0, 0
 	if len(kinds) > 0 {
 		_, forumFailures = scrapers.RunForum([]string{"-kinds", strings.Join(kinds, ",")})
+		if enabled["bepis"] {
+			_, bepisFailures = scrapers.RunBepis(runArgs(), kinds)
+		}
 	}
 
 	var (
@@ -184,7 +190,7 @@ func main() {
 		failures []any
 	)
 	for _, s := range all {
-		if !enabled[s.name] {
+		if !enabled[s.name] || s.run == nil {
 			continue
 		}
 		n, f := s.run()
@@ -200,6 +206,9 @@ func main() {
 	// missing API key) doesn't go unnoticed.
 	if forumFailures > 0 {
 		fatal("The forum could not be scraped completely (see the errors above)", "groups", forumFailures)
+	}
+	if bepisFailures > 0 {
+		fatal("db.bepis.moe could not be scraped completely (see the errors above)", "problems", bepisFailures)
 	}
 	if len(failures) > 0 {
 		fatal("Some items could not be processed (see the errors above)", failures...)
