@@ -30,8 +30,13 @@ package scrapers
 // links are indexed together in "(single files)". The URLs in the index of a list are
 // https://pixeldrain.com/u/<file id>.
 //
-// Only .zipmod and .zip files are looked at. A .zip that is an archive of many mods (rather
-// than one mod with manifest.xml at its root) is recorded as not indexable.
+// Only .zipmod and .zip files are looked at. A .zip with a manifest.xml at its root is one mod.
+// A .zip without one is treated as a pack of mods: Pixeldrain's zip viewer exposes the
+// entries of a zip (GET /api/file/<id>/info/zip lists them, GET /api/file/<id>/info/zip/<path>
+// serves one), so every .zipmod inside is indexed on its own, with that direct entry URL
+// (https://pixeldrain.com/api/file/<id>/info/zip/<path>) as its link. Entries are read with
+// the same ranged reads as plain files. This works for /u/ and /l/ links; /d/ file-system
+// shares do not have the zip viewer API and are still read as plain files.
 
 import (
 	"encoding/json"
@@ -42,6 +47,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -402,6 +408,148 @@ func pixeldrainMtime(s string) string {
 }
 
 // ---------------------------------------------------------------------------
+// Zip viewer (the entries of a zip)
+// ---------------------------------------------------------------------------
+
+const (
+	pixeldrainMaxZipEntries = 2000
+	pixeldrainMaxZipDepth   = 6
+)
+
+// pixeldrainZipNode is a node of GET /api/file/<id>/info/zip: the zip itself (with
+// Properties) or one of its entries. A directory has a Children map; a file has none.
+type pixeldrainZipNode struct {
+	Size       int64                        `json:"size"`
+	Children   map[string]pixeldrainZipNode `json:"children"`
+	Properties []string                     `json:"properties"`
+}
+
+// zipListing returns the entries of a file that Pixeldrain can browse as a zip. It returns
+// nil (and no error) when the file can't be browsed (the API answers 400 or 404 for it), so
+// the caller reads it as a plain file. Any other error (rate limits, outages, captchas) is
+// returned and the file is tried again on the next run.
+func (c *pixeldrainClient) zipListing(id string) (*pixeldrainZipNode, error) {
+	var n pixeldrainZipNode
+	if err := c.getJSON("/file/"+id+"/info/zip", &n); err != nil {
+		var pe *pixeldrainError
+		if errors.As(err, &pe) && (pe.Status == http.StatusBadRequest || pe.Status == http.StatusNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	readable := false
+	for _, p := range n.Properties {
+		if p == "read_individual_files" {
+			readable = true
+		}
+	}
+	if !readable || n.Children == nil {
+		return nil, nil
+	}
+	return &n, nil
+}
+
+func (n *pixeldrainZipNode) hasRootManifest() bool {
+	for name := range n.Children {
+		if strings.EqualFold(name, "manifest.xml") {
+			return true
+		}
+	}
+	return false
+}
+
+type pixeldrainZipEntry struct {
+	Path string // inside the zip, "/" separated
+	Size int64
+}
+
+// entries returns the .zipmod/.zip files inside the zip, sorted by path. Names that
+// Pixeldrain could not decode (they contain U+FFFD) can't be requested again, so they are
+// skipped.
+func (n *pixeldrainZipNode) entries() []pixeldrainZipEntry {
+	var out []pixeldrainZipEntry
+	var rec func(nodes map[string]pixeldrainZipNode, prefix string, depth int)
+	rec = func(nodes map[string]pixeldrainZipNode, prefix string, depth int) {
+		names := make([]string, 0, len(nodes))
+		for name := range nodes {
+			names = append(names, name)
+		}
+		sort.Strings(names)
+		for _, name := range names {
+			if len(out) >= pixeldrainMaxZipEntries {
+				return
+			}
+			node := nodes[name]
+			full := prefix + name
+			if strings.ContainsRune(full, '\uFFFD') {
+				continue
+			}
+			if node.Children != nil { // a directory
+				if depth < pixeldrainMaxZipDepth {
+					rec(node.Children, full+"/", depth+1)
+				}
+				continue
+			}
+			if node.Size > 0 && isZipmodName(name) {
+				out = append(out, pixeldrainZipEntry{Path: full, Size: node.Size})
+			}
+		}
+	}
+	rec(n.Children, "", 0)
+	return out
+}
+
+// pixeldrainZipEntryEndpoint is the API path of the bytes of one entry of a zip.
+func pixeldrainZipEntryEndpoint(id, entry string) string {
+	return "/file/" + id + "/info/zip" + pixeldrainEscapePath(entry)
+}
+
+// pixeldrainZipEntryURL is the direct download link of one entry of a zip.
+func pixeldrainZipEntryURL(id, entry string) string {
+	return "https://pixeldrain.com/api" + pixeldrainZipEntryEndpoint(id, entry)
+}
+
+// addPixeldrainFile adds one file to a folder listing. A .zip that is a pack (it has no
+// manifest.xml at its root but holds .zipmod files) is added as one item per mod inside;
+// anything else is added as the file itself.
+func addPixeldrainFile(c *pixeldrainClient, folder *remoteFolder, rangers map[string]*pixeldrainRanger, f pixeldrainFile) error {
+	mtime := pixeldrainMtime(f.DateUpload)
+	if strings.HasSuffix(strings.ToLower(f.Name), ".zip") {
+		zl, err := c.zipListing(f.ID)
+		if err != nil {
+			return fmt.Errorf("listing the zip %q: %w", f.Name, err)
+		}
+		if zl != nil && !zl.hasRootManifest() {
+			if entries := zl.entries(); len(entries) > 0 {
+				for _, e := range entries {
+					u := pixeldrainZipEntryURL(f.ID, e.Path)
+					folder.Labels[u] = f.Name + " > " + e.Path
+					folder.Listing[u] = fileSig{Mtime: mtime, Size: strconv.FormatInt(e.Size, 10)}
+					rangers[u] = &pixeldrainRanger{c: c, endpoint: pixeldrainZipEntryEndpoint(f.ID, e.Path), size: int(e.Size)}
+				}
+				return nil
+			}
+		}
+	}
+	u := pixeldrainFileURL(f.ID)
+	folder.Labels[u] = f.Name
+	folder.Listing[u] = fileSig{Mtime: mtime, Size: strconv.FormatInt(f.Size, 10)}
+	rangers[u] = pixeldrainFileRanger(c, f.ID, int(f.Size))
+	return nil
+}
+
+// probeFrom returns a Probe that reads the manifest of whichever listed item is asked for.
+func pixeldrainProbeFrom(rangers map[string]*pixeldrainRanger, what string) func(string) (manifestInfo, error) {
+	return func(u string) (manifestInfo, error) {
+		r, ok := rangers[u]
+		if !ok {
+			return manifestInfo{}, permanent("file is no longer in the Pixeldrain %s", what)
+		}
+		return r.probe()
+	}
+}
+
+// ---------------------------------------------------------------------------
 // Range reader
 // ---------------------------------------------------------------------------
 
@@ -554,18 +702,11 @@ func (pixeldrainProvider) Load(raw string) (*remoteFolder, error) {
 		if f.ID == "" || f.Size <= 0 || !isZipmodName(f.Name) {
 			continue
 		}
-		u := pixeldrainFileURL(f.ID)
-		folder.Labels[u] = f.Name
-		folder.Listing[u] = fileSig{Mtime: pixeldrainMtime(f.DateUpload), Size: strconv.FormatInt(f.Size, 10)}
-		rangers[u] = pixeldrainFileRanger(client, f.ID, int(f.Size))
-	}
-	folder.Probe = func(u string) (manifestInfo, error) {
-		r, ok := rangers[u]
-		if !ok {
-			return manifestInfo{}, permanent("file is no longer in the Pixeldrain list")
+		if err := addPixeldrainFile(client, folder, rangers, f); err != nil {
+			return nil, err
 		}
-		return r.probe()
 	}
+	folder.Probe = pixeldrainProbeFrom(rangers, "list")
 	return folder, nil
 }
 
@@ -596,9 +737,11 @@ func (pixeldrainProvider) LoadFile(raw string) (*remoteFolder, error) {
 	if !isZipmodName(f.Name) || f.Size <= 0 {
 		return folder, nil
 	}
-	folder.Listing[u] = fileSig{Mtime: pixeldrainMtime(f.DateUpload), Size: strconv.FormatInt(f.Size, 10)}
-	r := pixeldrainFileRanger(client, id, int(f.Size))
-	folder.Probe = func(string) (manifestInfo, error) { return r.probe() }
+	rangers := map[string]*pixeldrainRanger{}
+	if err := addPixeldrainFile(client, folder, rangers, f); err != nil {
+		return nil, err
+	}
+	folder.Probe = pixeldrainProbeFrom(rangers, "file")
 	return folder, nil
 }
 

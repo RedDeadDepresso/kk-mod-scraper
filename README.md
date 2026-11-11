@@ -106,6 +106,13 @@ Only `.zipmod` and `.zip` files are looked at.
   read through `/api/filesystem/<path>?stat` and walked recursively, so a link to a share or to any
   sub-directory indexes every `.zipmod`/`.zip` below it (a `/d/` link to one file works as well).
   Their index URLs look like `https://pixeldrain.com/d/<id>/<path to file>`.
+  A `.zip` on a list or `/u/` link that has no `manifest.xml` at its root is treated as a pack of mods:
+  Pixeldrain's zip viewer API (`/api/file/<id>/info/zip` lists the entries, `/api/file/<id>/info/zip/<path>`
+  serves one) is used to read the `manifest.xml` of every `.zipmod`/`.zip` inside it with the same ranged
+  reads, and each mod is indexed under its own direct link,
+  `https://pixeldrain.com/api/file/<id>/info/zip/<path inside the zip>`. Entries whose names Pixeldrain
+  could not decode (they come back with U+FFFD characters) are skipped. Zips of `/d/` shares are not
+  browsed. A pack link is only purged from a scraped group when none of its entries is a mod.
 
 - **Dropbox**: shared links (folders `https://www.dropbox.com/scl/fo/<id>/<key>?rlkey=...` or the
   older `/sh/<id>/<key>`, files `/scl/fi/<id>/<name>?rlkey=...` or `/s/<id>/<name>`). Dropbox's API

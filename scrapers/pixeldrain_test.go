@@ -196,11 +196,12 @@ type fakePixeldrain struct {
 	downloads map[string]int
 	dirs      map[string][]string // file-system directory path -> child paths
 	fsFiles   map[string]*fakePDFile // file-system file path -> file
+	zipFiles  map[string]map[string][]byte // file id -> zip entry path -> bytes (the zip viewer)
 	srv       *httptest.Server
 }
 
 func newFakePixeldrain(t *testing.T) *fakePixeldrain {
-	p := &fakePixeldrain{files: map[string]*fakePDFile{}, lists: map[string][]string{}, titles: map[string]string{}, downloads: map[string]int{}, dirs: map[string][]string{}, fsFiles: map[string]*fakePDFile{}}
+	p := &fakePixeldrain{files: map[string]*fakePDFile{}, lists: map[string][]string{}, titles: map[string]string{}, downloads: map[string]int{}, dirs: map[string][]string{}, fsFiles: map[string]*fakePDFile{}, zipFiles: map[string]map[string][]byte{}}
 	p.srv = httptest.NewServer(http.HandlerFunc(p.serve))
 	pixeldrainAPIBase = p.srv.URL + "/api"
 	t.Cleanup(p.srv.Close)
@@ -235,6 +236,8 @@ func (p *fakePixeldrain) serve(w http.ResponseWriter, r *http.Request) {
 	}
 	path := strings.TrimPrefix(r.URL.Path, "/api/")
 	switch {
+	case strings.HasPrefix(path, "file/") && strings.Contains(path, "/info/zip"):
+		p.serveZip(w, r, path)
 	case strings.HasPrefix(path, "filesystem/"):
 		p.serveFS(w, r, "/"+strings.TrimPrefix(path, "filesystem/"))
 	case strings.HasPrefix(path, "list/"):
@@ -279,6 +282,39 @@ func (p *fakePixeldrain) serve(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.NotFound(w, r)
 	}
+}
+
+// serveZip fakes the zip viewer: .../info/zip lists the entries, .../info/zip/<path> serves one.
+func (p *fakePixeldrain) serveZip(w http.ResponseWriter, r *http.Request, path string) {
+	id, sub, _ := strings.Cut(strings.TrimPrefix(path, "file/"), "/info/zip")
+	entries, ok := p.zipFiles[id]
+	if !ok {
+		p.fail(w, 404, "file_not_found")
+		return
+	}
+	sub = strings.Trim(sub, "/")
+	if sub == "" {
+		children := map[string]any{}
+		for name, data := range entries {
+			children[name] = map[string]any{"size": len(data)}
+		}
+		json.NewEncoder(w).Encode(map[string]any{"size": len(p.files[id].content), "children": children, "properties": []string{"read_individual_files"}})
+		return
+	}
+	data, ok := entries[sub]
+	if !ok {
+		p.fail(w, 404, "file_not_found")
+		return
+	}
+	p.downloads[id+"/"+sub]++
+	var s, e int
+	if _, err := fmt.Sscanf(r.Header.Get("Range"), "bytes=%d-%d", &s, &e); err != nil || s > e || e >= len(data) {
+		p.fail(w, 416, "bad_range")
+		return
+	}
+	w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", s, e, len(data)))
+	w.WriteHeader(http.StatusPartialContent)
+	w.Write(data[s : e+1])
 }
 
 func fsNode(path string, isDir bool, f *fakePDFile) map[string]any {
@@ -472,5 +508,84 @@ func TestPixeldrainAPIKeyIsSentAsBasicAuth(t *testing.T) {
 	info, err := f.Probe("https://pixeldrain.com/u/modFileA")
 	if err != nil || info.Guid != "com.test.single" {
 		t.Errorf("probe: %+v %v", info, err)
+	}
+}
+
+func TestPixeldrainZipPackIsIndexedPerEntry(t *testing.T) {
+	p := newFakePixeldrain(t)
+	p.addFile(&fakePDFile{id: "packZip01", name: "Pack.zip", content: []byte("outer zip bytes, never read directly")})
+	p.zipFiles["packZip01"] = map[string][]byte{
+		"A mod.zipmod":     makeZipmod(t, "com.test.a", "1.0", false),
+		"b.zipmod":         makeZipmod(t, "com.test.b", "2.0", false),
+		"readme.txt":       []byte("not a mod"),
+		"Bad\uFFFDname.zipmod": makeZipmod(t, "com.test.bad", "1.0", false), // undecodable name: skipped
+	}
+	// A plain single mod zipped with its manifest at the root: not browsable here (404), so
+	// it is read as one file.
+	p.addFile(&fakePDFile{id: "plainZip1", name: "single.zip", content: makeZipmod(t, "com.test.single", "1.0", false)})
+	p.lists["PackList1"] = []string{"packZip01", "plainZip1"}
+	p.titles["PackList1"] = "Packs"
+
+	dir := t.TempDir()
+	manual := &linkGroup{Name: "manual", Links: []string{"https://pixeldrain.com/l/PackList1"}}
+	opt := hostedOptions{
+		configPath: writePixeldrainConfig(t, dir, manual),
+		dataDir:    filepath.Join(dir, "data"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 2,
+	}
+	n, f := buildHostedIndexes(opt, pixeldrainProvider{})
+	if n != 3 || f != 0 {
+		t.Fatalf("newGuids=%d failures=%d", n, f)
+	}
+	data, err := os.ReadFile(filepath.Join(dir, "data", "pixeldrain", "Packs.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var idx modpackIndexFile
+	if err := json.Unmarshal(data, &idx); err != nil {
+		t.Fatal(err)
+	}
+	want := map[string]string{
+		"com.test.a":      "https://pixeldrain.com/api/file/packZip01/info/zip/A%20mod.zipmod",
+		"com.test.b":      "https://pixeldrain.com/api/file/packZip01/info/zip/b.zipmod",
+		"com.test.single": "https://pixeldrain.com/u/plainZip1",
+	}
+	for guid, u := range want {
+		if got := idx.Guids[guid]; len(got) != 1 || got[0] != u {
+			t.Errorf("%s: got %v want %s", guid, got, u)
+		}
+	}
+	if len(idx.Guids) != len(want) {
+		t.Errorf("unexpected GUIDs: %v", idx.Guids)
+	}
+	if p.downloads["packZip01"] != 0 {
+		t.Error("the outer zip must not be downloaded, only the entries")
+	}
+}
+
+// A pack whose mods sit in a folder inside the zip (the shape Pixeldrain's zip viewer returns).
+func TestPixeldrainZipNestedFolders(t *testing.T) {
+	const listing = `{"size":54811966,"children":{"LeiseHG mods II":{"size":54811966,"children":{
+		"[hg]Francesco058.zipmod":{"size":1540271},
+		"[hg]NewJersey047 (1).zipmod":{"size":1765314},
+		"notes.txt":{"size":10},
+		"unzen azur lane.zipmod":{"size":8420925}}}},"properties":["read_individual_files"]}`
+	var n pixeldrainZipNode
+	if err := json.Unmarshal([]byte(listing), &n); err != nil {
+		t.Fatal(err)
+	}
+	if n.hasRootManifest() {
+		t.Fatal("the root has no manifest.xml")
+	}
+	var got []string
+	for _, e := range n.entries() {
+		got = append(got, pixeldrainZipEntryURL("WjrTK8j1", e.Path))
+	}
+	want := []string{
+		"https://pixeldrain.com/api/file/WjrTK8j1/info/zip/LeiseHG%20mods%20II/%5Bhg%5DFrancesco058.zipmod",
+		"https://pixeldrain.com/api/file/WjrTK8j1/info/zip/LeiseHG%20mods%20II/%5Bhg%5DNewJersey047%20%281%29.zipmod",
+		"https://pixeldrain.com/api/file/WjrTK8j1/info/zip/LeiseHG%20mods%20II/unzen%20azur%20lane.zipmod",
+	}
+	if strings.Join(got, "\n") != strings.Join(want, "\n") {
+		t.Errorf("got\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
 	}
 }
