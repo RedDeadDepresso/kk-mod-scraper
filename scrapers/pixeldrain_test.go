@@ -1,6 +1,8 @@
 package scrapers
 
 import (
+	"archive/zip"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -511,15 +513,43 @@ func TestPixeldrainAPIKeyIsSentAsBasicAuth(t *testing.T) {
 	}
 }
 
+// makePackZip builds a zip holding the given entries, stored or deflated.
+func makePackZip(t *testing.T, entries map[string][]byte, deflated map[string]bool) []byte {
+	t.Helper()
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	for name, data := range entries {
+		method := zip.Store
+		if deflated[name] {
+			method = zip.Deflate
+		}
+		w, err := zw.CreateHeader(&zip.FileHeader{Name: name, Method: method})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := w.Write(data); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	return buf.Bytes()
+}
+
 func TestPixeldrainZipPackIsIndexedPerEntry(t *testing.T) {
 	p := newFakePixeldrain(t)
-	p.addFile(&fakePDFile{id: "packZip01", name: "Pack.zip", content: []byte("outer zip bytes, never read directly")})
-	p.zipFiles["packZip01"] = map[string][]byte{
-		"A mod.zipmod":     makeZipmod(t, "com.test.a", "1.0", false),
-		"b.zipmod":         makeZipmod(t, "com.test.b", "2.0", false),
-		"readme.txt":       []byte("not a mod"),
+	entries := map[string][]byte{
+		"A mod.zipmod":         makeZipmod(t, "com.test.a", "1.0", false), // stored
+		"b.zipmod":             makeZipmod(t, "com.test.b", "2.0", false), // deflated
+		"sub/c.zipmod":         makeZipmod(t, "com.test.c", "3.0", true),  // stored, in a folder
+		"readme.txt":           []byte("not a mod"),
 		"Bad\uFFFDname.zipmod": makeZipmod(t, "com.test.bad", "1.0", false), // undecodable name: skipped
 	}
+	// The entry URLs of the real server ignore Range, so the scraper must read the pack
+	// itself: the fake serves the pack's bytes on /api/file/<id> and only lists the entries.
+	p.addFile(&fakePDFile{id: "packZip01", name: "Pack.zip", content: makePackZip(t, entries, map[string]bool{"b.zipmod": true})})
+	p.zipFiles["packZip01"] = entries
 	// A plain single mod zipped with its manifest at the root: not browsable here (404), so
 	// it is read as one file.
 	p.addFile(&fakePDFile{id: "plainZip1", name: "single.zip", content: makeZipmod(t, "com.test.single", "1.0", false)})
@@ -533,7 +563,7 @@ func TestPixeldrainZipPackIsIndexedPerEntry(t *testing.T) {
 		dataDir:    filepath.Join(dir, "data"), cacheDir: filepath.Join(dir, "cache"), maxURLs: 4, workers: 2,
 	}
 	n, f := buildHostedIndexes(opt, pixeldrainProvider{})
-	if n != 3 || f != 0 {
+	if n != 4 || f != 0 {
 		t.Fatalf("newGuids=%d failures=%d", n, f)
 	}
 	data, err := os.ReadFile(filepath.Join(dir, "data", "pixeldrain", "Packs.json"))
@@ -547,6 +577,7 @@ func TestPixeldrainZipPackIsIndexedPerEntry(t *testing.T) {
 	want := map[string]string{
 		"com.test.a":      "https://pixeldrain.com/api/file/packZip01/info/zip/A%20mod.zipmod",
 		"com.test.b":      "https://pixeldrain.com/api/file/packZip01/info/zip/b.zipmod",
+		"com.test.c":      "https://pixeldrain.com/api/file/packZip01/info/zip/sub/c.zipmod",
 		"com.test.single": "https://pixeldrain.com/u/plainZip1",
 	}
 	for guid, u := range want {
@@ -557,8 +588,10 @@ func TestPixeldrainZipPackIsIndexedPerEntry(t *testing.T) {
 	if len(idx.Guids) != len(want) {
 		t.Errorf("unexpected GUIDs: %v", idx.Guids)
 	}
-	if p.downloads["packZip01"] != 0 {
-		t.Error("the outer zip must not be downloaded, only the entries")
+	for key, n := range p.downloads {
+		if strings.Contains(key, "/") && n > 0 {
+			t.Errorf("the entry URL %q was requested; entries must be read from the pack (Range is ignored there)", key)
+		}
 	}
 }
 

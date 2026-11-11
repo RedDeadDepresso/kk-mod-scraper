@@ -34,11 +34,18 @@ package scrapers
 // A .zip without one is treated as a pack of mods: Pixeldrain's zip viewer exposes the
 // entries of a zip (GET /api/file/<id>/info/zip lists them, GET /api/file/<id>/info/zip/<path>
 // serves one), so every .zipmod inside is indexed on its own, with that direct entry URL
-// (https://pixeldrain.com/api/file/<id>/info/zip/<path>) as its link. Entries are read with
-// the same ranged reads as plain files. This works for /u/ and /l/ links; /d/ file-system
-// shares do not have the zip viewer API and are still read as plain files.
+// (https://pixeldrain.com/api/file/<id>/info/zip/<path>) as its link. The entry URLs ignore
+// Range requests, so the manifests are NOT read from them: the pack itself (/api/file/<id>)
+// does honour Range, so its central directory is read once, which says where each entry's
+// bytes lie inside the pack, and the entry's own zip tail and manifest.xml are read from
+// there (a stored entry with ranged reads; a deflated one is fetched and inflated in memory,
+// up to pixeldrainMaxInflate). This works for /u/ and /l/ links; /d/ file-system shares do
+// not have the zip viewer API and are still read as plain files.
 
 import (
+	"bytes"
+	"compress/flate"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -50,6 +57,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -511,8 +519,9 @@ func pixeldrainZipEntryURL(id, entry string) string {
 
 // addPixeldrainFile adds one file to a folder listing. A .zip that is a pack (it has no
 // manifest.xml at its root but holds .zipmod files) is added as one item per mod inside;
-// anything else is added as the file itself.
-func addPixeldrainFile(c *pixeldrainClient, folder *remoteFolder, rangers map[string]*pixeldrainRanger, f pixeldrainFile) error {
+// anything else is added as the file itself. probes gets, per listed URL, how to read its
+// GUID.
+func addPixeldrainFile(c *pixeldrainClient, folder *remoteFolder, probes map[string]func() (manifestInfo, error), f pixeldrainFile) error {
 	mtime := pixeldrainMtime(f.DateUpload)
 	if strings.HasSuffix(strings.ToLower(f.Name), ".zip") {
 		zl, err := c.zipListing(f.ID)
@@ -521,11 +530,13 @@ func addPixeldrainFile(c *pixeldrainClient, folder *remoteFolder, rangers map[st
 		}
 		if zl != nil && !zl.hasRootManifest() {
 			if entries := zl.entries(); len(entries) > 0 {
+				pack := &pixeldrainPack{outer: pixeldrainFileRanger(c, f.ID, int(f.Size))}
 				for _, e := range entries {
-					u := pixeldrainZipEntryURL(f.ID, e.Path)
-					folder.Labels[u] = f.Name + " > " + e.Path
+					entryPath := e.Path
+					u := pixeldrainZipEntryURL(f.ID, entryPath)
+					folder.Labels[u] = f.Name + " > " + entryPath
 					folder.Listing[u] = fileSig{Mtime: mtime, Size: strconv.FormatInt(e.Size, 10)}
-					rangers[u] = &pixeldrainRanger{c: c, endpoint: pixeldrainZipEntryEndpoint(f.ID, e.Path), size: int(e.Size)}
+					probes[u] = func() (manifestInfo, error) { return pack.probe(entryPath) }
 				}
 				return nil
 			}
@@ -534,18 +545,244 @@ func addPixeldrainFile(c *pixeldrainClient, folder *remoteFolder, rangers map[st
 	u := pixeldrainFileURL(f.ID)
 	folder.Labels[u] = f.Name
 	folder.Listing[u] = fileSig{Mtime: mtime, Size: strconv.FormatInt(f.Size, 10)}
-	rangers[u] = pixeldrainFileRanger(c, f.ID, int(f.Size))
+	probes[u] = pixeldrainFileRanger(c, f.ID, int(f.Size)).probe
 	return nil
 }
 
-// probeFrom returns a Probe that reads the manifest of whichever listed item is asked for.
-func pixeldrainProbeFrom(rangers map[string]*pixeldrainRanger, what string) func(string) (manifestInfo, error) {
+// pixeldrainProbeFrom returns a Probe that reads the GUID of whichever listed item is asked for.
+func pixeldrainProbeFrom(probes map[string]func() (manifestInfo, error), what string) func(string) (manifestInfo, error) {
 	return func(u string) (manifestInfo, error) {
-		r, ok := rangers[u]
+		pr, ok := probes[u]
 		if !ok {
 			return manifestInfo{}, permanent("file is no longer in the Pixeldrain %s", what)
 		}
-		return r.probe()
+		return pr()
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Reading the entries of a pack from the pack itself
+// ---------------------------------------------------------------------------
+
+// pixeldrainMaxInflate is the largest deflated entry that is fetched and inflated in memory
+// to read its manifest. Stored entries need no such limit: only a few KB of them are read.
+const (
+	pixeldrainMaxInflate    = 128 << 20
+	pixeldrainMaxCentralDir = 32 << 20
+)
+
+// zipDirEntry is one entry of a zip's central directory.
+type zipDirEntry struct {
+	Flags       uint16
+	Method      uint16
+	CompSize    int64
+	UncompSize  int64
+	LocalOffset int64
+}
+
+// readZipDirectory reads the central directory of a remote zip: the tail first, then the
+// directory itself if it isn't inside the tail. ZIP64 is understood. Names are keyed with
+// "/" separators.
+func readZipDirectory(r rangeReader) (map[string]zipDirEntry, error) {
+	tail, err := r.Suffix(256 * 1024)
+	if err != nil {
+		return nil, err
+	}
+	le := binary.LittleEndian
+	eocdAt := bytes.LastIndex(tail.data, []byte("PK\x05\x06"))
+	if eocdAt < 0 || eocdAt+22 > len(tail.data) {
+		return nil, permanent("ZIP end-of-central-directory not found")
+	}
+	cSize := int64(le.Uint32(tail.data[eocdAt+12:]))
+	cOff := int64(le.Uint32(tail.data[eocdAt+16:]))
+	if cSize == 0xFFFFFFFF || cOff == 0xFFFFFFFF || le.Uint16(tail.data[eocdAt+10:]) == 0xFFFF {
+		// ZIP64: a locator right before the end record points at the ZIP64 end record.
+		if eocdAt < 20 || !bytes.Equal(tail.data[eocdAt-20:eocdAt-16], []byte("PK\x06\x07")) {
+			return nil, permanent("ZIP64 end-of-central-directory locator not found")
+		}
+		recAt := int64(le.Uint64(tail.data[eocdAt-20+8:]))
+		var rec []byte
+		if recAt >= int64(tail.start) && recAt+56 <= int64(tail.start+len(tail.data)) {
+			rec = tail.data[recAt-int64(tail.start):]
+		} else if recAt >= 0 && recAt+56 <= int64(tail.total) {
+			if rec, err = r.Range(int(recAt), int(recAt)+55); err != nil {
+				return nil, err
+			}
+		}
+		if len(rec) < 56 || !bytes.Equal(rec[:4], []byte("PK\x06\x06")) {
+			return nil, permanent("ZIP64 end-of-central-directory record not found")
+		}
+		cSize = int64(le.Uint64(rec[40:]))
+		cOff = int64(le.Uint64(rec[48:]))
+	}
+	if cSize <= 0 || cSize > pixeldrainMaxCentralDir || cOff < 0 || cOff+cSize > int64(tail.total) {
+		return nil, permanent("ZIP directory is invalid or too large")
+	}
+	var central []byte
+	if cOff >= int64(tail.start) {
+		begin := int(cOff - int64(tail.start))
+		central = tail.data[begin:min(begin+int(cSize), len(tail.data))]
+	} else if central, err = r.Range(int(cOff), int(cOff+cSize-1)); err != nil {
+		return nil, err
+	}
+
+	entries := map[string]zipDirEntry{}
+	for pos := 0; pos+46 <= len(central) && bytes.Equal(central[pos:pos+4], []byte("PK\x01\x02")); {
+		h := central[pos:]
+		flags := le.Uint16(h[8:])
+		method := le.Uint16(h[10:])
+		cs := int64(le.Uint32(h[20:]))
+		us := int64(le.Uint32(h[24:]))
+		nameLen := int(le.Uint16(h[28:]))
+		extraLen := int(le.Uint16(h[30:]))
+		commentLen := int(le.Uint16(h[32:]))
+		lo := int64(le.Uint32(h[42:]))
+		if pos+46+nameLen+extraLen > len(central) {
+			break
+		}
+		name := strings.ReplaceAll(string(h[46:46+nameLen]), `\`, "/")
+		if us == 0xFFFFFFFF || cs == 0xFFFFFFFF || lo == 0xFFFFFFFF {
+			// ZIP64 extra field: only the values that overflowed are present, in this order.
+			for extra := h[46+nameLen : 46+nameLen+extraLen]; len(extra) >= 4; {
+				id, sz := le.Uint16(extra), int(le.Uint16(extra[2:]))
+				if 4+sz > len(extra) {
+					break
+				}
+				if id == 1 {
+					d := extra[4 : 4+sz]
+					for _, v := range []*int64{&us, &cs, &lo} {
+						if *v == 0xFFFFFFFF && len(d) >= 8 {
+							*v = int64(le.Uint64(d))
+							d = d[8:]
+						}
+					}
+				}
+				extra = extra[4+sz:]
+			}
+		}
+		entries[name] = zipDirEntry{Flags: flags, Method: method, CompSize: cs, UncompSize: us, LocalOffset: lo}
+		pos += 46 + nameLen + extraLen + commentLen
+	}
+	if len(entries) == 0 {
+		return nil, permanent("ZIP directory has no entries")
+	}
+	return entries, nil
+}
+
+// subRanger exposes a slice of a remote file as a file of its own. A stored zip entry is
+// exactly that: the bytes of the zipmod, inside the pack.
+type subRanger struct {
+	outer     rangeReader
+	off, size int
+}
+
+func (s subRanger) Suffix(length int) (suffixResult, error) {
+	length = min(length, s.size)
+	start := s.size - length
+	data, err := s.outer.Range(s.off+start, s.off+s.size-1)
+	if err != nil {
+		return suffixResult{}, err
+	}
+	return suffixResult{data: data, total: s.size, start: start}, nil
+}
+
+func (s subRanger) Range(start, end int) ([]byte, error) {
+	if start < 0 || start > end || end >= s.size {
+		return nil, fmt.Errorf("invalid range %d-%d inside a %d-byte entry", start, end, s.size)
+	}
+	return s.outer.Range(s.off+start, s.off+end)
+}
+
+// memRanger is a file that is already in memory (an inflated entry).
+type memRanger struct{ data []byte }
+
+func (m memRanger) Suffix(length int) (suffixResult, error) {
+	length = min(length, len(m.data))
+	start := len(m.data) - length
+	return suffixResult{data: m.data[start:], total: len(m.data), start: start}, nil
+}
+
+func (m memRanger) Range(start, end int) ([]byte, error) {
+	if start < 0 || start > end || end >= len(m.data) {
+		return nil, fmt.Errorf("invalid range %d-%d inside a %d-byte entry", start, end, len(m.data))
+	}
+	return m.data[start : end+1], nil
+}
+
+// pixeldrainPack is a Pixeldrain zip that holds mods. Its directory is read once (by whichever
+// probe comes first) and shared by the probes of all its entries.
+type pixeldrainPack struct {
+	outer *pixeldrainRanger // the pack itself: /api/file/<id>, which honours Range
+	once  sync.Once
+	dir   map[string]zipDirEntry
+	err   error
+}
+
+func (p *pixeldrainPack) entry(name string) (zipDirEntry, error) {
+	p.once.Do(func() { p.dir, p.err = readZipDirectory(p.outer) })
+	if p.err != nil {
+		return zipDirEntry{}, p.err
+	}
+	e, ok := p.dir[name]
+	if !ok {
+		return zipDirEntry{}, permanent("entry %q not found in the zip's directory", name)
+	}
+	return e, nil
+}
+
+// probe reads the GUID and version of one entry of the pack.
+func (p *pixeldrainPack) probe(name string) (manifestInfo, error) {
+	info, err := p.probeEntry(name)
+	var pe *pixeldrainError
+	if errors.As(err, &pe) && pe.permanent() {
+		return manifestInfo{}, permanent("not readable on Pixeldrain (%v)", pe)
+	}
+	return info, err
+}
+
+func (p *pixeldrainPack) probeEntry(name string) (manifestInfo, error) {
+	e, err := p.entry(name)
+	if err != nil {
+		return manifestInfo{}, err
+	}
+	if e.Flags&1 != 0 {
+		return manifestInfo{}, permanent("encrypted entry")
+	}
+	if e.LocalOffset < 0 || e.LocalOffset+30 > int64(p.outer.size) {
+		return manifestInfo{}, permanent("invalid zip local file header")
+	}
+	lh, err := p.outer.Range(int(e.LocalOffset), int(e.LocalOffset)+29)
+	if err != nil {
+		return manifestInfo{}, err
+	}
+	if !bytes.Equal(lh[:4], []byte("PK\x03\x04")) {
+		return manifestInfo{}, permanent("invalid zip local file header")
+	}
+	dataAt := e.LocalOffset + 30 + int64(binary.LittleEndian.Uint16(lh[26:])) + int64(binary.LittleEndian.Uint16(lh[28:]))
+	if e.CompSize <= 0 || dataAt+e.CompSize > int64(p.outer.size) {
+		return manifestInfo{}, permanent("entry data lies outside the file")
+	}
+	switch e.Method {
+	case 0: // stored: the entry is the zipmod itself, read it in place
+		return readManifest(subRanger{outer: p.outer, off: int(dataAt), size: int(e.CompSize)})
+	case 8: // deflated: no random access; fetch the entry and inflate it
+		if e.CompSize > pixeldrainMaxInflate || e.UncompSize > pixeldrainMaxInflate {
+			return manifestInfo{}, permanent("deflated entry of %d bytes is too large to read from a pack", e.UncompSize)
+		}
+		comp, err := p.outer.Range(int(dataAt), int(dataAt+e.CompSize-1))
+		if err != nil {
+			return manifestInfo{}, err
+		}
+		raw, err := io.ReadAll(io.LimitReader(flate.NewReader(bytes.NewReader(comp)), pixeldrainMaxInflate+1))
+		if err != nil {
+			return manifestInfo{}, permanent("unreadable entry (%v)", err)
+		}
+		if len(raw) > pixeldrainMaxInflate || len(raw) == 0 {
+			return manifestInfo{}, permanent("deflated entry has an unusable size")
+		}
+		return readManifest(memRanger{raw})
+	default:
+		return manifestInfo{}, permanent("entry uses unsupported compression method %d", e.Method)
 	}
 }
 
@@ -697,16 +934,16 @@ func (pixeldrainProvider) Load(raw string) (*remoteFolder, error) {
 		return nil, err
 	}
 	folder := &remoteFolder{Name: title, Listing: map[string]fileSig{}, Labels: map[string]string{}}
-	rangers := map[string]*pixeldrainRanger{}
+	probes := map[string]func() (manifestInfo, error){}
 	for _, f := range files {
 		if f.ID == "" || f.Size <= 0 || !isZipmodName(f.Name) {
 			continue
 		}
-		if err := addPixeldrainFile(client, folder, rangers, f); err != nil {
+		if err := addPixeldrainFile(client, folder, probes, f); err != nil {
 			return nil, err
 		}
 	}
-	folder.Probe = pixeldrainProbeFrom(rangers, "list")
+	folder.Probe = pixeldrainProbeFrom(probes, "list")
 	return folder, nil
 }
 
@@ -737,11 +974,11 @@ func (pixeldrainProvider) LoadFile(raw string) (*remoteFolder, error) {
 	if !isZipmodName(f.Name) || f.Size <= 0 {
 		return folder, nil
 	}
-	rangers := map[string]*pixeldrainRanger{}
-	if err := addPixeldrainFile(client, folder, rangers, f); err != nil {
+	probes := map[string]func() (manifestInfo, error){}
+	if err := addPixeldrainFile(client, folder, probes, f); err != nil {
 		return nil, err
 	}
-	folder.Probe = pixeldrainProbeFrom(rangers, "file")
+	folder.Probe = pixeldrainProbeFrom(probes, "file")
 	return folder, nil
 }
 
