@@ -7,28 +7,12 @@
     {
       "name": "kknow.cc",
       "search": "https://kknow.cc/search/?q=https%3A%2F%2Fpixeldrain.com\u0026o=date",
-      "newest_post": {
-        "id": "post-93845",
-        "url": "https://kknow.cc/threads/illusion-koikatu-mod-search-thread.1854/post-93845",
-        "time": "2026-11-06T10:04:55Z"
-      },
-      "links": [
-        "https://pixeldrain.com/u/sYVsUc1N",
-        "https://pixeldrain.com/u/orsHoWxg",
-        "https://pixeldrain.com/u/9vBhMWXu"
-      ]
+      "links": []
     },
     {
       "name": "db.bepis.moe",
       "source": "db.bepis.moe",
-      "newest_card": 401893,
-      "links": [
-        "https://pixeldrain.com/u/Z75fiYCD",
-        "https://pixeldrain.com/u/s5KXavwZ",
-        "https://pixeldrain.com/u/KbYwcz3L",
-        "https://pixeldrain.com/u/wcyeNZiZ",
-        "https://pixeldrain.com/l/UD4GXufY"
-      ]
+      "links": []
     }
   ]
 }
