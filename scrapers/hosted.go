@@ -449,6 +449,9 @@ func buildHostedIndexes(opt hostedOptions, p folderProvider) (newGuids, failures
 	fp, _ := p.(fileProvider)
 	used := map[string]string{}
 	keep := map[string]bool{}
+	if opt.kind == pixeldrainKind {
+		keep[forumPacksIndexName] = true // written by RunPixeldrainPacks, not by a folder of the config
+	}
 	purged := map[string]bool{} // links to remove from the scraped groups
 	var files []fileItem
 	stopped := false

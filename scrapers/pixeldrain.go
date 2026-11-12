@@ -606,5 +606,8 @@ func (pixeldrainProvider) LoadFile(raw string) (*remoteFolder, error) {
 // returns how many GUIDs are new and how many items failed. args are command-line style
 // flags (nil = defaults).
 func RunPixeldrain(args []string) (newGuids, failures int) {
-	return runHosted(pixeldrainProvider{}, args)
+	newGuids, failures = runHosted(pixeldrainProvider{}, args)
+	// The forum's mod pack zips (see pixeldrainpack.go): a no-op without config/forum-packs.
+	n, f := RunPixeldrainPacks(args)
+	return newGuids + n, failures + f
 }
