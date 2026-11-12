@@ -1,0 +1,10 @@
+056: 8894, file_name: pama00_ACC.zip, guid: [cha]pama00_acc
+056: 8905, file_name: [gazun]Raiden heel.zipmod, guid: [gazun]Raiden heel
+056: 8940, file_name: [kyonko]Amber_hair.zipmod, guid: [kyonko]anber_hair
+056: 8956, file_name: BiyocaSSR01.zipmod, guid: [moonlight]BiyocaSSR01
+056: 8957, file_name: BiyocaSSR01-Base.zipmod, guid: [moonlight]BiyocaSSR01-Base
+056: 8959, file_name: [2025.01.25]Curve_Slient_Voice.zipmod, guid: [moonlight]Curve_Slient_Voice
+056: 8970, file_name: Koshmar_hair.zipmod, guid: [moonlight]Koshmar_hair
+056: 9000, file_name: Dup&amp;Name.zipmod, guid: dup.in.056
+057: 9001, file_name: Dup&amp;Name.zipmod, guid: dup.in.057
+057: 9002, file_name: Unset.zipmod, guid: &lt;not set&gt;

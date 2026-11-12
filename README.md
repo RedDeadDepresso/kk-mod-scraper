@@ -106,16 +106,17 @@ Only `.zipmod` and `.zip` files are looked at.
   read through `/api/filesystem/<path>?stat` and walked recursively, so a link to a share or to any
   sub-directory indexes every `.zipmod`/`.zip` below it (a `/d/` link to one file works as well).
   Their index URLs look like `https://pixeldrain.com/d/<id>/<path to file>`.
-  A `.zip` on a list or `/u/` link that has no `manifest.xml` at its root is treated as a pack of mods:
-  Pixeldrain's zip viewer API (`/api/file/<id>/info/zip` lists the entries, `/api/file/<id>/info/zip/<path>`
-  serves one) lists the mods inside it, and each is indexed under its own direct link,
-  `https://pixeldrain.com/api/file/<id>/info/zip/<path inside the zip>`. Those entry URLs ignore Range
-  requests, so the GUIDs are read from the pack itself, which does honour them: its central directory
-  (ZIP64 too) gives the position of each entry, and the entry's own zip tail and `manifest.xml` are
-  read from there with ranged reads (a deflated entry up to 128 MB is fetched and inflated in memory).
-  Entries whose names Pixeldrain could not decode (they come back with U+FFFD characters) are skipped.
-  Zips of `/d/` shares are not browsed. A pack link is only purged from a scraped group when none of
-  its entries is a mod.
+
+- **Pixeldrain mod packs of the forum** (`scrapers/pixeldrainpack.go`, runs after the Pixeldrain folders): the
+  first posts of the forum's "Mod - Part N: Mod Packs ..." threads link `https://pixeldrain.com/u/<id>` files that
+  are big zips of hundreds of zipmods, with no `manifest.xml` at the root. They are not read through ranged
+  reads: `/api/file/<id>/info/zip` lists the entries, and each entry's file name is mapped to its GUID with
+  `All_Mod_List.txt` (HTML-encoded, decoded on read; the `GUID-Index-NNN.txt` inside a zip says which pack(s) of
+  the list to use, since a name can occur in several packs). Put the list and the saved forum pages (`*.htm`)
+  and/or a `links.txt` in `config/forum-packs/`; without a list the step does nothing. Index URLs are
+  `https://pixeldrain.com/api/file/<id>/info/zip/<path in the zip>`, written to `data/pixeldrain/Forum Mod Packs.json`
+  (merged into `mod.json` as `pixeldrain`). Names missing from the list are logged and skipped; a zip that can't
+  be read keeps its old entries. Each zip's listing is cached in `cache/pixeldrain/Forum Mod Packs.json` and only listed again when its size or upload date (one light `/info` call per link) changes; `-full` ignores the cache, and the GUID mapping is redone every run, so a new mod list needs no relisting. `/u/` links (one zip) and `/l/` links are handled; for a list, the page `https://pixeldrain.com/l/<id>` is read and the files are taken from its `window.viewer_data` (id, name, size and upload date, so no `/info` call is needed per file; the JSON API `/api/list/<id>` is the fallback), then each `.zip` is treated like a `/u/` one. The files of each list are cached too, so a day the list page is unreachable still uses the last known files. Run alone: `go run . -sources pixeldrain`.
 
 - **Dropbox**: shared links (folders `https://www.dropbox.com/scl/fo/<id>/<key>?rlkey=...` or the
   older `/sh/<id>/<key>`, files `/scl/fi/<id>/<name>?rlkey=...` or `/s/<id>/<name>`). Dropbox's API

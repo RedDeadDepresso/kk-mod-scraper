@@ -380,22 +380,10 @@ func syncFiles(p folderProvider, fp fileProvider, items []fileItem, opt hostedOp
 		slog.Error("Stopped the single-file index", "source", kind, "err", aerr)
 		return base, 0, failures + 1, purge
 	}
-	// A recorded error is permanent: the file was read and is no mod. A link can list several
-	// items (a zip holding many mods), so it is only purged when every one of them is
-	// a permanent non-mod; one good mod, or one item that couldn't be read this run, keeps it.
-	total, bad, why := map[string]int{}, map[string]int{}, map[string]string{}
-	for u := range merged.Listing {
-		total[rawOf[u]]++
-	}
 	for u, e := range entries {
-		if e.Guid == "" && e.Error != "" {
-			bad[rawOf[u]]++
-			why[rawOf[u]] = e.Error
-		}
-	}
-	for raw, n := range bad {
-		if n == total[raw] && groupOf[raw] != nil && groupOf[raw].scraped() {
-			purge[raw] = fmt.Sprintf("the %s file is not a usable mod (%s)", kind, why[raw])
+		// A recorded error is permanent: the file was read and is no mod.
+		if raw := rawOf[u]; e.Guid == "" && e.Error != "" && groupOf[raw] != nil && groupOf[raw].scraped() {
+			purge[raw] = fmt.Sprintf("the %s file is not a usable mod (%s)", kind, e.Error)
 		}
 	}
 	if unreachable > 0 {
@@ -461,6 +449,9 @@ func buildHostedIndexes(opt hostedOptions, p folderProvider) (newGuids, failures
 	fp, _ := p.(fileProvider)
 	used := map[string]string{}
 	keep := map[string]bool{}
+	if opt.kind == pixeldrainKind {
+		keep[forumPacksIndexName] = true // written by RunPixeldrainPacks, not by a folder of the config
+	}
 	purged := map[string]bool{} // links to remove from the scraped groups
 	var files []fileItem
 	stopped := false
