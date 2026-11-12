@@ -22,6 +22,9 @@ package scrapers
 // with different GUIDs). A zip without such a file is looked up in the whole list, and a
 // name that is ambiguous there is skipped.
 //
+// Names stored in a legacy code page (GBK...) come back from Pixeldrain mangled, with "\uFFFD"
+// for each byte that is not valid UTF-8; see pixeldrainmangle.go for how they are matched.
+//
 // Input (all optional; if there is no mod list the step does nothing):
 //
 //	config/forum-packs/All_Mod_List.txt   the mod list
@@ -50,6 +53,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 const (
@@ -69,6 +73,9 @@ type modList struct {
 	all    map[string]map[string]bool
 	lower  map[string]map[string]bool // lowercase file name -> guids
 	lines  int
+
+	mu      sync.Mutex                         // guards mangled
+	mangled map[int]map[string]map[string]bool // pack -> mangled name -> guids (see pixeldrainmangle.go)
 }
 
 var modListLineRe = regexp.MustCompile(`^(\d+): (\d+), file_name: (.*), guid: (.*)$`)
@@ -131,6 +138,11 @@ func (ml *modList) lookup(name string, packs []int) (guid string, ok bool) {
 				}
 			}
 		}
+	}
+	// Names that Pixeldrain returned mangled (legacy code page read as UTF-8, bad bytes -> U+FFFD):
+	// recovered through the pack's names, and only when they lead to exactly one GUID.
+	if g := ml.lookupMangled(name, packs); g != "" {
+		return g, true
 	}
 	if g := onlyOne(ml.all[name]); g != "" {
 		return g, true
