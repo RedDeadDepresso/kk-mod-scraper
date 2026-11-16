@@ -7,7 +7,7 @@ package scrapers
 //  1. every card that isn't cached yet is fetched (ids go up from the last cached one to the
 //     newest card, which the site's "most recent" search reports) and stored in
 //     cache/bepis/cards.json, so a card is only ever fetched once. The cache is a JSON array
-//     of {id, bio, comments, failed}, one card per line (valid JSON, but a daily commit only
+//     of {id, bio, authors, comments, failed}, one card per line (valid JSON, but a daily commit only
 //     adds lines instead of rewriting a 30+ MB line). Cards the site refused are kept with
 //     "failed": true and only tried again with -retry-failed;
 //  2. per config, a group with "source": "db.bepis.moe" holds the links of these cards. It is
@@ -57,6 +57,7 @@ const (
 type bepisRecord struct {
 	ID       int      `json:"id"`
 	Bio      string   `json:"bio"`
+	Authors  []string `json:"authors"`
 	Comments []string `json:"comments"`
 	Failed   bool     `json:"failed"`
 }
@@ -79,7 +80,8 @@ type bepisCardResp struct {
 	Data struct {
 		Card struct {
 			CardData struct {
-				Bio string `json:"bio"`
+				Bio           string   `json:"bio"`
+				AuthorHistory []string `json:"authorHistory"`
 			} `json:"cardData"`
 		} `json:"card"`
 		Comments []struct {
@@ -277,7 +279,7 @@ func (c *bepisClient) latestID(ctx context.Context) (int, error) {
 }
 
 func (c *bepisClient) fetchCard(ctx context.Context, id int) bepisRecord {
-	rec := bepisRecord{ID: id, Comments: []string{}}
+	rec := bepisRecord{ID: id, Authors: []string{}, Comments: []string{}}
 	var cr bepisCardResp
 	url := fmt.Sprintf("%s/cardPage?cardType=%s&id=%d", c.base, bepisCardType, id)
 	if err := c.getJSON(ctx, url, &cr); err != nil || cr.Type != "success" {
@@ -288,6 +290,9 @@ func (c *bepisClient) fetchCard(ctx context.Context, id int) bepisRecord {
 		return rec
 	}
 	rec.Bio = cr.Data.Card.CardData.Bio
+	if a := cr.Data.Card.CardData.AuthorHistory; a != nil {
+		rec.Authors = a
+	}
 	for _, cm := range cr.Data.Comments {
 		rec.Comments = append(rec.Comments, cm.Text)
 	}

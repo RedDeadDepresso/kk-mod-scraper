@@ -150,7 +150,7 @@ func TestBepisFetchNew(t *testing.T) {
 				http.NotFound(w, r)
 				return
 			}
-			fmt.Fprintf(w, `{"type":"success","data":{"card":{"cardData":{"bio":"bio %s %s"}},"comments":[{"text":"c%s"}]}}`, id, testGofile, id)
+			fmt.Fprintf(w, `{"type":"success","data":{"card":{"cardData":{"bio":"bio %s %s","authorHistory":["author%s","other"]}},"comments":[{"text":"c%s"}]}}`, id, testGofile, id, id)
 		}
 	}))
 	defer srv.Close()
@@ -171,6 +171,9 @@ func TestBepisFetchNew(t *testing.T) {
 	}
 	if !strings.Contains(records[4].Bio, testGofile) || records[4].Comments[0] != "c4" {
 		t.Errorf("card 4 = %+v", records[4])
+	}
+	if a := records[4].Authors; len(a) != 2 || a[0] != "author4" || a[1] != "other" {
+		t.Errorf("card 4 authors = %v", a)
 	}
 	for _, h := range hits {
 		if strings.Contains(h, "id=1") || strings.Contains(h, "id=3") {
