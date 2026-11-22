@@ -79,9 +79,18 @@ func runArgs() []string {
 	return args
 }
 
+// bepisArgs are the flags the Bepis step takes: it only reads the cards that kk-author-scraper
+// fetched, so -retry-failed doesn't apply to it.
+func bepisArgs() []string {
+	if *fullFlag {
+		return []string{"-full"}
+	}
+	return nil
+}
+
 func sources() []source {
 	return []source{
-		{"bepis", nil}, // collector: cards of db.bepis.moe, their links go to config/*.json
+		{"bepis", nil}, // collector: cards of db.bepis.moe (from kk-author-scraper), their links go to config/*.json
 		{"koikatsucards", func() (int, int) { return scrapers.ScrapeMods(), 0 }},
 		{"betterrepack", func() (int, int) { return scrapers.RunModpack(runArgs()), 0 }},
 		{"mega", func() (int, int) { return scrapers.RunMega(runArgs()) }},
@@ -181,7 +190,7 @@ func main() {
 	if len(kinds) > 0 {
 		_, forumFailures = scrapers.RunForum([]string{"-kinds", strings.Join(kinds, ",")})
 		if enabled["bepis"] {
-			_, bepisFailures = scrapers.RunBepis(runArgs(), kinds)
+			_, bepisFailures = scrapers.RunBepis(bepisArgs(), kinds)
 		}
 	}
 

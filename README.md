@@ -62,17 +62,18 @@ Single-file links are looked at with one cheap API call (name and size); only `.
   doesn't let guests search, set the `KKNOW_COOKIE` environment variable / repository secret to
   the `Cookie` header of a logged-in browser session (sent to kknow.cc only).
 
-- A group with `"source": "db.bepis.moe"` is filled by the Bepis scraper (`scrapers/bepis.go`, runs
-  right after the forum scraper). It fetches every card of [db.bepis.moe](https://db.bepis.moe) that
-  isn't cached yet into `cache/bepis/cards.json` (a JSON array, one card per line, so a daily commit only
-  adds lines; a card is fetched once, so later comments on old cards are not seen), then adds the
+- A group with `"source": "db.bepis.moe"` is filled by the Bepis step (`scrapers/bepis.go`, runs
+  right after the forum scraper). The cards of [db.bepis.moe](https://db.bepis.moe) are **not fetched
+  here**: [kk-author-scraper](https://github.com/RedDeadDepresso/kk-author-scraper) fetches them into its
+  `cache/bepis/cards.json` (a JSON array, one card per line; a card is fetched once, so later comments on old
+  cards are not seen). This step downloads that file at the start of every run to `cache/bepis/cards.json`
+  (git-ignored, not committed; if the download fails, a copy left by an earlier run is used), then adds the
   Mega / Drive / Pixeldrain / Dropbox / MediaFire / Catbox / Gofile links found in the bios and
   comments to this group in each config (created if missing). It is purged like a forum group.
-  `newest_card` is how far the cached cards were read; only newer cards are read, so a purged link
-  isn't added and probed again every run. Cards the site refuses are stored with `"failed": true` and
-  skipped. Flags: `-retry-failed` (fetch refused cards again), `-full` (read every cached card again),
-  `-rps` (default 5), `-workers` (4), `-max-cards` (30000 per run; the rest follows next run),
-  `-bepis-dir`, `-config-dir`.
+  `newest_card` is how far the cards were read; only newer cards are read, so a purged link
+  isn't added and probed again every run. Cards the site refused are stored with `"failed": true` and
+  skipped. Flags: `-full` (read every card again, also the main `-full` flag), `-bepis-url` (where to download
+  `cards.json` from), `-bepis-dir`, `-config-dir`.
 
 Add a link to a group to index another folder; remove one and its files are deleted on the next fully
 successful run. Each folder gets an index and a cache named after the folder as it is called

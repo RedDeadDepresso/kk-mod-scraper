@@ -3,7 +3,6 @@ package scrapers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -19,40 +18,65 @@ const (
 	testGofile      = "https://gofile.io/d/UMLcracT"
 )
 
-func TestBepisCacheRoundTrip(t *testing.T) {
+// writeTestCards writes cards.json the way kk-author-scraper does: a JSON array, one card per
+// line, with the "authors" list this scraper ignores.
+func writeTestCards(t *testing.T, path string, cards map[int]bepisRecord) {
+	t.Helper()
+	var sb strings.Builder
+	sb.WriteString("[\n")
+	first := true
+	for id := 1; id <= 100; id++ {
+		r, ok := cards[id]
+		if !ok {
+			continue
+		}
+		if !first {
+			sb.WriteString(",\n")
+		}
+		first = false
+		if r.Comments == nil {
+			r.Comments = []string{}
+		}
+		b, err := json.Marshal(struct {
+			bepisRecord
+			Authors []string `json:"authors"`
+		}{r, []string{"someone"}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		sb.Write(b)
+	}
+	sb.WriteString("\n]\n")
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, []byte(sb.String()), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestLoadBepisCards(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "sub", "cards.json")
 	in := map[int]bepisRecord{
 		3: {ID: 3, Bio: "a <b> & \"c\"", Comments: []string{"x", "y\r\nz"}},
 		1: {ID: 1, Failed: true},
 		2: {ID: 2},
 	}
-	if err := saveBepisCards(path, in); err != nil {
-		t.Fatal(err)
-	}
-	raw, _ := os.ReadFile(path)
-	lines := strings.Split(strings.TrimSpace(string(raw)), "\n")
-	if len(lines) != 5 { // "[", three cards, "]"
-		t.Fatalf("expected one card per line, got %d lines:\n%s", len(lines), raw)
-	}
-	if !strings.HasPrefix(lines[1], `{"id":1,`) || !strings.HasPrefix(lines[3], `{"id":3,`) {
-		t.Errorf("cards not sorted by id:\n%s", raw)
-	}
-	if !strings.Contains(lines[2], `"comments":[]`) {
-		t.Errorf("nil comments must be written as []: %s", lines[2])
-	}
-	var plain []bepisRecord // still plain JSON, as the standalone tool wrote it
-	if err := json.Unmarshal(raw, &plain); err != nil || len(plain) != 3 {
-		t.Fatalf("not valid JSON: %v", err)
-	}
+	writeTestCards(t, path, in)
 	out, err := loadBepisCards(path)
-	if err != nil {
-		t.Fatal(err)
+	if err != nil || len(out) != 3 {
+		t.Fatalf("%v %v", out, err)
 	}
 	if out[3].Bio != in[3].Bio || len(out[3].Comments) != 2 || !out[1].Failed {
-		t.Errorf("round trip changed the data: %+v", out)
+		t.Errorf("load changed the data: %+v", out)
 	}
 	if m, err := loadBepisCards(filepath.Join(t.TempDir(), "none.json")); err != nil || len(m) != 0 {
 		t.Errorf("a missing cache must be empty, got %v %v", m, err)
+	}
+	bad := filepath.Join(t.TempDir(), "bad.json")
+	_ = os.WriteFile(bad, []byte(`{"a":1}`), 0o644)
+	if _, err := loadBepisCards(bad); err == nil {
+		t.Error("a file that is not an array must be an error")
 	}
 }
 
@@ -75,7 +99,7 @@ func TestFileBepisLinks(t *testing.T) {
 		5: {ID: 5, Bio: "dup " + strings.Replace(testMegaFolder2, "mega.nz", "mega.nz", 1)}, // duplicate of 2
 	}
 
-	added, err := fileBepisLinks(path, forumMega, cards, nil, false)
+	added, err := fileBepisLinks(path, forumMega, cards, false)
 	if err != nil || added != 1 {
 		t.Fatalf("added=%d err=%v, want 1 new link", added, err)
 	}
@@ -96,23 +120,17 @@ func TestFileBepisLinks(t *testing.T) {
 	if err := cfg.save(path); err != nil {
 		t.Fatal(err)
 	}
-	if added, err = fileBepisLinks(path, forumMega, cards, nil, false); err != nil || added != 0 {
+	if added, err = fileBepisLinks(path, forumMega, cards, false); err != nil || added != 0 {
 		t.Errorf("purged link re-added: added=%d err=%v", added, err)
 	}
-	// ...unless the card was fetched again this run, or everything is re-read.
-	if added, _ = fileBepisLinks(path, forumMega, cards, map[int]bool{2: true}, false); added != 1 {
-		t.Errorf("a card fetched this run must be read, added=%d", added)
-	}
-	cfg, _ = loadHostedConfig(path)
-	cfg.Groups[1].Links = nil
-	_ = cfg.save(path)
-	if added, _ = fileBepisLinks(path, forumMega, cards, nil, true); added != 1 {
+	// ...unless everything is re-read.
+	if added, _ = fileBepisLinks(path, forumMega, cards, true); added != 1 {
 		t.Errorf("-full must read every cached card, added=%d", added)
 	}
 
 	// New cards above the watermark are read.
 	cards[6] = bepisRecord{ID: 6, Bio: "new " + "https://mega.nz/folder/QqQqQqQq#abcdefghijklmnopqrstuv"}
-	if added, _ = fileBepisLinks(path, forumMega, cards, nil, false); added != 1 {
+	if added, _ = fileBepisLinks(path, forumMega, cards, false); added != 1 {
 		t.Errorf("new card not read, added=%d", added)
 	}
 }
@@ -120,13 +138,13 @@ func TestFileBepisLinks(t *testing.T) {
 func TestFileBepisLinksLeavesUnchangedConfigAlone(t *testing.T) {
 	path := writeTestConfig(t, `{"groups":[{"name":"x","links":[]}]}`)
 	cards := map[int]bepisRecord{1: {ID: 1}}
-	if _, err := fileBepisLinks(path, forumGofile, cards, nil, false); err != nil {
+	if _, err := fileBepisLinks(path, forumGofile, cards, false); err != nil {
 		t.Fatal(err)
 	}
 	before, _ := os.ReadFile(path)
 	st1, _ := os.Stat(path)
 	time.Sleep(20 * time.Millisecond)
-	if added, err := fileBepisLinks(path, forumGofile, cards, nil, false); err != nil || added != 0 {
+	if added, err := fileBepisLinks(path, forumGofile, cards, false); err != nil || added != 0 {
 		t.Fatal(added, err)
 	}
 	after, _ := os.ReadFile(path)
@@ -136,84 +154,22 @@ func TestFileBepisLinksLeavesUnchangedConfigAlone(t *testing.T) {
 	}
 }
 
-func TestBepisFetchNew(t *testing.T) {
-	const latest = 6
-	var hits []string
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		hits = append(hits, r.URL.Path+"?"+r.URL.RawQuery)
-		switch {
-		case strings.HasSuffix(r.URL.Path, "/search"):
-			fmt.Fprintf(w, `{"type":"success","data":{"cards":[{"id":%d},{"id":%d}]}}`, latest-1, latest)
-		case strings.HasSuffix(r.URL.Path, "/cardPage"):
-			id := r.URL.Query().Get("id")
-			if id == "5" {
-				http.NotFound(w, r)
-				return
-			}
-			fmt.Fprintf(w, `{"type":"success","data":{"card":{"cardData":{"bio":"bio %s %s","authorHistory":["author%s","other"]}},"comments":[{"text":"c%s"}]}}`, id, testGofile, id, id)
+func newCardsServer(t *testing.T, path string, status *int) *httptest.Server {
+	t.Helper()
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if *status != http.StatusOK {
+			http.Error(w, "no", *status)
+			return
 		}
+		b, err := os.ReadFile(path)
+		if err != nil {
+			t.Error(err)
+		}
+		w.Write(b)
 	}))
-	defer srv.Close()
-
-	c := &bepisClient{http: srv.Client(), lim: &bepisLimiter{interval: time.Millisecond}, base: srv.URL}
-	path := filepath.Join(t.TempDir(), "cards.json")
-	records := map[int]bepisRecord{3: {ID: 3, Bio: "cached"}} // ids 1 and 2 are "older than the cache"
-
-	fresh, err := c.fetchNew(context.Background(), path, records, bepisFetchOptions{workers: 2, saveEvery: 1})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(records) != 4 || records[3].Bio != "cached" {
-		t.Fatalf("expected the cached card to be kept and 4..6 fetched, got %d records", len(records))
-	}
-	if !fresh[4] || fresh[5] || !fresh[6] || !records[5].Failed {
-		t.Errorf("fresh=%v failed5=%v", fresh, records[5].Failed)
-	}
-	if !strings.Contains(records[4].Bio, testGofile) || records[4].Comments[0] != "c4" {
-		t.Errorf("card 4 = %+v", records[4])
-	}
-	if a := records[4].Authors; len(a) != 2 || a[0] != "author4" || a[1] != "other" {
-		t.Errorf("card 4 authors = %v", a)
-	}
-	for _, h := range hits {
-		if strings.Contains(h, "id=1") || strings.Contains(h, "id=3") {
-			t.Errorf("fetched a card that is cached or older: %s", h)
-		}
-	}
-	saved, err := loadBepisCards(path)
-	if err != nil || len(saved) != 4 {
-		t.Fatalf("saved cache: %d records, %v", len(saved), err)
-	}
-
-	// Nothing new: no card requests, only the search for the newest id.
-	hits = nil
-	if fresh, err = c.fetchNew(context.Background(), path, records, bepisFetchOptions{workers: 2, saveEvery: 10}); err != nil || len(fresh) != 0 {
-		t.Fatal(fresh, err)
-	}
-	if len(hits) != 1 {
-		t.Errorf("expected only the search request, got %v", hits)
-	}
-
-	// -retry-failed: only the failed card, and it still fails (404).
-	hits = nil
-	if _, err = c.fetchNew(context.Background(), path, records, bepisFetchOptions{retryFailed: true, workers: 1, saveEvery: 10}); err != nil {
-		t.Fatal(err)
-	}
-	if len(hits) != 1 || !strings.Contains(hits[0], "id=5") {
-		t.Errorf("retry should only ask for card 5, got %v", hits)
-	}
-
-	// max-cards caps a run.
-	records = map[int]bepisRecord{}
-	if _, err = c.fetchNew(context.Background(), path, records, bepisFetchOptions{maxCards: 2, workers: 1, saveEvery: 10}); err != nil {
-		t.Fatal(err)
-	}
-	if len(records) != 2 || records[1].ID != 1 || records[2].ID != 2 {
-		t.Errorf("max-cards: %v", records)
-	}
 }
 
-func TestRunBepisFilesLinksOfTheCache(t *testing.T) {
+func TestRunBepisDownloadsAndFilesLinks(t *testing.T) {
 	dir := t.TempDir()
 	cards := filepath.Join(dir, "bepis")
 	cfgDir := filepath.Join(dir, "config")
@@ -225,26 +181,76 @@ func TestRunBepisFilesLinksOfTheCache(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	err := saveBepisCards(filepath.Join(cards, "cards.json"), map[int]bepisRecord{
+	// what the server (kk-author-scraper's repository) serves
+	served := filepath.Join(dir, "served.json")
+	writeTestCards(t, served, map[int]bepisRecord{
 		1: {ID: 1, Bio: testMegaFolder + " and " + testGofile},
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	// An unreachable site must not stop the cached cards from being filed: it is one failure.
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { http.Error(w, "no", 403) }))
+	status := http.StatusOK
+	srv := newCardsServer(t, served, &status)
 	defer srv.Close()
-	old := bepisSearchBase
-	bepisSearchBase = srv.URL
-	defer func() { bepisSearchBase = old }()
+	args := []string{"-bepis-dir", cards, "-config-dir", cfgDir, "-bepis-url", srv.URL}
 
-	added, failures := RunBepis([]string{"-bepis-dir", cards, "-config-dir", cfgDir}, []string{"mega", "gofile"})
-	if added != 2 || failures != 1 {
-		t.Errorf("added=%d failures=%d, want 2 and 1", added, failures)
+	added, failures := RunBepis(args, []string{"mega", "gofile"})
+	if added != 2 || failures != 0 {
+		t.Fatalf("added=%d failures=%d, want 2 and 0", added, failures)
 	}
-	// only the enabled kinds are filled
-	added, _ = RunBepis([]string{"-bepis-dir", cards, "-config-dir", cfgDir, "-full"}, []string{"gofile"})
+	if _, err := os.Stat(filepath.Join(cards, "cards.json")); err != nil {
+		t.Errorf("cards.json was not downloaded: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(cards, "cards.json.tmp")); err == nil {
+		t.Error("temp file left behind")
+	}
+
+	// only the enabled kinds are filled, and nothing is added twice
+	added, _ = RunBepis(append(args, "-full"), []string{"gofile"})
 	if added != 0 {
 		t.Errorf("gofile link was already filed, added=%d", added)
+	}
+}
+
+func TestRunBepisKeepsOldCopyWhenDownloadFails(t *testing.T) {
+	dir := t.TempDir()
+	cards := filepath.Join(dir, "bepis")
+	cfgDir := filepath.Join(dir, "config")
+	if err := os.MkdirAll(cfgDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(cfgDir, "mega.json"), []byte(`{"groups":[{"name":"manual","links":[]}]}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	writeTestCards(t, filepath.Join(cards, "cards.json"), map[int]bepisRecord{1: {ID: 1, Bio: testMegaFolder}})
+
+	status := http.StatusForbidden
+	srv := newCardsServer(t, "", &status)
+	defer srv.Close()
+
+	// The download retries with a pause; the short deadline keeps the test fast.
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+	if err := downloadBepisCards(ctx, srv.URL, filepath.Join(cards, "cards.json")); err == nil {
+		t.Fatal("expected an error")
+	}
+	records, err := loadBepisCards(filepath.Join(cards, "cards.json"))
+	if err != nil || len(records) != 1 || records[1].Bio != testMegaFolder {
+		t.Fatalf("the old copy was damaged: %v %v", records, err)
+	}
+	if _, err := os.Stat(filepath.Join(cards, "cards.json.tmp")); err == nil {
+		t.Error("temp file left behind")
+	}
+}
+
+func TestDownloadBepisCardsRejectsGarbage(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("<html>not json</html>")) }))
+	defer srv.Close()
+	path := filepath.Join(t.TempDir(), "cards.json")
+	writeTestCards(t, path, map[int]bepisRecord{1: {ID: 1, Bio: "good"}})
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+	if err := downloadBepisCards(ctx, srv.URL, path); err == nil {
+		t.Fatal("garbage must not be accepted")
+	}
+	if m, err := loadBepisCards(path); err != nil || m[1].Bio != "good" {
+		t.Errorf("good copy replaced: %v %v", m, err)
 	}
 }

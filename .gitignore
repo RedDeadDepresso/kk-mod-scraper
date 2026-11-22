@@ -30,3 +30,6 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# downloaded from kk-author-scraper on every run (42 MB), never committed
+cache/bepis/
