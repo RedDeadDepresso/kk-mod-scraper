@@ -75,6 +75,17 @@ Single-file links are looked at with one cheap API call (name and size); only `.
   skipped. Flags: `-full` (read every card again, also the main `-full` flag), `-bepis-url` (where to download
   `cards.json` from), `-bepis-dir`, `-config-dir`.
 
+- A group with `"source": "pixiv"` is filled the same way from the **pixiv profiles** of the authors
+  (`scrapers/pixivprofiles.go`, runs right after the Bepis step). kk-author-scraper reads the profiles
+  (description, homepage, social links) into its `cache/pixiv/profiles.json`; this step downloads
+  <https://raw.githubusercontent.com/RedDeadDepresso/kk-author-scraper/refs/heads/main/cache/pixiv/profiles.json>
+  to `cache/pixiv/profiles.json` (git-ignored; if the download fails, a copy left by an earlier run is used), and
+  adds the Mega / Drive / Pixeldrain / Dropbox / MediaFire / Catbox / Gofile links found in the descriptions and
+  links of the profiles to this group in each config (created if missing). It is purged like a forum group.
+  `newest_profile` is the newest `checked_at` that was read; only profiles checked later are read, so a purged
+  link isn't probed again every run (a profile kk-author-scraper reads again, every 30 days by default, is read again
+  too). Flags: `-full` (read every profile again, also the main `-full` flag), `-pixiv-url`, `-pixiv-dir`, `-config-dir`.
+
 Add a link to a group to index another folder; remove one and its files are deleted on the next fully
 successful run. Each folder gets an index and a cache named after the folder as it is called
 on the host (`<name> (<id>)` if two folders share a name). One broken folder doesn't stop the
@@ -180,13 +191,13 @@ Flags (all optional) for all of them: `-config`, `-data-dir`, `-cache-dir`, `-fu
 
 ### Choosing which sources run
 
-Sources: `bepis`, `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`, `mediafire`, `catbox`, `gofile`. By default all run. To run only some,
+Sources: `bepis`, `pixiv`, `koikatsucards`, `betterrepack`, `mega`, `drive`, `pixeldrain`, `dropbox`, `mediafire`, `catbox`, `gofile`. By default all run. To run only some,
 pass `-sources mega,koikatsucards` (`go run . -sources ...`) or set the `SCRAPE_SOURCES`
 environment variable. In GitHub Actions, set the repository variable `SCRAPE_SOURCES`
 (Settings > Secrets and variables > Actions > Variables); the next run uses it, no commit needed.
 Empty or unset means all. An unknown name stops the run, so a typo can't silently disable
 everything. A disabled source is skipped completely: its files in `data/` and its config stay as
-they are (and stay published), and the forum and Bepis aren't searched for its links (`bepis` itself only collects links: enable it together with the host sources you want filled). To add a website, add
+they are (and stay published), and the forum and Bepis aren't searched for its links (`bepis` and `pixiv` only collect links: enable it together with the host sources you want filled). To add a website, add
 an entry to `sources()` in `main.go`.
 
 ### Published site

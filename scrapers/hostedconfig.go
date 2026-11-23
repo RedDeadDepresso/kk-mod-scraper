@@ -16,9 +16,10 @@ package scrapers
 // indexer: links without mods are purged from it. A group without one is hand-maintained and
 // never loses links automatically. "newest_post" is where the forum scraper stops next time.
 //
-// A group with a "source" (db.bepis.moe) is filled by the Bepis scraper (bepis.go) and is
-// tidied up the same way. "newest_card" is the newest cached card whose bio and comments were
-// read for it.
+// A group with a "source" is filled by a collector and is tidied up the same way:
+// "db.bepis.moe" by the Bepis scraper (bepis.go; "newest_card" is the newest cached card whose
+// bio and comments were read) and "pixiv" by the pixiv profile scraper (pixivprofiles.go;
+// "newest_profile" is the newest profile that was read).
 //
 // The old format, a plain JSON array of links, is still read (as one group named "manual").
 
@@ -45,6 +46,8 @@ type linkGroup struct {
 	NewestPost *postMarker `json:"newest_post,omitempty"`
 	Source     string      `json:"source,omitempty"`      // filled by another scraper than the forum one: "db.bepis.moe"
 	NewestCard int         `json:"newest_card,omitempty"` // Bepis groups: how far the cached cards were read
+	// pixiv groups: "checked_at" of the newest profile that was read (RFC 3339, UTC)
+	NewestProfile string `json:"newest_profile,omitempty"`
 	Links      []string    `json:"links"`
 }
 

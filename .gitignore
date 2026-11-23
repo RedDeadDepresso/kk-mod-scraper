@@ -31,5 +31,6 @@ go.work.sum
 # .idea/
 # .vscode/
 
-# downloaded from kk-author-scraper on every run (42 MB), never committed
+# downloaded from kk-author-scraper on every run, never committed
 cache/bepis/
+cache/pixiv/

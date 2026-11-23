@@ -79,8 +79,8 @@ func runArgs() []string {
 	return args
 }
 
-// bepisArgs are the flags the Bepis step takes: it only reads the cards that kk-author-scraper
-// fetched, so -retry-failed doesn't apply to it.
+// bepisArgs are the flags the Bepis and pixiv steps take: they only read what kk-author-scraper
+// collected, so -retry-failed doesn't apply to them.
 func bepisArgs() []string {
 	if *fullFlag {
 		return []string{"-full"}
@@ -90,6 +90,7 @@ func bepisArgs() []string {
 
 func sources() []source {
 	return []source{
+		{"pixiv", nil}, // collector: pixiv profiles (from kk-author-scraper), their links go to config/*.json
 		{"bepis", nil}, // collector: cards of db.bepis.moe (from kk-author-scraper), their links go to config/*.json
 		{"koikatsucards", func() (int, int) { return scrapers.ScrapeMods(), 0 }},
 		{"betterrepack", func() (int, int) { return scrapers.RunModpack(runArgs()), 0 }},
@@ -104,7 +105,7 @@ func sources() []source {
 }
 
 // forumKinds are the sources whose links are collected from the forum (see scrapers/forum.go)
-// and from the Bepis cards (see scrapers/bepis.go): they are only collected for the kinds of
+// from the Bepis cards (see scrapers/bepis.go) and from the pixiv profiles (see scrapers/pixivprofiles.go): they are only collected for the kinds of
 // links whose source is enabled.
 var forumKinds = []string{"mega", "drive", "pixeldrain", "dropbox", "mediafire", "catbox", "gofile"}
 
@@ -186,11 +187,14 @@ func main() {
 			kinds = append(kinds, k)
 		}
 	}
-	forumFailures, bepisFailures := 0, 0
+	forumFailures, bepisFailures, pixivFailures := 0, 0, 0
 	if len(kinds) > 0 {
 		_, forumFailures = scrapers.RunForum([]string{"-kinds", strings.Join(kinds, ",")})
 		if enabled["bepis"] {
 			_, bepisFailures = scrapers.RunBepis(bepisArgs(), kinds)
+		}
+		if enabled["pixiv"] {
+			_, pixivFailures = scrapers.RunPixiv(bepisArgs(), kinds)
 		}
 	}
 
@@ -218,6 +222,9 @@ func main() {
 	}
 	if bepisFailures > 0 {
 		fatal("db.bepis.moe could not be scraped completely (see the errors above)", "problems", bepisFailures)
+	}
+	if pixivFailures > 0 {
+		fatal("The pixiv profiles could not be scraped completely (see the errors above)", "problems", pixivFailures)
 	}
 	if len(failures) > 0 {
 		fatal("Some items could not be processed (see the errors above)", failures...)

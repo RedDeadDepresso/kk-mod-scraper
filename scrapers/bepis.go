@@ -86,6 +86,16 @@ func loadBepisCards(path string) (map[int]bepisRecord, error) {
 // downloadBepisCards downloads cards.json to path (atomically, only replacing the old copy
 // when the new one is a valid JSON array of cards).
 func downloadBepisCards(ctx context.Context, url, path string) error {
+	return downloadFile(ctx, url, path, func(p string) error {
+		_, err := loadBepisCards(p)
+		return err
+	})
+}
+
+// downloadFile downloads url to path, trying 3 times. The file is written next to path and
+// only replaces it when validate accepts it, so a truncated or wrong answer never destroys a
+// good copy.
+func downloadFile(ctx context.Context, url, path string, validate func(path string) error) error {
 	const attempts = 3
 	var lastErr error
 	for i := 1; i <= attempts; i++ {
@@ -96,16 +106,16 @@ func downloadBepisCards(ctx context.Context, url, path string) error {
 			case <-time.After(time.Duration(i) * 2 * time.Second):
 			}
 		}
-		lastErr = downloadOnce(ctx, url, path)
+		lastErr = downloadOnce(ctx, url, path, validate)
 		if lastErr == nil || ctx.Err() != nil {
 			break
 		}
-		slog.Warn("Downloading the Bepis cards failed", "attempt", i, "of", attempts, "err", lastErr)
+		slog.Warn("Download failed", "url", url, "attempt", i, "of", attempts, "err", lastErr)
 	}
 	return lastErr
 }
 
-func downloadOnce(ctx context.Context, url, path string) error {
+func downloadOnce(ctx context.Context, url, path string, validate func(path string) error) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return err
@@ -133,11 +143,11 @@ func downloadOnce(ctx context.Context, url, path string) error {
 		err = cerr
 	}
 	if err == nil {
-		_, err = loadBepisCards(tmp) // a truncated or wrong file must not replace a good copy
+		err = validate(tmp) // a truncated or wrong file must not replace a good copy
 	}
 	if err != nil {
 		os.Remove(tmp)
-		return fmt.Errorf("could not download the cards: %w", err)
+		return fmt.Errorf("could not download %s: %w", url, err)
 	}
 	return os.Rename(tmp, path)
 }
@@ -158,13 +168,17 @@ var bepisKinds = map[string]forumKind{
 }
 
 // bepisGroup returns the group of the config that holds the Bepis links, adding it if needed.
-func (c *hostedConfig) bepisGroup() (g *linkGroup, created bool) {
+func (c *hostedConfig) bepisGroup() (g *linkGroup, created bool) { return c.sourceGroup(bepisSource) }
+
+// sourceGroup returns the group of the config that a collector (Bepis, pixiv profiles) fills,
+// adding it if needed. Its name is the source.
+func (c *hostedConfig) sourceGroup(source string) (g *linkGroup, created bool) {
 	for _, g := range c.Groups {
-		if g.Source == bepisSource {
+		if g.Source == source {
 			return g, false
 		}
 	}
-	g = &linkGroup{Name: bepisSource, Source: bepisSource, Links: []string{}}
+	g = &linkGroup{Name: source, Source: source, Links: []string{}}
 	c.Groups = append(c.Groups, g)
 	return g, true
 }
