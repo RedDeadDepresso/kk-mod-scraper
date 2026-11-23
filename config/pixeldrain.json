@@ -8,9 +8,9 @@
       "name": "kknow.cc",
       "search": "https://kknow.cc/search/?q=https%3A%2F%2Fpixeldrain.com\u0026o=date",
       "newest_post": {
-        "id": "post-93845",
-        "url": "https://kknow.cc/threads/illusion-koikatu-mod-search-thread.1854/post-93845",
-        "time": "2026-11-06T10:04:55Z"
+        "id": "post-95071",
+        "url": "https://kknow.cc/threads/illusion-koikatu-card-sharing-request-thread-2-0-restart.6/post-95071",
+        "time": "2026-11-17T01:15:40Z"
       },
       "links": [
         "https://pixeldrain.com/u/sYVsUc1N",
@@ -21,7 +21,7 @@
     {
       "name": "db.bepis.moe",
       "source": "db.bepis.moe",
-      "newest_card": 401893,
+      "newest_card": 402088,
       "links": [
         "https://pixeldrain.com/u/Z75fiYCD",
         "https://pixeldrain.com/u/s5KXavwZ",
@@ -29,6 +29,12 @@
         "https://pixeldrain.com/u/wcyeNZiZ",
         "https://pixeldrain.com/l/UD4GXufY"
       ]
+    },
+    {
+      "name": "pixiv",
+      "source": "pixiv",
+      "newest_profile": "2026-11-22T06:20:06Z",
+      "links": []
     }
   ]
 }

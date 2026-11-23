@@ -19,11 +19,17 @@
     {
       "name": "db.bepis.moe",
       "source": "db.bepis.moe",
-      "newest_card": 401893,
+      "newest_card": 402088,
       "links": [
         "https://www.dropbox.com/s/67x1qszw843kgzt/%5BSZY%5DhutaoV0.9.zip",
         "https://www.dropbox.com/scl/fo/u24ly96tgd6q1sjz8xrkf/AALcwv_O-5hcTFaHfh7-4pk?rlkey=j7mwsz868zsudez3zjk7fdkh2"
       ]
+    },
+    {
+      "name": "pixiv",
+      "source": "pixiv",
+      "newest_profile": "2026-11-22T06:20:06Z",
+      "links": []
     }
   ]
 }

@@ -8,9 +8,9 @@
       "name": "kknow.cc",
       "search": "https://kknow.cc/search/?q=https%3A%2F%2Fwww.mediafire.com\u0026o=date",
       "newest_post": {
-        "id": "post-92897",
-        "url": "https://kknow.cc/threads/my-collection-of-edited-out-girls-frontline-2-cards.2112/post-92897",
-        "time": "2026-10-28T19:02:52Z"
+        "id": "post-95960",
+        "url": "https://kknow.cc/threads/illusion-koikatu-card-sharing-request-thread-2-0-restart.6/post-95960",
+        "time": "2026-11-22T21:59:33Z"
       },
       "links": [
         "https://www.mediafire.com/file/rt2laq6one78z3g",
@@ -26,7 +26,6 @@
         "https://www.mediafire.com/file/5k5zujjxby587fk",
         "https://www.mediafire.com/file/bkkluc7a61k8ft7",
         "https://www.mediafire.com/file/mzur08pz3aoro8o",
-        "https://www.mediafire.com/file/wmx5dulyoz0zido",
         "https://www.mediafire.com/file/hpqxg5c6ji4i3me",
         "https://www.mediafire.com/file/hydemh1ilr6mvy0",
         "https://www.mediafire.com/file/hx96bcycuixquw2"
@@ -35,7 +34,7 @@
     {
       "name": "db.bepis.moe",
       "source": "db.bepis.moe",
-      "newest_card": 401893,
+      "newest_card": 402088,
       "links": [
         "https://www.mediafire.com/file/ozen2amab46hoj6",
         "https://www.mediafire.com/folder/wn6706mrelwhp6d",
@@ -220,7 +219,6 @@
         "https://www.mediafire.com/file/fer2xae8ib5cod2",
         "https://www.mediafire.com/file/pryvx6h239tpfme",
         "https://www.mediafire.com/file/aid38kl8t1eom6f",
-        "https://www.mediafire.com/file/o4agivpceu7bmmr",
         "https://www.mediafire.com/file/1n1w4hcxgvn51iv",
         "https://www.mediafire.com/file/fwos3ul8lagxres",
         "https://www.mediafire.com/file/umuyxwip6k4ftcn",
@@ -233,6 +231,12 @@
         "https://www.mediafire.com/file/9sc3qwd3hx7yi11",
         "https://www.mediafire.com/file/mote6meu56umrd8"
       ]
+    },
+    {
+      "name": "pixiv",
+      "source": "pixiv",
+      "newest_profile": "2026-11-22T06:20:06Z",
+      "links": []
     }
   ]
 }

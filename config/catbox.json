@@ -17,7 +17,7 @@
     {
       "name": "db.bepis.moe",
       "source": "db.bepis.moe",
-      "newest_card": 401893,
+      "newest_card": 402088,
       "links": [
         "https://files.catbox.moe/5lqrle.zipmod",
         "https://files.catbox.moe/788xp2.zipmod",
@@ -103,6 +103,12 @@
         "https://files.catbox.moe/y17md0.zipmod",
         "https://files.catbox.moe/j2yti4.zipmod"
       ]
+    },
+    {
+      "name": "pixiv",
+      "source": "pixiv",
+      "newest_profile": "2026-11-22T06:20:06Z",
+      "links": []
     }
   ]
 }

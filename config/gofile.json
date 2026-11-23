@@ -8,9 +8,9 @@
       "name": "kknow.cc",
       "search": "https://kknow.cc/search/?q=https%3A%2F%2Fgofile.io\u0026o=date",
       "newest_post": {
-        "id": "post-95872",
-        "url": "https://kknow.cc/threads/illusion-koikatu-card-sharing-request-thread-2-0-restart.6/post-95872",
-        "time": "2026-11-22T08:53:45Z"
+        "id": "post-95966",
+        "url": "https://kknow.cc/threads/illusion-koikatu-card-sharing-request-thread-2-0-restart.6/post-95966",
+        "time": "2026-11-22T23:45:08Z"
       },
       "links": [
         "https://gofile.io/d/UMLcracT",
@@ -50,7 +50,13 @@
     {
       "name": "db.bepis.moe",
       "source": "db.bepis.moe",
-      "newest_card": 401893,
+      "newest_card": 402088,
+      "links": []
+    },
+    {
+      "name": "pixiv",
+      "source": "pixiv",
+      "newest_profile": "2026-11-22T06:20:06Z",
       "links": []
     }
   ]

@@ -51,7 +51,7 @@
     {
       "name": "db.bepis.moe",
       "source": "db.bepis.moe",
-      "newest_card": 401893,
+      "newest_card": 402088,
       "links": [
         "https://drive.google.com/file/d/1qJfK788U_ZWbE_cZLCNx9aygUyYVLAQz/view",
         "https://drive.google.com/file/d/1bmPWKBuo0-JKjCKFwixIbHIvRpIBLhPd/view",
@@ -114,6 +114,15 @@
         "https://drive.google.com/drive/folders/1w_V2QkcuutgNCZqzYTKVb8u9Zy3ajd_4",
         "https://drive.google.com/drive/folders/1h6G1dRwNjGDmGVmmP4-z65I5hC7rEBsy",
         "https://drive.google.com/drive/folders/1A19Bl27mXtSXrnavyQexANPkjAw4Qc5s"
+      ]
+    },
+    {
+      "name": "pixiv",
+      "source": "pixiv",
+      "newest_profile": "2026-11-22T06:20:06Z",
+      "links": [
+        "https://drive.google.com/drive/folders/1kVaI2sylO34dUyUcKvqSfLK_OHket8Oy",
+        "https://drive.google.com/drive/folders/1AT3t5_R6XMKQgDS3QG2MGLvNAGEhQQSR"
       ]
     }
   ]
