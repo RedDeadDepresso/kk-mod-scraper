@@ -32,7 +32,8 @@ package scrapers
 //	                                      /u/ links are used), and/or
 //	config/forum-packs/links.txt          extra links, one per line (# comments allowed)
 //
-// Output: data/pixeldrain/Forum Mod Packs.json, merged into mod.json with the other
+// Output: data/pixeldrain/Forum Mod Packs.json (every GUID under the version "unknown", as the
+// mod list has no versions), merged into mod.json with the other
 // Pixeldrain indexes by the Pages workflow. /u/ links (one zip) and /l/ links (a list of zips) are handled.
 
 import (
@@ -695,8 +696,8 @@ func buildPackIndex(dir, modlistPath, out, cachePath string, full bool, maxURLs 
 	slog.Info("Zips listed", "source", pixeldrainKind, "zips", len(targets), "listed_again", relisted, "from_cache", len(newCache.Zips)-relisted)
 
 	// A zip that could not be read keeps its old entries, so one bad moment doesn't drop it.
-	for g, urls := range prev {
-		for _, u := range urls {
+	for g := range prev {
+		for _, u := range prev.flatURLs(g) {
 			for _, id := range failed {
 				if strings.Contains(u, "/file/"+id+"/info/zip/") {
 					index[g] = append(index[g], u)
@@ -715,7 +716,8 @@ func buildPackIndex(dir, modlistPath, out, cachePath string, full bool, maxURLs 
 			newGuids++
 		}
 	}
-	wrote, err := writeIndex(out, index)
+	// The mod list gives no versions, so all URLs of a GUID go under "unknown".
+	wrote, err := writeIndex(out, withVersion(index, unknownVersion))
 	if err != nil {
 		slog.Error("Could not write the index", "path", out, "err", err)
 		return 0, failures + 1

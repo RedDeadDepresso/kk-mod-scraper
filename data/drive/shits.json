@@ -2,13 +2,17 @@
  "generated": "2026-11-23T00:17:09",
  "count": 2,
  "guids": {
-  "xukmi.Shaders.VanillaPlus": [
-   "https://drive.google.com/file/d/1Vm0bKBtrQR1ZQ-EbPFLb4ITKoiWvJ-An/view",
-   "https://drive.google.com/file/d/10Es1xgw8QKc8kF6c2WcQjVUiU8txzdVu/view"
-  ],
-  "xukmi.Shaders.VanillaPlus.Tess": [
-   "https://drive.google.com/file/d/16w-8y5vsQEsVwxKHSKG-cOv0OCCtC34e/view",
-   "https://drive.google.com/file/d/1dpTnhH9SA64QM2tmRtta3J3-hhdy10Kw/view"
-  ]
+  "xukmi.Shaders.VanillaPlus": {
+   "1.7.2": [
+    "https://drive.google.com/file/d/1Vm0bKBtrQR1ZQ-EbPFLb4ITKoiWvJ-An/view",
+    "https://drive.google.com/file/d/10Es1xgw8QKc8kF6c2WcQjVUiU8txzdVu/view"
+   ]
+  },
+  "xukmi.Shaders.VanillaPlus.Tess": {
+   "0.0.0.5": [
+    "https://drive.google.com/file/d/16w-8y5vsQEsVwxKHSKG-cOv0OCCtC34e/view",
+    "https://drive.google.com/file/d/1dpTnhH9SA64QM2tmRtta3J3-hhdy10Kw/view"
+   ]
+  }
  }
 }

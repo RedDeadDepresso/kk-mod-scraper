@@ -2,33 +2,53 @@
  "generated": "2026-11-16T10:24:34",
  "count": 9,
  "guids": {
-  "BronyaMN": [
-   "https://drive.google.com/file/d/1DN79eeHT2Ankhl5eQ1xOf8n1BKqDIixj/view"
-  ],
-  "KL_bronya": [
-   "https://drive.google.com/file/d/1LO1wBu1jsCwaH_SHXFpFNU949WXc_K9Z/view"
-  ],
-  "[bokuli]Bronya_C9": [
-   "https://drive.google.com/file/d/1X01np5kQCnkBNeuuknhGm3ljfD9UOqs7/view"
-  ],
-  "[bokuli]Bronya_C9_headmod": [
-   "https://drive.google.com/file/d/1SH2kRaFM-y8drp9c42WPAEUrauKHtZDi/view"
-  ],
-  "bronya_ganhai": [
-   "https://drive.google.com/file/d/1qn-2DTKu9W6c7A4P4shg0qeVDVuft9MF/view"
-  ],
-  "bronya_helena_wings": [
-   "https://drive.google.com/file/d/1c6--HG_3FwtB-6hfwCmb3eVV5SuTWjYN/view"
-  ],
-  "bronya_qipao": [
-   "https://drive.google.com/file/d/1kRc6nXPzlgru4KYyIQjba-rYaClqYHAW/view"
-  ],
-  "enimaroah.TwilekHead": [
-   "https://drive.google.com/file/d/1JisalM_S5aI_DL4nmPK1CrFJahRzn_3L/view",
-   "https://drive.google.com/file/d/1xwuzfBAY0icPmzr4wVDndeHghb-CyvAQ/view"
-  ],
-  "xukmi.Shaders.FX": [
-   "https://drive.google.com/file/d/1BBLMzCVfG_leoFj7oaPXR1Z5u8x_ou-Y/view"
-  ]
+  "BronyaMN": {
+   "1.0": [
+    "https://drive.google.com/file/d/1DN79eeHT2Ankhl5eQ1xOf8n1BKqDIixj/view"
+   ]
+  },
+  "KL_bronya": {
+   "1.0": [
+    "https://drive.google.com/file/d/1LO1wBu1jsCwaH_SHXFpFNU949WXc_K9Z/view"
+   ]
+  },
+  "[bokuli]Bronya_C9": {
+   "1.1": [
+    "https://drive.google.com/file/d/1X01np5kQCnkBNeuuknhGm3ljfD9UOqs7/view"
+   ]
+  },
+  "[bokuli]Bronya_C9_headmod": {
+   "1.0": [
+    "https://drive.google.com/file/d/1SH2kRaFM-y8drp9c42WPAEUrauKHtZDi/view"
+   ]
+  },
+  "bronya_ganhai": {
+   "1.0": [
+    "https://drive.google.com/file/d/1qn-2DTKu9W6c7A4P4shg0qeVDVuft9MF/view"
+   ]
+  },
+  "bronya_helena_wings": {
+   "1.0": [
+    "https://drive.google.com/file/d/1c6--HG_3FwtB-6hfwCmb3eVV5SuTWjYN/view"
+   ]
+  },
+  "bronya_qipao": {
+   "1.0": [
+    "https://drive.google.com/file/d/1kRc6nXPzlgru4KYyIQjba-rYaClqYHAW/view"
+   ]
+  },
+  "enimaroah.TwilekHead": {
+   "1.0": [
+    "https://drive.google.com/file/d/1JisalM_S5aI_DL4nmPK1CrFJahRzn_3L/view"
+   ],
+   "v1.0": [
+    "https://drive.google.com/file/d/1xwuzfBAY0icPmzr4wVDndeHghb-CyvAQ/view"
+   ]
+  },
+  "xukmi.Shaders.FX": {
+   "1.0": [
+    "https://drive.google.com/file/d/1BBLMzCVfG_leoFj7oaPXR1Z5u8x_ou-Y/view"
+   ]
+  }
  }
 }

@@ -2,11 +2,15 @@
  "generated": "2026-11-23T11:34:08",
  "count": 2,
  "guids": {
-  "[Makise]SeeleC5": [
-   "https://gofile.io/d/lR5bp31q#afd90a23-a52f-4af9-9bda-04b21505792f"
-  ],
-  "ayuriassets.mod": [
-   "https://gofile.io/d/lR5bp31q#86797d26-3043-4105-ada5-cebc996ec416"
-  ]
+  "[Makise]SeeleC5": {
+   "1": [
+    "https://gofile.io/d/lR5bp31q#afd90a23-a52f-4af9-9bda-04b21505792f"
+   ]
+  },
+  "ayuriassets.mod": {
+   "1": [
+    "https://gofile.io/d/lR5bp31q#86797d26-3043-4105-ada5-cebc996ec416"
+   ]
+  }
  }
 }

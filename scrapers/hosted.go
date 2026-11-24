@@ -266,8 +266,8 @@ func syncFolder(p folderProvider, raw, id string, opt hostedOptions, used map[st
 		return base, 0, unreachable, fmt.Errorf("stopped the %s folder %q: %w", kind, base, aerr)
 	}
 
-	// All files share one "category", so buildGameIndex just orders by newest version, then
-	// newest upload, and drops identical copies.
+	// All files share one "category", so buildGameIndex just groups by version, orders by newest
+	// upload, and drops identical copies.
 	index := buildGameIndex(entries, []string{""}, "", opt.maxURLs)
 	if purgeable && len(index) == 0 && unreachable == 0 {
 		// Every file was read and none is a mod (character cards zipped, packs of many mods...).
@@ -544,7 +544,7 @@ func runHosted(p folderProvider, args []string) (newGuids, failures int) {
 	cacheDir := fs.String("cache-dir", defaultCacheDir, "cache files are written to <dir>/"+p.Kind()+"/<folder name>.json")
 	full := fs.Bool("full", false, "ignore the caches and probe every file")
 	retryFailed := fs.Bool("retry-failed", false, "probe again the files recorded as not indexable")
-	maxURLs := fs.Int("max-urls", defaultMaxURLs, "most URLs kept per GUID")
+	maxURLs := fs.Int("max-urls", defaultMaxURLs, "most URLs kept per GUID and version")
 	workers := fs.Int("workers", 4, "parallel downloads (max 8; the hosts rate-limit aggressively)")
 	_ = fs.Parse(args)
 

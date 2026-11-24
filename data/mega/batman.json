@@ -2,23 +2,35 @@
  "generated": "2026-11-10T19:00:51",
  "count": 6,
  "guids": {
-  "ArmR": [
-   "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/A9FwiTpR"
-  ],
-  "Arml": [
-   "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/44NCBL7T"
-  ],
-  "face": [
-   "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/8gUU1J4C"
-  ],
-  "jj.bathair": [
-   "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/ohdwnDyY"
-  ],
-  "jj.batmask": [
-   "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/Nl1z2C4C"
-  ],
-  "jj.battorso": [
-   "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/BklHjIjA"
-  ]
+  "ArmR": {
+   "1.0": [
+    "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/A9FwiTpR"
+   ]
+  },
+  "Arml": {
+   "1.0": [
+    "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/44NCBL7T"
+   ]
+  },
+  "face": {
+   "1.0": [
+    "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/8gUU1J4C"
+   ]
+  },
+  "jj.bathair": {
+   "1.0": [
+    "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/ohdwnDyY"
+   ]
+  },
+  "jj.batmask": {
+   "1.0": [
+    "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/Nl1z2C4C"
+   ]
+  },
+  "jj.battorso": {
+   "1.0": [
+    "https://mega.nz/folder/gk0RzKyI#KHwoC0JEBgf9n2FG4PgPUA/file/BklHjIjA"
+   ]
+  }
  }
 }

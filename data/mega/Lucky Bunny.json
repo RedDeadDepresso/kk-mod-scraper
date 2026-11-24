@@ -2,8 +2,10 @@
  "generated": "2026-11-08T06:27:02",
  "count": 1,
  "guids": {
-  "Lucky Bunny": [
-   "https://mega.nz/folder/d8MxVI7Y#3A6ttLQVYc4kilelaL9OkQ/file/wo9UFYgb"
-  ]
+  "Lucky Bunny": {
+   "1.0": [
+    "https://mega.nz/folder/d8MxVI7Y#3A6ttLQVYc4kilelaL9OkQ/file/wo9UFYgb"
+   ]
+  }
  }
 }

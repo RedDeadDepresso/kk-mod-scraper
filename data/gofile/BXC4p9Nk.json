@@ -2,18 +2,26 @@
  "generated": "2026-11-15T10:12:51",
  "count": 4,
  "guids": {
-  "Phantom.Hairs": [
-   "https://gofile.io/d/BXC4p9Nk#b21f01c0-6af4-46b7-8046-71518b282df0"
-  ],
-  "[Hatoko]ひがし茜特拉莉手指脚趾": [
-   "https://gofile.io/d/BXC4p9Nk#62fbdd2a-86e5-434b-b71f-383b3718f42c"
-  ],
-  "[纸鸢]星神-阿哈": [
-   "https://gofile.io/d/BXC4p9Nk#b4f244e2-68ef-4e1b-a163-3a12829c7f21",
-   "https://gofile.io/d/BXC4p9Nk#f8184b44-04ee-4aad-b71d-2ed4058af023"
-  ],
-  "[纸鸢]阿哈-群星乐透": [
-   "https://gofile.io/d/BXC4p9Nk#e07366f9-fe3c-490e-94f5-321b10d8e3df"
-  ]
+  "Phantom.Hairs": {
+   "1.25": [
+    "https://gofile.io/d/BXC4p9Nk#b21f01c0-6af4-46b7-8046-71518b282df0"
+   ]
+  },
+  "[Hatoko]ひがし茜特拉莉手指脚趾": {
+   "1.0": [
+    "https://gofile.io/d/BXC4p9Nk#62fbdd2a-86e5-434b-b71f-383b3718f42c"
+   ]
+  },
+  "[纸鸢]星神-阿哈": {
+   "1.0": [
+    "https://gofile.io/d/BXC4p9Nk#b4f244e2-68ef-4e1b-a163-3a12829c7f21",
+    "https://gofile.io/d/BXC4p9Nk#f8184b44-04ee-4aad-b71d-2ed4058af023"
+   ]
+  },
+  "[纸鸢]阿哈-群星乐透": {
+   "1.0": [
+    "https://gofile.io/d/BXC4p9Nk#e07366f9-fe3c-490e-94f5-321b10d8e3df"
+   ]
+  }
  }
 }

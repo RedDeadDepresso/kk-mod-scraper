@@ -231,8 +231,8 @@ func TestDriveEndToEnd(t *testing.T) {
 		t.Errorf("header: %+v", idx)
 	}
 	for g, u := range want {
-		if len(idx.Guids[g]) != 1 || idx.Guids[g][0] != u {
-			t.Errorf("%s: %v want %s", g, idx.Guids[g], u)
+		if len(idx.Guids.flatURLs(g)) != 1 || idx.Guids.flatURLs(g)[0] != u {
+			t.Errorf("%s: %v want %s", g, idx.Guids.flatURLs(g), u)
 		}
 	}
 

@@ -2,11 +2,15 @@
  "generated": "2026-11-16T10:24:28",
  "count": 2,
  "guids": {
-  "KKUSS": [
-   "https://drive.google.com/file/d/15bwwQyPElLY-fjfDHN43bqJcY__WOpX3/view"
-  ],
-  "KKUTS": [
-   "https://drive.google.com/file/d/1jW6iB6NEM2UpkCfUTLVMV7p61KMoAK1g/view"
-  ]
+  "KKUSS": {
+   "1.10": [
+    "https://drive.google.com/file/d/15bwwQyPElLY-fjfDHN43bqJcY__WOpX3/view"
+   ]
+  },
+  "KKUTS": {
+   "2.2": [
+    "https://drive.google.com/file/d/1jW6iB6NEM2UpkCfUTLVMV7p61KMoAK1g/view"
+   ]
+  }
  }
 }

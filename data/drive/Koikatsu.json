@@ -2,53 +2,85 @@
  "generated": "2026-11-23T00:18:00",
  "count": 16,
  "guids": {
-  "Anime_Nipples": [
-   "https://drive.google.com/file/d/14WLJZmCRxAwf6J0RSBqH902WEsmsaYFa/view"
-  ],
-  "KRM.PerineSet": [
-   "https://drive.google.com/file/d/1lfOlHlhwB9JixaBrZRVX0v_n78-L7MTE/view"
-  ],
-  "SunshineClothes": [
-   "https://drive.google.com/file/d/1bPTCb4QhJZ0HynfC0s6AZjmTZmRvJETt/view"
-  ],
-  "WWUF_Rooms": [
-   "https://drive.google.com/file/d/10d3avqaOX017hyKZxsEU3EBX6qmeMfrS/view"
-  ],
-  "WWUF_Weapons": [
-   "https://drive.google.com/file/d/1En_YPrnFvgcYxEfuVjbg4b--Csl2JzZV/view"
-  ],
-  "WW_Accs": [
-   "https://drive.google.com/file/d/1yycQ2LxcsbwrU8ZGUXNeIPpBAI_z7_lF/view"
-  ],
-  "WW_Emblems": [
-   "https://drive.google.com/file/d/17B4ARNZwjO4BIJx5yRkBezCV6VHqf_D1/view"
-  ],
-  "WW_Eyes": [
-   "https://drive.google.com/file/d/1PDLxNWiN0hkP-EnVHonpj1GGk-oTiZpl/view"
-  ],
-  "WW_Familiars": [
-   "https://drive.google.com/file/d/1x9m7fjGw-80eQaKcqM2zGLUw4REM8IXu/view"
-  ],
-  "WW_Hair": [
-   "https://drive.google.com/file/d/18eiWP455pU3U_pxBeD1TfmAP0d6XzZgb/view"
-  ],
-  "WW_Launcher_Unit": [
-   "https://drive.google.com/file/d/1vApev204uMpq9L5HuiYGTmgwzr-HFNq7/view"
-  ],
-  "WW_Neuroi": [
-   "https://drive.google.com/file/d/1VcFC5mkhSoZeYxc7jKUjneBYfDnP5SmT/view"
-  ],
-  "WW_SFX": [
-   "https://drive.google.com/file/d/1LjEF54Vo0YeRqr8NDLNBkkxqWmypwB6q/view"
-  ],
-  "WW_Skymaps": [
-   "https://drive.google.com/file/d/1lUcKCseOoO97c6soxI5SF2dcPrxdvOUk/view"
-  ],
-  "WW_Strikers": [
-   "https://drive.google.com/file/d/1sWx7-yQCDvcIjlGqGzbsJC78ED3VTvT_/view"
-  ],
-  "WW_WeaponAccs": [
-   "https://drive.google.com/file/d/17IDwwTAjBX7ctXhK1gv7qMH2ZNcSZIwp/view"
-  ]
+  "Anime_Nipples": {
+   "1.0": [
+    "https://drive.google.com/file/d/14WLJZmCRxAwf6J0RSBqH902WEsmsaYFa/view"
+   ]
+  },
+  "KRM.PerineSet": {
+   "1.1": [
+    "https://drive.google.com/file/d/1lfOlHlhwB9JixaBrZRVX0v_n78-L7MTE/view"
+   ]
+  },
+  "SunshineClothes": {
+   "1.2": [
+    "https://drive.google.com/file/d/1bPTCb4QhJZ0HynfC0s6AZjmTZmRvJETt/view"
+   ]
+  },
+  "WWUF_Rooms": {
+   "2.0": [
+    "https://drive.google.com/file/d/10d3avqaOX017hyKZxsEU3EBX6qmeMfrS/view"
+   ]
+  },
+  "WWUF_Weapons": {
+   "2.5.2": [
+    "https://drive.google.com/file/d/1En_YPrnFvgcYxEfuVjbg4b--Csl2JzZV/view"
+   ]
+  },
+  "WW_Accs": {
+   "1.1": [
+    "https://drive.google.com/file/d/1yycQ2LxcsbwrU8ZGUXNeIPpBAI_z7_lF/view"
+   ]
+  },
+  "WW_Emblems": {
+   "1.2": [
+    "https://drive.google.com/file/d/17B4ARNZwjO4BIJx5yRkBezCV6VHqf_D1/view"
+   ]
+  },
+  "WW_Eyes": {
+   "1.7.5": [
+    "https://drive.google.com/file/d/1PDLxNWiN0hkP-EnVHonpj1GGk-oTiZpl/view"
+   ]
+  },
+  "WW_Familiars": {
+   "v1.5": [
+    "https://drive.google.com/file/d/1x9m7fjGw-80eQaKcqM2zGLUw4REM8IXu/view"
+   ]
+  },
+  "WW_Hair": {
+   "0.8.2": [
+    "https://drive.google.com/file/d/18eiWP455pU3U_pxBeD1TfmAP0d6XzZgb/view"
+   ]
+  },
+  "WW_Launcher_Unit": {
+   "2.0": [
+    "https://drive.google.com/file/d/1vApev204uMpq9L5HuiYGTmgwzr-HFNq7/view"
+   ]
+  },
+  "WW_Neuroi": {
+   "2.2": [
+    "https://drive.google.com/file/d/1VcFC5mkhSoZeYxc7jKUjneBYfDnP5SmT/view"
+   ]
+  },
+  "WW_SFX": {
+   "1.2": [
+    "https://drive.google.com/file/d/1LjEF54Vo0YeRqr8NDLNBkkxqWmypwB6q/view"
+   ]
+  },
+  "WW_Skymaps": {
+   "1.0": [
+    "https://drive.google.com/file/d/1lUcKCseOoO97c6soxI5SF2dcPrxdvOUk/view"
+   ]
+  },
+  "WW_Strikers": {
+   "2.5.1": [
+    "https://drive.google.com/file/d/1sWx7-yQCDvcIjlGqGzbsJC78ED3VTvT_/view"
+   ]
+  },
+  "WW_WeaponAccs": {
+   "2.5.2": [
+    "https://drive.google.com/file/d/17IDwwTAjBX7ctXhK1gv7qMH2ZNcSZIwp/view"
+   ]
+  }
  }
 }

@@ -2,14 +2,20 @@
  "generated": "2026-11-10T19:18:42",
  "count": 3,
  "guids": {
-  "Evaan.DragonMaid.Mod": [
-   "https://www.mediafire.com/file/7ijy2mnn0b9ug0c"
-  ],
-  "arcown.tohru": [
-   "https://www.mediafire.com/file/ofjfk4e76puiaew"
-  ],
-  "tohru_h_h_123": [
-   "https://www.mediafire.com/file/h8huhqto9a1wm6x"
-  ]
+  "Evaan.DragonMaid.Mod": {
+   "1.1": [
+    "https://www.mediafire.com/file/7ijy2mnn0b9ug0c"
+   ]
+  },
+  "arcown.tohru": {
+   "1.0": [
+    "https://www.mediafire.com/file/ofjfk4e76puiaew"
+   ]
+  },
+  "tohru_h_h_123": {
+   "v0.1.9": [
+    "https://www.mediafire.com/file/h8huhqto9a1wm6x"
+   ]
+  }
  }
 }

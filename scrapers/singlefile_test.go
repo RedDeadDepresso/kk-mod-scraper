@@ -106,7 +106,7 @@ func TestMegaFileLinks(t *testing.T) {
 		Guids map[string][]string `json:"guids"`
 	}
 	json.Unmarshal(data, &idx)
-	if urls := idx.Guids["com.test.single"]; len(urls) != 1 || urls[0] != fileLink(good) {
+	if urls := idx.Guids.flatURLs("com.test.single"); len(urls) != 1 || urls[0] != fileLink(good) {
 		t.Errorf("index: %s", data)
 	}
 

@@ -2,11 +2,15 @@
  "generated": "2026-11-16T10:24:58",
  "count": 2,
  "guids": {
-  "Neko's Bundle_V2": [
-   "https://drive.google.com/file/d/1QN0TcGAuQYK7dJuUrfhC2e9BgxtAHRCM/view"
-  ],
-  "[YueFengYu]鳶一折紙": [
-   "https://drive.google.com/file/d/1VPPMPKE0v2AU3IYzVa31_DCosbLEc-pH/view"
-  ]
+  "Neko's Bundle_V2": {
+   "4.8": [
+    "https://drive.google.com/file/d/1QN0TcGAuQYK7dJuUrfhC2e9BgxtAHRCM/view"
+   ]
+  },
+  "[YueFengYu]鳶一折紙": {
+   "1.0": [
+    "https://drive.google.com/file/d/1VPPMPKE0v2AU3IYzVa31_DCosbLEc-pH/view"
+   ]
+  }
  }
 }

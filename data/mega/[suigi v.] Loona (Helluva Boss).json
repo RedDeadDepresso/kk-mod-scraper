@@ -2,11 +2,15 @@
  "generated": "2026-11-08T06:15:49",
  "count": 2,
  "guids": {
-  "ABCEEFG.LoonaHeadmod": [
-   "https://mega.nz/folder/IihwHY5K#ALr7mZAODqeaYwkmOK6vFw/file/RzhGFK4R"
-  ],
-  "ABCEEFG.SuigiLoona": [
-   "https://mega.nz/folder/IihwHY5K#ALr7mZAODqeaYwkmOK6vFw/file/QyhGRY4I"
-  ]
+  "ABCEEFG.LoonaHeadmod": {
+   "0.1": [
+    "https://mega.nz/folder/IihwHY5K#ALr7mZAODqeaYwkmOK6vFw/file/RzhGFK4R"
+   ]
+  },
+  "ABCEEFG.SuigiLoona": {
+   "0.1": [
+    "https://mega.nz/folder/IihwHY5K#ALr7mZAODqeaYwkmOK6vFw/file/QyhGRY4I"
+   ]
+  }
  }
 }

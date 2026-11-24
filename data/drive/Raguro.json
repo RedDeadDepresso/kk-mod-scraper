@@ -2,260 +2,430 @@
  "generated": "2026-11-19T10:56:32",
  "count": 85,
  "guids": {
-  "Raguro.BGBackHair": [
-   "https://drive.google.com/file/d/10LhQLVQJZGXSsWsARy-BhcHh87c98-7a/view"
-  ],
-  "Raguro.BGhair1": [
-   "https://drive.google.com/file/d/1OMrym74h948sOBo895ZYwIKy4vWcd4R6/view"
-  ],
-  "Raguro.BGhairF1": [
-   "https://drive.google.com/file/d/1e8BaBe7nUsBkmxrItA-GH-rV4jcOGtQZ/view"
-  ],
-  "Raguro.BGhairF2": [
-   "https://drive.google.com/file/d/140Pj8BYy1oSTbxGr2k2C1x1W7SdQ-7kG/view"
-  ],
-  "Raguro.BatgirlMask": [
-   "https://drive.google.com/file/d/12vqFSkM7RtgqLGrjjdvgBj5Dy6hiTXgo/view"
-  ],
-  "Raguro.CSocks": [
-   "https://drive.google.com/file/d/1rY4mqsEfVvOkkTWbqGC0XRPh-gJVcLXa/view"
-  ],
-  "Raguro.ChuckyShoes": [
-   "https://drive.google.com/file/d/1bnlQdvr1KqiPK1g5gxmW1oAB0yw227jR/view"
-  ],
-  "Raguro.FatinaHeels": [
-   "https://drive.google.com/file/d/1cUSsfi0DpUoZWsOSXTwsFgUBosC9gBKP/view"
-  ],
-  "Raguro.GloriaNMGvs": [
-   "https://drive.google.com/file/d/16c5g6G1sDKQrcg5SZW7vwemNxC1_3zPf/view"
-  ],
-  "Raguro.GloriaNMhair": [
-   "https://drive.google.com/file/d/1f2h7VBy4LcNoVz64L2UIyDoYsJBcQwJx/view"
-  ],
-  "Raguro.GloriaNMhairf": [
-   "https://drive.google.com/file/d/1vwTmeRBN5Bk5M8q0kpT-Ei8kpYKOaKSg/view"
-  ],
-  "Raguro.GnmBts": [
-   "https://drive.google.com/file/d/1D92bNia_NDlFAvUIuqonS7htyjqMksHV/view"
-  ],
-  "Raguro.GnmCpe": [
-   "https://drive.google.com/file/d/1_rmlO7oMM36hQLdpLycRH6DIFFnaTEJg/view"
-  ],
-  "Raguro.GnmSkrt": [
-   "https://drive.google.com/file/d/11vxt8qr3Qly_RyjISygG1J33Z7BNAbBD/view"
-  ],
-  "Raguro.GnmTop": [
-   "https://drive.google.com/file/d/1jOGuuOMg4zSIzHtu-_YU2syyJHQEwZku/view"
-  ],
-  "Raguro.HollowHead": [
-   "https://drive.google.com/file/d/13Hny8uuM6HDrXpyCE_vptKq9WsY2mRRF/view"
-  ],
-  "Raguro.JGHair": [
-   "https://drive.google.com/file/d/1PdZ3ZmkN5WheiN9fWRRtMzZXlI3A2ND7/view"
-  ],
-  "Raguro.JGSuit": [
-   "https://drive.google.com/file/d/14M7iRHpTtsS8UgyX9aMx8w6acOPHkQ5L/view"
-  ],
-  "Raguro.JGgloves": [
-   "https://drive.google.com/file/d/1E2YhfBqWQbRmmJLN5lrbQAN1xbIGCV08/view"
-  ],
-  "Raguro.JGjacket": [
-   "https://drive.google.com/file/d/1O52jFUDDzFMAw8oL6BiVRyieSboBQlll/view"
-  ],
-  "Raguro.JGpants": [
-   "https://drive.google.com/file/d/13GwY9gNiLEXC9T6IMu37wquhHPQRLTim/view"
-  ],
-  "Raguro.KNhr": [
-   "https://drive.google.com/file/d/10I28MSlXQCjyBCLzlNVoFkA72Ga--Gju/view"
-  ],
-  "Raguro.KNld": [
-   "https://drive.google.com/file/d/17-l6gQnV4lZU26M2X3ciJ2MJi41kRLUK/view"
-  ],
-  "Raguro.KNls": [
-   "https://drive.google.com/file/d/1qTtCoxp0EG662xVHBiTKOO1gycQY6V_g/view"
-  ],
-  "Raguro.KNsw": [
-   "https://drive.google.com/file/d/1-_1X-bwfHRhB_ejvoYo2ElYVPuOc-L8M/view"
-  ],
-  "Raguro.KNtd": [
-   "https://drive.google.com/file/d/1txptQ3i8J8u1JsoMkVyojU4_PgBo2del/view"
-  ],
-  "Raguro.KamadoKieCap": [
-   "https://drive.google.com/file/d/1RujW9-BfRcbvrP4PXQ_1K7_NQbUfkWoz/view"
-  ],
-  "Raguro.KamadoKieHair": [
-   "https://drive.google.com/file/d/15tdLgl0Zgartl26EH-kvZSn06WxctRbf/view"
-  ],
-  "Raguro.KamadoKieYukata": [
-   "https://drive.google.com/file/d/1a6V6J8ue_Uvh057FgndZvv17MLNZuPUt/view"
-  ],
-  "Raguro.KamadoKieZori": [
-   "https://drive.google.com/file/d/11nD6wMBm0uyau-H_G-xQFL8NZzwconel/view"
-  ],
-  "Raguro.LottaDress": [
-   "https://drive.google.com/file/d/1K0eVL6P4GDzT7JKonedD7UAl_HFYC0Lm/view"
-  ],
-  "Raguro.LottaHair": [
-   "https://drive.google.com/file/d/1BP-NvGnyiaK9RvafQPCzZayn99LwzCB2/view"
-  ],
-  "Raguro.LottaHead3": [
-   "https://drive.google.com/file/d/1KR_fUErnOg7affx70QeJo_yb2TsaWFQa/view"
-  ],
-  "Raguro.LottaTiara": [
-   "https://drive.google.com/file/d/1rug4FFBUJ8u9vh7hI7EtPoUGBu30rMby/view"
-  ],
-  "Raguro.MKdss": [
-   "https://drive.google.com/file/d/1BtW_XDekRoXKd6pc3_YQngoXVns_voxr/view"
-  ],
-  "Raguro.MarikoCap": [
-   "https://drive.google.com/file/d/1PfLLhQpSU7YerePV_-H4cZOyeD0GZpuM/view"
-  ],
-  "Raguro.MarikoCapHair": [
-   "https://drive.google.com/file/d/1g2Cj7cqz8ikLZfwTVXR0ITgGRyWuDiP3/view"
-  ],
-  "Raguro.OkuAcc": [
-   "https://drive.google.com/file/d/19_8kKpM00qJlTMUJrMWSo9rFaCqdFhjU/view"
-  ],
-  "Raguro.OkuBackHair": [
-   "https://drive.google.com/file/d/1mC_p4shM7ItienHyZdnznhVMSWpLeV2d/view"
-  ],
-  "Raguro.OkuBaseHair": [
-   "https://drive.google.com/file/d/1Ji6NHEheVzS-SFLC1s4XjkAw9RjFCW_s/view"
-  ],
-  "Raguro.OkuFrontHair": [
-   "https://drive.google.com/file/d/1BkipMymlMBon2yjvALueIQQx0sTup0Dz/view"
-  ],
-  "Raguro.OldNail": [
-   "https://drive.google.com/file/d/1vVRngX0EDKJ5PqYPIbv7UKWkXIuUhbTk/view"
-  ],
-  "Raguro.PhoenixSuit": [
-   "https://drive.google.com/file/d/19Q6R1vu7TF9Pv7anh2qYenFlZhGbEEv3/view"
-  ],
-  "Raguro.SofielBackHair": [
-   "https://drive.google.com/file/d/13VeMsNPb2ntypA3sxp0qZi52l0fedtJy/view"
-  ],
-  "Raguro.SofielBoots": [
-   "https://drive.google.com/file/d/1lKZWZhJmfRBBGXo18AA0i1mtx6mkrLeN/view"
-  ],
-  "Raguro.SofielFrontHair": [
-   "https://drive.google.com/file/d/1qi3GRpSJdLGnhzZ8z_8Q_QjE7cXbrIQz/view"
-  ],
-  "Raguro.SofielGloves": [
-   "https://drive.google.com/file/d/1s8pxtSDSDYiauHEu4_MyGA-hPPgwG86o/view"
-  ],
-  "Raguro.SofielHairAccessory": [
-   "https://drive.google.com/file/d/1XBs31TmOVuwNFpPHWfarT0QBVZiugOdP/view"
-  ],
-  "Raguro.SofielLeotard": [
-   "https://drive.google.com/file/d/1ZOYe-ElB2qY6HlqZkRQD5RXQtJylh8y2/view"
-  ],
-  "Raguro.SofielSkirt": [
-   "https://drive.google.com/file/d/1Oz-Huj0CmK42R1aGQppqBdbloh0YhZjK/view"
-  ],
-  "Raguro.SofielWeapon": [
-   "https://drive.google.com/file/d/10SHGFwMk1QWpPc-3BN_kdGTZbXIVdm9N/view"
-  ],
-  "Raguro.TMmst": [
-   "https://drive.google.com/file/d/1yHBlPPUTAL3lb2ElXV9q_GzzkmQiPJoV/view"
-  ],
-  "Raguro.ToudouMarikoAccHair": [
-   "https://drive.google.com/file/d/1i_5fFHPLyHpEUA4AkZ6AHBM6el_mFmJu/view"
-  ],
-  "Raguro.ToudouMarikoCollar": [
-   "https://drive.google.com/file/d/1a3stgtpVHmugGDl8Af9XfNHFqI1qQn7O/view"
-  ],
-  "Raguro.ToudouMarikoEarring": [
-   "https://drive.google.com/file/d/1a8vdEdeIfZo1oP5UGZ4oD2qC5Z8Z8x6z/view"
-  ],
-  "Raguro.ToudouMarikoGvs": [
-   "https://drive.google.com/file/d/1KHBeNKNXg9GHO3n6l4w2lB7__oGEVBIt/view"
-  ],
-  "Raguro.ToudouMarikoTop": [
-   "https://drive.google.com/file/d/1yxmx2HG-w0iyP9VkeKOX7R-qUEMuT9dQ/view"
-  ],
-  "Raguro.YamamotoSayuriApron": [
-   "https://drive.google.com/file/d/1xuMi88aFo0NOUYgkX9n2eoroxSnHUa4g/view"
-  ],
-  "Raguro.YamamotoSayuriBackHair": [
-   "https://drive.google.com/file/d/1loSKk_EqFD3yHd-3d0mnu2uppnRG0fOc/view"
-  ],
-  "Raguro.YamamotoSayuriLooseHair": [
-   "https://drive.google.com/file/d/1n-Ug1WosjZ6E6g8I1ddIvlX1hYJlsDrS/view"
-  ],
-  "Raguro.YamamotoSayuriShoes": [
-   "https://drive.google.com/file/d/1FUDnO2iNg7yqH6-QkfGKTq7f7uZTGadr/view"
-  ],
-  "Raguro.YamamotoSayuriTop": [
-   "https://drive.google.com/file/d/1Ul6UuA_9OCn4S_kwM33NS4JjM0Sm5A0a/view"
-  ],
-  "Raguro.YukiHair": [
-   "https://drive.google.com/file/d/1VPirio0SGFUctVV2AdtJsqdHkvIQAPcz/view"
-  ],
-  "Raguro.ZeldaHWBts": [
-   "https://drive.google.com/file/d/1h5oEN4Xw1ANuAcCl5QIWYh04E7c6IHrr/view"
-  ],
-  "Raguro.ZeldaHWCr": [
-   "https://drive.google.com/file/d/1u3ObCyqahLqFVzTkOOASbd8rOH-0CBoc/view"
-  ],
-  "Raguro.ZeldaHWear": [
-   "https://drive.google.com/file/d/1xioZ6_w_vakYAFWPcN3iMp10sLhdwxdP/view"
-  ],
-  "Raguro.ZeldaHWs": [
-   "https://drive.google.com/file/d/1KZpFrWQR0gxhk22GYhhQBHTA9z2p6vdP/view"
-  ],
-  "Raguro.ZeldaHairB": [
-   "https://drive.google.com/file/d/1BO_2Zp85JOBLu0gg0ZgFaoVO6EMHp76F/view"
-  ],
-  "Raguro.ZeldaHairF": [
-   "https://drive.google.com/file/d/1wbTmxgx6jT9gZDLXkpL-KYgFnXggbKQd/view"
-  ],
-  "Raguro.ZhwBD": [
-   "https://drive.google.com/file/d/19G8DMNTxHJV8Lr7JO_ObuqOOLvvJasPa/view"
-  ],
-  "Raguro.ZhwCT": [
-   "https://drive.google.com/file/d/1Uksw2iIurhWzSjEETqWp5Xifg7nOXqo8/view"
-  ],
-  "Raguro.ZhwTD": [
-   "https://drive.google.com/file/d/1pXyYYdNYKBGjaCCixmeadcHWjz79HVrC/view"
-  ],
-  "Raguro.fatinaclothes": [
-   "https://drive.google.com/file/d/1l2i5u_6Ce9rj33A5NlqIBBlsWIgSpjsW/view"
-  ],
-  "Raguro.fatinagloves": [
-   "https://drive.google.com/file/d/1bmDIBjnGcPS2jJ-ngGx7oC2M7SnRQn6m/view"
-  ],
-  "Raguro.fatinahair": [
-   "https://drive.google.com/file/d/1QRS3xWEJtE_uiJgA1ECTmu9kTyvkque1/view"
-  ],
-  "Raguro.fatinahairband": [
-   "https://drive.google.com/file/d/1Llo4eh5oXSTcHLWKyEtZ5HyyV_4ZWulA/view"
-  ],
-  "Raguro.fatinasocks": [
-   "https://drive.google.com/file/d/1KTE8nkQEQpx1vC6Hcof3neChWY9-b97Q/view"
-  ],
-  "Raguro.fatinaweapon": [
-   "https://drive.google.com/file/d/1ysFwiQb4CxFl2EgFVdg9eeZX485g-Yzt/view"
-  ],
-  "Raguro.jeangreybelt": [
-   "https://drive.google.com/file/d/1lgh0EgXnniGk8NDQAAh3_Dsm5nSHCdTq/view"
-  ],
-  "Raguro.jeangreysocks": [
-   "https://drive.google.com/file/d/1yzetXuw-BT2lbpcMye_xO5zGvWdu0QvE/view"
-  ],
-  "Raguro.jgheadacc": [
-   "https://drive.google.com/file/d/1Lj2B21hY51h7k_4UmfuL6duMa7njyiKN/view"
-  ],
-  "Raguro.mkcll": [
-   "https://drive.google.com/file/d/1Wetw4RYXUBqs3Dm1cFrZ00PEaDU53K0v/view"
-  ],
-  "Raguro.zHWsh": [
-   "https://drive.google.com/file/d/1P2vwvQ_VGoxG046Hp4i49QRYTE8Ezvu3/view"
-  ],
-  "Raguro.zeldaglovesarmor": [
-   "https://drive.google.com/file/d/1UzrwCvtLHTIirEOoZQBhnNdKJG8CsRM9/view"
-  ],
-  "raguro_fatinacape": [
-   "https://drive.google.com/file/d/1Gp8HsicQzfgTe407hPb_Sm9ZpVm38VzQ/view"
-  ]
+  "Raguro.BGBackHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/10LhQLVQJZGXSsWsARy-BhcHh87c98-7a/view"
+   ]
+  },
+  "Raguro.BGhair1": {
+   "1.0": [
+    "https://drive.google.com/file/d/1OMrym74h948sOBo895ZYwIKy4vWcd4R6/view"
+   ]
+  },
+  "Raguro.BGhairF1": {
+   "1.0": [
+    "https://drive.google.com/file/d/1e8BaBe7nUsBkmxrItA-GH-rV4jcOGtQZ/view"
+   ]
+  },
+  "Raguro.BGhairF2": {
+   "1.0": [
+    "https://drive.google.com/file/d/140Pj8BYy1oSTbxGr2k2C1x1W7SdQ-7kG/view"
+   ]
+  },
+  "Raguro.BatgirlMask": {
+   "1.0": [
+    "https://drive.google.com/file/d/12vqFSkM7RtgqLGrjjdvgBj5Dy6hiTXgo/view"
+   ]
+  },
+  "Raguro.CSocks": {
+   "1.0": [
+    "https://drive.google.com/file/d/1rY4mqsEfVvOkkTWbqGC0XRPh-gJVcLXa/view"
+   ]
+  },
+  "Raguro.ChuckyShoes": {
+   "1.0": [
+    "https://drive.google.com/file/d/1bnlQdvr1KqiPK1g5gxmW1oAB0yw227jR/view"
+   ]
+  },
+  "Raguro.FatinaHeels": {
+   "1.0": [
+    "https://drive.google.com/file/d/1cUSsfi0DpUoZWsOSXTwsFgUBosC9gBKP/view"
+   ]
+  },
+  "Raguro.GloriaNMGvs": {
+   "1.0": [
+    "https://drive.google.com/file/d/16c5g6G1sDKQrcg5SZW7vwemNxC1_3zPf/view"
+   ]
+  },
+  "Raguro.GloriaNMhair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1f2h7VBy4LcNoVz64L2UIyDoYsJBcQwJx/view"
+   ]
+  },
+  "Raguro.GloriaNMhairf": {
+   "1.0": [
+    "https://drive.google.com/file/d/1vwTmeRBN5Bk5M8q0kpT-Ei8kpYKOaKSg/view"
+   ]
+  },
+  "Raguro.GnmBts": {
+   "1.0": [
+    "https://drive.google.com/file/d/1D92bNia_NDlFAvUIuqonS7htyjqMksHV/view"
+   ]
+  },
+  "Raguro.GnmCpe": {
+   "1.0": [
+    "https://drive.google.com/file/d/1_rmlO7oMM36hQLdpLycRH6DIFFnaTEJg/view"
+   ]
+  },
+  "Raguro.GnmSkrt": {
+   "1.0": [
+    "https://drive.google.com/file/d/11vxt8qr3Qly_RyjISygG1J33Z7BNAbBD/view"
+   ]
+  },
+  "Raguro.GnmTop": {
+   "1.0": [
+    "https://drive.google.com/file/d/1jOGuuOMg4zSIzHtu-_YU2syyJHQEwZku/view"
+   ]
+  },
+  "Raguro.HollowHead": {
+   "1.0": [
+    "https://drive.google.com/file/d/13Hny8uuM6HDrXpyCE_vptKq9WsY2mRRF/view"
+   ]
+  },
+  "Raguro.JGHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1PdZ3ZmkN5WheiN9fWRRtMzZXlI3A2ND7/view"
+   ]
+  },
+  "Raguro.JGSuit": {
+   "1.0": [
+    "https://drive.google.com/file/d/14M7iRHpTtsS8UgyX9aMx8w6acOPHkQ5L/view"
+   ]
+  },
+  "Raguro.JGgloves": {
+   "1.0": [
+    "https://drive.google.com/file/d/1E2YhfBqWQbRmmJLN5lrbQAN1xbIGCV08/view"
+   ]
+  },
+  "Raguro.JGjacket": {
+   "1.0": [
+    "https://drive.google.com/file/d/1O52jFUDDzFMAw8oL6BiVRyieSboBQlll/view"
+   ]
+  },
+  "Raguro.JGpants": {
+   "1.0": [
+    "https://drive.google.com/file/d/13GwY9gNiLEXC9T6IMu37wquhHPQRLTim/view"
+   ]
+  },
+  "Raguro.KNhr": {
+   "1.0": [
+    "https://drive.google.com/file/d/10I28MSlXQCjyBCLzlNVoFkA72Ga--Gju/view"
+   ]
+  },
+  "Raguro.KNld": {
+   "1.0": [
+    "https://drive.google.com/file/d/17-l6gQnV4lZU26M2X3ciJ2MJi41kRLUK/view"
+   ]
+  },
+  "Raguro.KNls": {
+   "1.0": [
+    "https://drive.google.com/file/d/1qTtCoxp0EG662xVHBiTKOO1gycQY6V_g/view"
+   ]
+  },
+  "Raguro.KNsw": {
+   "1.0": [
+    "https://drive.google.com/file/d/1-_1X-bwfHRhB_ejvoYo2ElYVPuOc-L8M/view"
+   ]
+  },
+  "Raguro.KNtd": {
+   "1.0": [
+    "https://drive.google.com/file/d/1txptQ3i8J8u1JsoMkVyojU4_PgBo2del/view"
+   ]
+  },
+  "Raguro.KamadoKieCap": {
+   "1.0": [
+    "https://drive.google.com/file/d/1RujW9-BfRcbvrP4PXQ_1K7_NQbUfkWoz/view"
+   ]
+  },
+  "Raguro.KamadoKieHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/15tdLgl0Zgartl26EH-kvZSn06WxctRbf/view"
+   ]
+  },
+  "Raguro.KamadoKieYukata": {
+   "1.0": [
+    "https://drive.google.com/file/d/1a6V6J8ue_Uvh057FgndZvv17MLNZuPUt/view"
+   ]
+  },
+  "Raguro.KamadoKieZori": {
+   "1.0": [
+    "https://drive.google.com/file/d/11nD6wMBm0uyau-H_G-xQFL8NZzwconel/view"
+   ]
+  },
+  "Raguro.LottaDress": {
+   "1.0": [
+    "https://drive.google.com/file/d/1K0eVL6P4GDzT7JKonedD7UAl_HFYC0Lm/view"
+   ]
+  },
+  "Raguro.LottaHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1BP-NvGnyiaK9RvafQPCzZayn99LwzCB2/view"
+   ]
+  },
+  "Raguro.LottaHead3": {
+   "1.0": [
+    "https://drive.google.com/file/d/1KR_fUErnOg7affx70QeJo_yb2TsaWFQa/view"
+   ]
+  },
+  "Raguro.LottaTiara": {
+   "1.0": [
+    "https://drive.google.com/file/d/1rug4FFBUJ8u9vh7hI7EtPoUGBu30rMby/view"
+   ]
+  },
+  "Raguro.MKdss": {
+   "1.0": [
+    "https://drive.google.com/file/d/1BtW_XDekRoXKd6pc3_YQngoXVns_voxr/view"
+   ]
+  },
+  "Raguro.MarikoCap": {
+   "1.0": [
+    "https://drive.google.com/file/d/1PfLLhQpSU7YerePV_-H4cZOyeD0GZpuM/view"
+   ]
+  },
+  "Raguro.MarikoCapHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1g2Cj7cqz8ikLZfwTVXR0ITgGRyWuDiP3/view"
+   ]
+  },
+  "Raguro.OkuAcc": {
+   "1.0": [
+    "https://drive.google.com/file/d/19_8kKpM00qJlTMUJrMWSo9rFaCqdFhjU/view"
+   ]
+  },
+  "Raguro.OkuBackHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1mC_p4shM7ItienHyZdnznhVMSWpLeV2d/view"
+   ]
+  },
+  "Raguro.OkuBaseHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1Ji6NHEheVzS-SFLC1s4XjkAw9RjFCW_s/view"
+   ]
+  },
+  "Raguro.OkuFrontHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1BkipMymlMBon2yjvALueIQQx0sTup0Dz/view"
+   ]
+  },
+  "Raguro.OldNail": {
+   "1.0": [
+    "https://drive.google.com/file/d/1vVRngX0EDKJ5PqYPIbv7UKWkXIuUhbTk/view"
+   ]
+  },
+  "Raguro.PhoenixSuit": {
+   "1.0": [
+    "https://drive.google.com/file/d/19Q6R1vu7TF9Pv7anh2qYenFlZhGbEEv3/view"
+   ]
+  },
+  "Raguro.SofielBackHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/13VeMsNPb2ntypA3sxp0qZi52l0fedtJy/view"
+   ]
+  },
+  "Raguro.SofielBoots": {
+   "1.0": [
+    "https://drive.google.com/file/d/1lKZWZhJmfRBBGXo18AA0i1mtx6mkrLeN/view"
+   ]
+  },
+  "Raguro.SofielFrontHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1qi3GRpSJdLGnhzZ8z_8Q_QjE7cXbrIQz/view"
+   ]
+  },
+  "Raguro.SofielGloves": {
+   "1.0": [
+    "https://drive.google.com/file/d/1s8pxtSDSDYiauHEu4_MyGA-hPPgwG86o/view"
+   ]
+  },
+  "Raguro.SofielHairAccessory": {
+   "1.0": [
+    "https://drive.google.com/file/d/1XBs31TmOVuwNFpPHWfarT0QBVZiugOdP/view"
+   ]
+  },
+  "Raguro.SofielLeotard": {
+   "1.0": [
+    "https://drive.google.com/file/d/1ZOYe-ElB2qY6HlqZkRQD5RXQtJylh8y2/view"
+   ]
+  },
+  "Raguro.SofielSkirt": {
+   "1.0": [
+    "https://drive.google.com/file/d/1Oz-Huj0CmK42R1aGQppqBdbloh0YhZjK/view"
+   ]
+  },
+  "Raguro.SofielWeapon": {
+   "1.0": [
+    "https://drive.google.com/file/d/10SHGFwMk1QWpPc-3BN_kdGTZbXIVdm9N/view"
+   ]
+  },
+  "Raguro.TMmst": {
+   "1.0": [
+    "https://drive.google.com/file/d/1yHBlPPUTAL3lb2ElXV9q_GzzkmQiPJoV/view"
+   ]
+  },
+  "Raguro.ToudouMarikoAccHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1i_5fFHPLyHpEUA4AkZ6AHBM6el_mFmJu/view"
+   ]
+  },
+  "Raguro.ToudouMarikoCollar": {
+   "1.0": [
+    "https://drive.google.com/file/d/1a3stgtpVHmugGDl8Af9XfNHFqI1qQn7O/view"
+   ]
+  },
+  "Raguro.ToudouMarikoEarring": {
+   "1.0": [
+    "https://drive.google.com/file/d/1a8vdEdeIfZo1oP5UGZ4oD2qC5Z8Z8x6z/view"
+   ]
+  },
+  "Raguro.ToudouMarikoGvs": {
+   "1.0": [
+    "https://drive.google.com/file/d/1KHBeNKNXg9GHO3n6l4w2lB7__oGEVBIt/view"
+   ]
+  },
+  "Raguro.ToudouMarikoTop": {
+   "1.0": [
+    "https://drive.google.com/file/d/1yxmx2HG-w0iyP9VkeKOX7R-qUEMuT9dQ/view"
+   ]
+  },
+  "Raguro.YamamotoSayuriApron": {
+   "1.0": [
+    "https://drive.google.com/file/d/1xuMi88aFo0NOUYgkX9n2eoroxSnHUa4g/view"
+   ]
+  },
+  "Raguro.YamamotoSayuriBackHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1loSKk_EqFD3yHd-3d0mnu2uppnRG0fOc/view"
+   ]
+  },
+  "Raguro.YamamotoSayuriLooseHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1n-Ug1WosjZ6E6g8I1ddIvlX1hYJlsDrS/view"
+   ]
+  },
+  "Raguro.YamamotoSayuriShoes": {
+   "1.0": [
+    "https://drive.google.com/file/d/1FUDnO2iNg7yqH6-QkfGKTq7f7uZTGadr/view"
+   ]
+  },
+  "Raguro.YamamotoSayuriTop": {
+   "1.0": [
+    "https://drive.google.com/file/d/1Ul6UuA_9OCn4S_kwM33NS4JjM0Sm5A0a/view"
+   ]
+  },
+  "Raguro.YukiHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1VPirio0SGFUctVV2AdtJsqdHkvIQAPcz/view"
+   ]
+  },
+  "Raguro.ZeldaHWBts": {
+   "1.0": [
+    "https://drive.google.com/file/d/1h5oEN4Xw1ANuAcCl5QIWYh04E7c6IHrr/view"
+   ]
+  },
+  "Raguro.ZeldaHWCr": {
+   "1.0": [
+    "https://drive.google.com/file/d/1u3ObCyqahLqFVzTkOOASbd8rOH-0CBoc/view"
+   ]
+  },
+  "Raguro.ZeldaHWear": {
+   "1.0": [
+    "https://drive.google.com/file/d/1xioZ6_w_vakYAFWPcN3iMp10sLhdwxdP/view"
+   ]
+  },
+  "Raguro.ZeldaHWs": {
+   "1.0": [
+    "https://drive.google.com/file/d/1KZpFrWQR0gxhk22GYhhQBHTA9z2p6vdP/view"
+   ]
+  },
+  "Raguro.ZeldaHairB": {
+   "1.0": [
+    "https://drive.google.com/file/d/1BO_2Zp85JOBLu0gg0ZgFaoVO6EMHp76F/view"
+   ]
+  },
+  "Raguro.ZeldaHairF": {
+   "1.0": [
+    "https://drive.google.com/file/d/1wbTmxgx6jT9gZDLXkpL-KYgFnXggbKQd/view"
+   ]
+  },
+  "Raguro.ZhwBD": {
+   "1.0": [
+    "https://drive.google.com/file/d/19G8DMNTxHJV8Lr7JO_ObuqOOLvvJasPa/view"
+   ]
+  },
+  "Raguro.ZhwCT": {
+   "1.0": [
+    "https://drive.google.com/file/d/1Uksw2iIurhWzSjEETqWp5Xifg7nOXqo8/view"
+   ]
+  },
+  "Raguro.ZhwTD": {
+   "1.0": [
+    "https://drive.google.com/file/d/1pXyYYdNYKBGjaCCixmeadcHWjz79HVrC/view"
+   ]
+  },
+  "Raguro.fatinaclothes": {
+   "1.0": [
+    "https://drive.google.com/file/d/1l2i5u_6Ce9rj33A5NlqIBBlsWIgSpjsW/view"
+   ]
+  },
+  "Raguro.fatinagloves": {
+   "1.0": [
+    "https://drive.google.com/file/d/1bmDIBjnGcPS2jJ-ngGx7oC2M7SnRQn6m/view"
+   ]
+  },
+  "Raguro.fatinahair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1QRS3xWEJtE_uiJgA1ECTmu9kTyvkque1/view"
+   ]
+  },
+  "Raguro.fatinahairband": {
+   "1.0": [
+    "https://drive.google.com/file/d/1Llo4eh5oXSTcHLWKyEtZ5HyyV_4ZWulA/view"
+   ]
+  },
+  "Raguro.fatinasocks": {
+   "1.0": [
+    "https://drive.google.com/file/d/1KTE8nkQEQpx1vC6Hcof3neChWY9-b97Q/view"
+   ]
+  },
+  "Raguro.fatinaweapon": {
+   "1.0": [
+    "https://drive.google.com/file/d/1ysFwiQb4CxFl2EgFVdg9eeZX485g-Yzt/view"
+   ]
+  },
+  "Raguro.jeangreybelt": {
+   "1.0": [
+    "https://drive.google.com/file/d/1lgh0EgXnniGk8NDQAAh3_Dsm5nSHCdTq/view"
+   ]
+  },
+  "Raguro.jeangreysocks": {
+   "1.0": [
+    "https://drive.google.com/file/d/1yzetXuw-BT2lbpcMye_xO5zGvWdu0QvE/view"
+   ]
+  },
+  "Raguro.jgheadacc": {
+   "1.0": [
+    "https://drive.google.com/file/d/1Lj2B21hY51h7k_4UmfuL6duMa7njyiKN/view"
+   ]
+  },
+  "Raguro.mkcll": {
+   "1.0": [
+    "https://drive.google.com/file/d/1Wetw4RYXUBqs3Dm1cFrZ00PEaDU53K0v/view"
+   ]
+  },
+  "Raguro.zHWsh": {
+   "1.0": [
+    "https://drive.google.com/file/d/1P2vwvQ_VGoxG046Hp4i49QRYTE8Ezvu3/view"
+   ]
+  },
+  "Raguro.zeldaglovesarmor": {
+   "1.0": [
+    "https://drive.google.com/file/d/1UzrwCvtLHTIirEOoZQBhnNdKJG8CsRM9/view"
+   ]
+  },
+  "raguro_fatinacape": {
+   "1.0": [
+    "https://drive.google.com/file/d/1Gp8HsicQzfgTe407hPb_Sm9ZpVm38VzQ/view"
+   ]
+  }
  }
 }

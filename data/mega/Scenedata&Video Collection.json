@@ -2,8 +2,10 @@
  "generated": "2026-11-08T06:25:42",
  "count": 1,
  "guids": {
-  "Magic Wand": [
-   "https://mega.nz/folder/YspmQARb#ER5cmLHykM8F9N7Tr8Fnww/file/Fk4yAQJT"
-  ]
+  "Magic Wand": {
+   "1.0": [
+    "https://mega.nz/folder/YspmQARb#ER5cmLHykM8F9N7Tr8Fnww/file/Fk4yAQJT"
+   ]
+  }
  }
 }

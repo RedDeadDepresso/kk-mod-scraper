@@ -59,22 +59,66 @@ func TestCombinedIndexCoversBothGames(t *testing.T) {
 		t.Errorf("want 3 guids (both, kk.only, kks.only), got %v", index)
 	}
 	for _, g := range []string{"kk.only", "kks.only", "both"} {
-		if len(index[g]) == 0 {
+		if len(index.flatURLs(g)) == 0 {
 			t.Errorf("%s missing", g)
 		}
 	}
 	if _, ok := index["not.indexed"]; ok {
 		t.Error("a category outside both lists was indexed")
 	}
-	// The main folder outranks studio even though studio holds the newer version.
-	if got := index["both"]; len(got) != 2 || got[0] != u("Sideloader%20Modpack", "main.zipmod") {
-		t.Errorf("ranking: %v", got)
+	// Each version of a GUID has its own list.
+	if got := index["both"]["1.0"]; len(got) != 1 || got[0] != u("Sideloader%20Modpack", "main.zipmod") {
+		t.Errorf("version 1.0: %v", got)
+	}
+	if got := index["both"]["9.0"]; len(got) != 1 || got[0] != u("Sideloader%20Modpack%20-%20Studio", "both.zipmod") {
+		t.Errorf("version 9.0: %v", got)
+	}
+}
+
+// A file without a version goes under "unknown"; copies of one version are ranked best first.
+func TestIndexGroupsByVersion(t *testing.T) {
+	const base = "https://sideload.example/download/KKEC/"
+	u := func(category, file string) string { return base + category + "/" + file }
+	entries := map[string]cacheEntry{
+		u("Sideloader%20Modpack%20-%20Studio", "a.zipmod"): {Mtime: "2024-06-01 00:00", Size: "1M", Guid: "g", Version: "1.0"},
+		u("Sideloader%20Modpack", "a.zipmod"):              {Mtime: "2024-01-01 00:00", Size: "2M", Guid: "g", Version: "1.0"},
+		u("Sideloader%20Modpack", "b.zipmod"):              {Mtime: "2024-01-01 00:00", Size: "3M", Guid: "g"},
+		u("Sideloader%20Modpack", "c.zipmod"):              {Mtime: "2024-01-01 00:00", Size: "4M", Guid: "g", Version: "  "},
+	}
+	index := buildGameIndex(entries, modpackCategories, base, 4)
+	if got := index["g"]["1.0"]; len(got) != 2 || got[0] != u("Sideloader%20Modpack", "a.zipmod") {
+		t.Errorf("1.0: %v", got)
+	}
+	if got := index["g"][unknownVersion]; len(got) != 2 {
+		t.Errorf("unknown: %v", got)
+	}
+	if len(index["g"]) != 2 {
+		t.Errorf("versions: %v", index["g"])
+	}
+}
+
+// The old {guid: [url, ...]} format is read as the "unknown" version, and rewritten once.
+func TestOldIndexFormatIsReadAndRewritten(t *testing.T) {
+	path := filepath.Join(t.TempDir(), modpackIndexName)
+	old := `{"generated":"2025-01-01T00:00:00","count":1,"guids":{"a":["https://x/a.zipmod"]}}`
+	if err := os.WriteFile(path, []byte(old), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if got := readIndexGuids(path)["a"][unknownVersion]; len(got) != 1 {
+		t.Errorf("old format not read: %v", readIndexGuids(path))
+	}
+	index := guidIndex{"a": {unknownVersion: {"https://x/a.zipmod"}}}
+	if wrote, err := writeIndex(path, index); err != nil || !wrote {
+		t.Fatalf("old format not rewritten: %v %v", wrote, err)
+	}
+	if wrote, _ := writeIndex(path, index); wrote {
+		t.Error("rewritten again although nothing changed")
 	}
 }
 
 func TestModpackIndexFileIsRewrittenOnlyOnChange(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "indices", modpackIndexName)
-	index := map[string][]string{"a": {"https://x/a.zipmod"}}
+	index := guidIndex{"a": {"1.0": {"https://x/a.zipmod"}}}
 	if wrote, err := writeIndex(path, index); err != nil || !wrote {
 		t.Fatalf("first write: %v %v", wrote, err)
 	}
@@ -96,7 +140,7 @@ func TestWriteIndexDropsLegacyGameType(t *testing.T) {
 	if err := os.WriteFile(path, []byte(legacy), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	index := map[string][]string{"a": {"https://x/a.zipmod"}}
+	index := guidIndex{"a": {"1.0": {"https://x/a.zipmod"}}}
 	if wrote, err := writeIndex(path, index); err != nil || !wrote {
 		t.Fatalf("legacy file not rewritten: %v %v", wrote, err)
 	}

@@ -2,54 +2,90 @@
  "generated": "2026-11-22T10:30:17",
  "count": 15,
  "guids": {
-  "NightOwlZzz.Cissia Stuffs": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/CN9Cwb4L"
-  ],
-  "NightOwlZzz.Dorm Stuffs": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/nI9TQASY",
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/jAEwzTRD"
-  ],
-  "NightOwlZzz.FXMultiEmission": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/HZUCXZya"
-  ],
-  "NightOwlZzz.Fluorite Stuffs": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/KIllTKBC"
-  ],
-  "NightOwlZzz.Frostburn.Shader": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/nQ1QSLgR"
-  ],
-  "NightOwlZzz.GFL2_Eyes": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/rIklBbKQ"
-  ],
-  "NightOwlZzz.GFL2_Highlights": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/6I9TTJIa"
-  ],
-  "NightOwlZzz.GlassesReflection56": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/bVcTQDwK"
-  ],
-  "NightOwlZzz.KKLT": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/PE9RSRwb",
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/jYk1XLJC",
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/WZFB1bQB",
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/XNFBQByB"
-  ],
-  "NightOwlZzz.Mint_Nighty": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/SJtSGKJD"
-  ],
-  "NightOwlZzz.Nanally_Phoenix_Kick": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/nI8CzSjB"
-  ],
-  "NightOwlZzz.OwlLiquidSurface": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/DE9QABZZ"
-  ],
-  "NightOwlZzz.RaidenFix": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/PRkkhJhQ"
-  ],
-  "NightOwlZzz.RemielleWeapon": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/ndtgDDCI"
-  ],
-  "Owl.Endfield.Highlight": [
-   "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/nUsygBDb"
-  ]
+  "NightOwlZzz.Cissia Stuffs": {
+   "1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/CN9Cwb4L"
+   ]
+  },
+  "NightOwlZzz.Dorm Stuffs": {
+   "1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/nI9TQASY",
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/jAEwzTRD"
+   ]
+  },
+  "NightOwlZzz.FXMultiEmission": {
+   "3.5": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/HZUCXZya"
+   ]
+  },
+  "NightOwlZzz.Fluorite Stuffs": {
+   "1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/KIllTKBC"
+   ]
+  },
+  "NightOwlZzz.Frostburn.Shader": {
+   "1.2": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/nQ1QSLgR"
+   ]
+  },
+  "NightOwlZzz.GFL2_Eyes": {
+   "2.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/rIklBbKQ"
+   ]
+  },
+  "NightOwlZzz.GFL2_Highlights": {
+   "2.2": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/6I9TTJIa"
+   ]
+  },
+  "NightOwlZzz.GlassesReflection56": {
+   "0.1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/bVcTQDwK"
+   ]
+  },
+  "NightOwlZzz.KKLT": {
+   "2.3.10": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/WZFB1bQB"
+   ],
+   "2.3.9": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/XNFBQByB"
+   ],
+   "2.4A": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/PE9RSRwb"
+   ],
+   "2.4B": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/jYk1XLJC"
+   ]
+  },
+  "NightOwlZzz.Mint_Nighty": {
+   "1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/SJtSGKJD"
+   ]
+  },
+  "NightOwlZzz.Nanally_Phoenix_Kick": {
+   "1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/nI8CzSjB"
+   ]
+  },
+  "NightOwlZzz.OwlLiquidSurface": {
+   "1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/DE9QABZZ"
+   ]
+  },
+  "NightOwlZzz.RaidenFix": {
+   "1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/PRkkhJhQ"
+   ]
+  },
+  "NightOwlZzz.RemielleWeapon": {
+   "1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/ndtgDDCI"
+   ]
+  },
+  "Owl.Endfield.Highlight": {
+   "1.0": [
+    "https://mega.nz/folder/yJkXVILL#V-nOstT7ruxZ37cysxg9pQ/file/nUsygBDb"
+   ]
+  }
  }
 }

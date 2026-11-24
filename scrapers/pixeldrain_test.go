@@ -152,14 +152,14 @@ func TestPixeldrainDirectoryShare(t *testing.T) {
 		"com.test.inner": "https://pixeldrain.com/d/ShareId01/Mods%20Pack/inner.zipmod",
 		"com.test.deep":  "https://pixeldrain.com/d/ShareId01/Mods%20Pack/Deep/deep.zipmod",
 	} {
-		if len(idx.Guids[g]) != 1 || idx.Guids[g][0] != u {
-			t.Errorf("%s: %v want %s", g, idx.Guids[g], u)
+		if len(idx.Guids.flatURLs(g)) != 1 || idx.Guids.flatURLs(g)[0] != u {
+			t.Errorf("%s: %v want %s", g, idx.Guids.flatURLs(g), u)
 		}
 	}
 	if len(idx.Guids) != 3 {
 		t.Errorf("guids: %v", idx.Guids)
 	}
-	if one := read("deep.zipmod"); len(one.Guids["com.test.deep"]) != 1 {
+	if one := read("deep.zipmod"); len(one.Guids.flatURLs("com.test.deep")) != 1 {
 		t.Errorf("single-file /d/ link: %v", one.Guids)
 	}
 }
@@ -376,8 +376,8 @@ func TestPixeldrainEndToEnd(t *testing.T) {
 		t.Errorf("header: %+v", idx)
 	}
 	for g, u := range want {
-		if len(idx.Guids[g]) != 1 || idx.Guids[g][0] != u {
-			t.Errorf("%s: %v want %s", g, idx.Guids[g], u)
+		if len(idx.Guids.flatURLs(g)) != 1 || idx.Guids.flatURLs(g)[0] != u {
+			t.Errorf("%s: %v want %s", g, idx.Guids.flatURLs(g), u)
 		}
 	}
 
@@ -445,7 +445,7 @@ func TestPixeldrainSingleFilesAndPurge(t *testing.T) {
 	if err := json.Unmarshal(data, &idx); err != nil {
 		t.Fatal(err)
 	}
-	if u := idx.Guids["com.test.single"]; len(u) != 1 || u[0] != "https://pixeldrain.com/u/modFileA" {
+	if u := idx.Guids.flatURLs("com.test.single"); len(u) != 1 || u[0] != "https://pixeldrain.com/u/modFileA" {
 		t.Errorf("single file: %v", idx.Guids)
 	}
 	cfg, err := loadHostedConfig(opt.configPath)

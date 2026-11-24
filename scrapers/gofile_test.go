@@ -298,8 +298,8 @@ func TestGofileEndToEnd(t *testing.T) {
 		"com.test.big": "https://gofile.io/d/AbCd12#f4",
 	}
 	for guid, u := range want {
-		if len(idx.Guids[guid]) != 1 || idx.Guids[guid][0] != u {
-			t.Errorf("%s: %v want %s", guid, idx.Guids[guid], u)
+		if len(idx.Guids.flatURLs(guid)) != 1 || idx.Guids.flatURLs(guid)[0] != u {
+			t.Errorf("%s: %v want %s", guid, idx.Guids.flatURLs(guid), u)
 		}
 	}
 	if g.downloads["f2"] != 0 {

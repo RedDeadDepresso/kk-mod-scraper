@@ -2,11 +2,15 @@
  "generated": "2026-11-10T19:13:14",
  "count": 2,
  "guids": {
-  "A-fan.Kosaki_mods": [
-   "https://pixeldrain.com/u/94Zv5pEy"
-  ],
-  "kkxbaimaoqf": [
-   "https://pixeldrain.com/u/stzJ7Ktv"
-  ]
+  "A-fan.Kosaki_mods": {
+   "7.2": [
+    "https://pixeldrain.com/u/94Zv5pEy"
+   ]
+  },
+  "kkxbaimaoqf": {
+   "kkxbaimaoqf": [
+    "https://pixeldrain.com/u/stzJ7Ktv"
+   ]
+  }
  }
 }

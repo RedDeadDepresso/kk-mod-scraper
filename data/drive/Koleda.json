@@ -2,12 +2,18 @@
  "generated": "2026-11-18T10:56:05",
  "count": 2,
  "guids": {
-  "[纸鸢]珂蕾妲": [
-   "https://drive.google.com/file/d/17AXaetnoLx3Z8U0ZcfWEMlrOmb85FvEw/view"
-  ],
-  "enimaroah.TwilekHead": [
-   "https://drive.google.com/file/d/1bMvgBfG3NwbEjfS9qhPv51BJUn7EqF2X/view",
-   "https://drive.google.com/file/d/1nNUj_Ajc7BQpmqWi4oVgHWTZJ3HbsYwJ/view"
-  ]
+  "[纸鸢]珂蕾妲": {
+   "1.1": [
+    "https://drive.google.com/file/d/17AXaetnoLx3Z8U0ZcfWEMlrOmb85FvEw/view"
+   ]
+  },
+  "enimaroah.TwilekHead": {
+   "1.0": [
+    "https://drive.google.com/file/d/1nNUj_Ajc7BQpmqWi4oVgHWTZJ3HbsYwJ/view"
+   ],
+   "v1.0": [
+    "https://drive.google.com/file/d/1bMvgBfG3NwbEjfS9qhPv51BJUn7EqF2X/view"
+   ]
+  }
  }
 }

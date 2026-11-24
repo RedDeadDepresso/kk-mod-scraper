@@ -2,11 +2,15 @@
  "generated": "2026-11-16T10:24:06",
  "count": 2,
  "guids": {
-  "com.Nullpoppo.SadouTopside": [
-   "https://drive.google.com/file/d/14VpRMuSpxyWyWhX0Jtd8Kdr6VxrpDKJZ/view"
-  ],
-  "ima_ryuu_maid_mod": [
-   "https://drive.google.com/file/d/1rsR3H7zHDoPE-i_B6k6P3Cp6s82tNaHw/view"
-  ]
+  "com.Nullpoppo.SadouTopside": {
+   "v1.1": [
+    "https://drive.google.com/file/d/14VpRMuSpxyWyWhX0Jtd8Kdr6VxrpDKJZ/view"
+   ]
+  },
+  "ima_ryuu_maid_mod": {
+   "1": [
+    "https://drive.google.com/file/d/1rsR3H7zHDoPE-i_B6k6P3Cp6s82tNaHw/view"
+   ]
+  }
  }
 }

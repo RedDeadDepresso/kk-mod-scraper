@@ -2,14 +2,20 @@
  "generated": "2026-11-21T10:30:28",
  "count": 3,
  "guids": {
-  "mrhodes.sorahair": [
-   "https://drive.google.com/file/d/1BhZAsA51rnxIFS1yPL3jWtmLZBVH2FUu/view"
-  ],
-  "private.dracuhair": [
-   "https://drive.google.com/file/d/1wDUwix8fetFrUaG53LEEsVvbT4qGq9an/view"
-  ],
-  "private.melhair": [
-   "https://drive.google.com/file/d/1nys-zuzlrZv7a1xms9vay56ejziobtuE/view"
-  ]
+  "mrhodes.sorahair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1BhZAsA51rnxIFS1yPL3jWtmLZBVH2FUu/view"
+   ]
+  },
+  "private.dracuhair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1wDUwix8fetFrUaG53LEEsVvbT4qGq9an/view"
+   ]
+  },
+  "private.melhair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1nys-zuzlrZv7a1xms9vay56ejziobtuE/view"
+   ]
+  }
  }
 }

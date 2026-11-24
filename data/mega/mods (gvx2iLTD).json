@@ -2,29 +2,45 @@
  "generated": "2026-11-10T00:42:51",
  "count": 8,
  "guids": {
-  "1999_hair": [
-   "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/52IU3JiT"
-  ],
-  "1999_panty": [
-   "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/4iIUXRpR"
-  ],
-  "1999_top": [
-   "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/hqZ02JaC"
-  ],
-  "1999shoe": [
-   "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/R3YWwbJL"
-  ],
-  "ABCEEFG.CreepySusie": [
-   "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/83QUjRJQ"
-  ],
-  "Claire Hair": [
-   "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/VnYUBRyA"
-  ],
-  "[gyobobo]Claire Set": [
-   "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/tiQSWB4D"
-  ],
-  "gyobobo.ClaireSet": [
-   "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/N2JSiD4B"
-  ]
+  "1999_hair": {
+   "1.0": [
+    "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/52IU3JiT"
+   ]
+  },
+  "1999_panty": {
+   "1.0": [
+    "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/4iIUXRpR"
+   ]
+  },
+  "1999_top": {
+   "1.0": [
+    "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/hqZ02JaC"
+   ]
+  },
+  "1999shoe": {
+   "1.0": [
+    "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/R3YWwbJL"
+   ]
+  },
+  "ABCEEFG.CreepySusie": {
+   "1.0": [
+    "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/83QUjRJQ"
+   ]
+  },
+  "Claire Hair": {
+   "1.0": [
+    "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/VnYUBRyA"
+   ]
+  },
+  "[gyobobo]Claire Set": {
+   "gyobobo": [
+    "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/tiQSWB4D"
+   ]
+  },
+  "gyobobo.ClaireSet": {
+   "v1.0": [
+    "https://mega.nz/folder/gvx2iLTD#eNPVAKMuM9WxM5lLjdJQPw/file/N2JSiD4B"
+   ]
+  }
  }
 }

@@ -44,14 +44,15 @@ jobs:
           # published merged, as mod.json, rather than as separate files.
           rm -rf _site/indices/telegram.json _site/indices/mega _site/indices/drive _site/indices/pixeldrain _site/indices/dropbox _site/indices/mediafire _site/indices/catbox _site/indices/gofile
 
-          # mod.json: {"<guid>": {"mega": [link, ...], "drive": [link, ...], "pixeldrain": [link, ...], "dropbox": [link, ...], "mediafire": [link, ...], "catbox": [link, ...], "gofile": [link, ...], "telegram": [link, ...]}, ...}
-          #  - telegram: telegram.json is a newest-first list of mods; every link of a GUID
-          #    is kept, newest first.
-          #  - mega / drive / pixeldrain / dropbox / mediafire / catbox / gofile: the "guids" maps of every folder in data/mega/,
-          #    data/drive/, data/pixeldrain/, data/dropbox/, data/mediafire/, data/catbox/ and data/gofile/ (best link of each folder first, folders in
-          #    file-name order).
-          #  - Links are de-duplicated; a GUID known from only some sources gets an empty
-          #    list for the others.
+          # mod.json: {"<guid>": {"<version>": {"mega": [link, ...], "drive": [...], "pixeldrain": [...],
+          #            "dropbox": [...], "mediafire": [...], "catbox": [...], "gofile": [...], "telegram": [...]}}}
+          #  - Every version has all eight sources; a source without a link has an empty list.
+          #  - A mod without a known version (no <version> in its manifest, a telegram post
+          #    with "-", and all the forum mod packs) is filed under "unknown".
+          #  - Versions are listed newest first, "unknown" last. Links of a source are
+          #    de-duplicated (best link of each folder first, folders in file-name order).
+          #  - telegram.json is a newest-first list of mods; its links keep that order.
+          #  - data/<source>/*.json hold {"guids": {"<guid>": {"<version>": [link, ...]}}}.
           shopt -s nullglob
           jq -n -c \
             --slurpfile t data/telegram.json \
@@ -63,27 +64,31 @@ jobs:
             --slurpfile c <(cat /dev/null data/catbox/*.json) \
             --slurpfile g <(cat /dev/null data/gofile/*.json) '
             def uniq: reduce .[] as $x ([]; if any(.[]; . == $x) then . else . + [$x] end);
-            def folders: reduce (.[] | (.guids // {}) | to_entries[]) as $e ({}; .[$e.key] += $e.value) | map_values(uniq);
-            ($t[0] | reduce .[] as $mod ({}; .[$mod.Guid] += [$mod.Link]) | map_values(uniq)) as $telegram
-            | ($m | folders) as $mega
-            | ($d | folders) as $drive
-            | ($p | folders) as $pixeldrain
-            | ($x | folders) as $dropbox
-            | ($f | folders) as $mediafire
-            | ($c | folders) as $catbox
-            | ($g | folders) as $gofile
-            | reduce (($telegram | keys) + ($mega | keys) + ($drive | keys) + ($pixeldrain | keys) + ($dropbox | keys) + ($mediafire | keys) + ($catbox | keys) + ($gofile | keys) | unique)[] as $guid
-                ({}; .[$guid] = {mega: ($mega[$guid] // []), drive: ($drive[$guid] // []), pixeldrain: ($pixeldrain[$guid] // []), dropbox: ($dropbox[$guid] // []), mediafire: ($mediafire[$guid] // []), catbox: ($catbox[$guid] // []), gofile: ($gofile[$guid] // []), telegram: ($telegram[$guid] // [])})
+            def vkey: [scan("[0-9]+") | tonumber];
+            def unknown: "unknown";
+            # {guid: {version: [link]}} from the index files of one source's folders
+            def folders: reduce (.[] | (.guids // {}) | to_entries[]) as $e ({};
+              reduce ($e.value | to_entries[]) as $v (.; .[$e.key][$v.key] += $v.value));
+            # newest version first, "unknown" last
+            def order: to_entries
+              | (map(select(.key != unknown)) | sort_by([(.key | vkey), .key]) | reverse)
+                + map(select(.key == unknown))
+              | from_entries;
+            def tgversion: (. // "" | tostring | gsub("^\\s+|\\s+$"; "")) as $v
+              | if $v == "" or $v == "-" then unknown else $v end;
+            ($t[0] | reduce .[] as $mod ({}; .[$mod.Guid][$mod.Version | tgversion] += [$mod.Link])) as $telegram
+            | {mega: ($m | folders), drive: ($d | folders), pixeldrain: ($p | folders), dropbox: ($x | folders),
+               mediafire: ($f | folders), catbox: ($c | folders), gofile: ($g | folders), telegram: $telegram} as $sources
+            | reduce ($sources | to_entries[]) as $s ({};
+                reduce ($s.value | to_entries[]) as $e (.;
+                  reduce ($e.value | to_entries[]) as $v (.; .[$e.key][$v.key][$s.key] += $v.value)))
+            | map_values(map_values(. as $o
+                | reduce ("mega","drive","pixeldrain","dropbox","mediafire","catbox","gofile","telegram") as $k
+                    ({}; .[$k] = ($o[$k] // [] | uniq))) | order)
           ' > _site/indices/mod.json
           echo "Generated $(jq 'length' _site/indices/mod.json) mod entries" \
-            "($(jq '[.[] | select(.mega | length > 0)] | length' _site/indices/mod.json) with mega links," \
-            "$(jq '[.[] | select(.drive | length > 0)] | length' _site/indices/mod.json) with drive links," \
-            "$(jq '[.[] | select(.pixeldrain | length > 0)] | length' _site/indices/mod.json) with pixeldrain links," \
-            "$(jq '[.[] | select(.dropbox | length > 0)] | length' _site/indices/mod.json) with dropbox links," \
-            "$(jq '[.[] | select(.mediafire | length > 0)] | length' _site/indices/mod.json) with mediafire links," \
-            "$(jq '[.[] | select(.catbox | length > 0)] | length' _site/indices/mod.json) with catbox links," \
-            "$(jq '[.[] | select(.gofile | length > 0)] | length' _site/indices/mod.json) with gofile links," \
-            "$(jq '[.[] | select(.telegram | length > 0)] | length' _site/indices/mod.json) with telegram links)"
+            "($(jq '[.[] | length] | add' _site/indices/mod.json) versions in total," \
+            "$(jq '[.[] | select(has("unknown"))] | length' _site/indices/mod.json) with an unknown version)"
           ls -lR _site
 
       - name: Setup Pages

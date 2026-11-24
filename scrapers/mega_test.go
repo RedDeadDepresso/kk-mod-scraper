@@ -324,8 +324,8 @@ func TestBuildMegaIndexesEndToEnd(t *testing.T) {
 		"com.test.big":   {link.fileURL("BBBBBBBB"), link.fileURL("CCCCCCCC")}, // newest version first
 	}
 	for g, urls := range want {
-		if strings.Join(idx.Guids[g], ",") != strings.Join(urls, ",") {
-			t.Errorf("%s: got %v want %v", g, idx.Guids[g], urls)
+		if strings.Join(idx.Guids.flatURLs(g), ",") != strings.Join(urls, ",") {
+			t.Errorf("%s: got %v want %v", g, idx.Guids.flatURLs(g), urls)
 		}
 	}
 	if _, err := os.Stat(cachePath); err != nil {

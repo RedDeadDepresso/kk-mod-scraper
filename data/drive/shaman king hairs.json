@@ -2,8 +2,10 @@
  "generated": "2026-11-16T10:24:39",
  "count": 1,
  "guids": {
-  "Jinsung.FunbariHair": [
-   "https://drive.google.com/file/d/1c0pZZ6kuDc62Z_Kqy8NeWN6CoshDjwuz/view"
-  ]
+  "Jinsung.FunbariHair": {
+   "1.0": [
+    "https://drive.google.com/file/d/1c0pZZ6kuDc62Z_Kqy8NeWN6CoshDjwuz/view"
+   ]
+  }
  }
 }

@@ -2,47 +2,75 @@
  "generated": "2026-11-10T19:08:12",
  "count": 14,
  "guids": {
-  "SSCustomCloth": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/F1USkRzb"
-  ],
-  "com.DeathWeasel.AccessoryHairBack": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/wotTRYAB"
-  ],
-  "com.DeathWeasel.AccessoryHairFront": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/okE2HDoJ"
-  ],
-  "com.DeathWeasel.Collars": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/YoFA3bzR"
-  ],
-  "com.DeathWeasel.NoIris": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/x1cCQDzC"
-  ],
-  "com.gf.clothes": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/8811EAAC"
-  ],
-  "cream002": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/pgMQXDJL"
-  ],
-  "moderchan.CharamakerSupportMOD": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/U4Mk2JBC"
-  ],
-  "roie.WBTops": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/h9MmBZ5R"
-  ],
-  "xne_skdrs01": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/BwE0hJ7S"
-  ],
-  "yamadamod.acchairF2": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/Fwd2UBBZ"
-  ],
-  "yamadamod.nohairB": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/N1NQRLyL"
-  ],
-  "yamadamod.texchange": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/0xcEjT4Y"
-  ],
-  "yamadamod.ymdtexture": [
-   "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/AwdGBZBS"
-  ]
+  "SSCustomCloth": {
+   "1.5": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/F1USkRzb"
+   ]
+  },
+  "com.DeathWeasel.AccessoryHairBack": {
+   "1.6.5": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/wotTRYAB"
+   ]
+  },
+  "com.DeathWeasel.AccessoryHairFront": {
+   "1.5.4": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/okE2HDoJ"
+   ]
+  },
+  "com.DeathWeasel.Collars": {
+   "1": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/YoFA3bzR"
+   ]
+  },
+  "com.DeathWeasel.NoIris": {
+   "1.1": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/x1cCQDzC"
+   ]
+  },
+  "com.gf.clothes": {
+   "2.7": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/8811EAAC"
+   ]
+  },
+  "cream002": {
+   "6.0.0": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/pgMQXDJL"
+   ]
+  },
+  "moderchan.CharamakerSupportMOD": {
+   "1.1": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/U4Mk2JBC"
+   ]
+  },
+  "roie.WBTops": {
+   "1.0": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/h9MmBZ5R"
+   ]
+  },
+  "xne_skdrs01": {
+   "0.5": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/BwE0hJ7S"
+   ]
+  },
+  "yamadamod.acchairF2": {
+   "13.2": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/Fwd2UBBZ"
+   ]
+  },
+  "yamadamod.nohairB": {
+   "8": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/N1NQRLyL"
+   ]
+  },
+  "yamadamod.texchange": {
+   "8": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/0xcEjT4Y"
+   ]
+  },
+  "yamadamod.ymdtexture": {
+   "2": [
+    "https://mega.nz/folder/d0dFkRia#gc0U1YbZB9hibW5jAQBFbg/file/AwdGBZBS"
+   ]
+  }
  }
 }

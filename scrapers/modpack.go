@@ -8,9 +8,10 @@ package scrapers
 //  2. For every .zipmod that is new or changed since the last run, read its GUID and version
 //     from the server with HTTP Range requests (the zip's tail, then only manifest.xml - a
 //     few KB per mod, never the whole file).
-//  3. Write one index, {guid: [url, ...]}, best URL first, covering the categories of both
-//     games (kkCategories and kksCategories). The URLs say which folder, and so which game,
-//     a file is in.
+//  3. Write one index, {guid: {version: [url, ...]}}, best URL first, covering the categories
+//     of both games (kkCategories and kksCategories). The URLs say which folder, and so which
+//     game, a file is in. A file whose manifest has no version is filed under "unknown"
+//     (unknownVersion).
 //
 // Incremental updates: the listing's date and size strings are the change signature. Files
 // whose signature is unchanged keep their cached GUID and are not probed; a file that only
@@ -26,15 +27,15 @@ package scrapers
 //	{
 //	  "generated": "2025-01-01T12:00:00",
 //	  "count":     5800,
-//	  "guids":     {"com.example.mod": ["https://.../Sideloader%20Modpack/a/mod.zipmod", ...], ...}
+//	  "guids":     {"com.example.mod": {"1.0": ["https://.../Sideloader%20Modpack/a/mod.zipmod", ...]}, ...}
 //	}
 //
 // The URLs are percent-encoded exactly as the server lists them.
 //
-// URLs of one GUID are ordered best first: main "Sideloader Modpack" folder before the
-// specialised categories (studio last), then newest manifest version, then newest file date.
-// Identical copies (same filename, date and size) in several folders are listed once, and at
-// most -max-urls URLs are kept per GUID.
+// URLs of one GUID and version are ordered best first: main "Sideloader Modpack" folder before
+// the specialised categories (studio last), then newest file date. Identical copies (same
+// filename, date and size) in several folders are listed once, and at most -max-urls URLs are
+// kept per GUID and version.
 
 import (
 	"bytes"
@@ -1017,8 +1018,49 @@ func compareVersions(a, b string) int {
 	return 0
 }
 
-// buildGameIndex returns {guid: [url, ...]} for the given categories, best URL first.
-func buildGameIndex(entries map[string]cacheEntry, categories []string, baseURL string, maxURLs int) map[string][]string {
+// unknownVersion is the key under which URLs of a file without a known version are filed:
+// mods whose manifest has no <version>, and the forum mod packs (their mod list has none).
+const unknownVersion = "unknown"
+
+// guidIndex is {guid: {version: [url, ...]}}, the "guids" of an index file.
+type guidIndex map[string]map[string][]string
+
+// UnmarshalJSON also reads the old format, {guid: [url, ...]}, as one "unknown" version, so
+// the first run after the change doesn't count every GUID as new.
+func (g *guidIndex) UnmarshalJSON(data []byte) error {
+	var cur map[string]map[string][]string
+	if err := json.Unmarshal(data, &cur); err == nil {
+		*g = cur
+		return nil
+	}
+	var old map[string][]string
+	if err := json.Unmarshal(data, &old); err != nil {
+		return err
+	}
+	*g = withVersion(old, unknownVersion)
+	return nil
+}
+
+// withVersion files every URL list of a flat {guid: [url, ...]} map under one version.
+func withVersion(flat map[string][]string, version string) guidIndex {
+	out := make(guidIndex, len(flat))
+	for g, urls := range flat {
+		out[g] = map[string][]string{version: urls}
+	}
+	return out
+}
+
+// versionKey is the key of a manifest version in the index.
+func versionKey(v string) string {
+	if v = strings.TrimSpace(v); v == "" {
+		return unknownVersion
+	}
+	return v
+}
+
+// buildGameIndex returns {guid: {version: [url, ...]}} for the given categories, best URL
+// first. maxURLs applies to each version of a GUID.
+func buildGameIndex(entries map[string]cacheEntry, categories []string, baseURL string, maxURLs int) guidIndex {
 	rank := map[string]int{}
 	for i, c := range categories {
 		rank[c] = i
@@ -1027,22 +1069,23 @@ func buildGameIndex(entries map[string]cacheEntry, categories []string, baseURL 
 		url string
 		e   cacheEntry
 	}
-	byGuid := map[string][]item{}
+	type key struct{ guid, version string }
+	groups := map[key][]item{}
 	for u, e := range entries {
 		if e.Guid == "" {
 			continue
 		}
 		if _, ok := rank[categoryOf(u, baseURL)]; ok {
-			byGuid[e.Guid] = append(byGuid[e.Guid], item{u, e})
+			k := key{e.Guid, versionKey(e.Version)}
+			groups[k] = append(groups[k], item{u, e})
 		}
 	}
 
-	index := make(map[string][]string, len(byGuid))
-	for guid, items := range byGuid {
+	index := guidIndex{}
+	for k, items := range groups {
 		// Chained stable sorts, least significant key first.
 		sort.SliceStable(items, func(i, j int) bool { return items[i].url < items[j].url })
 		sort.SliceStable(items, func(i, j int) bool { return items[i].e.Mtime > items[j].e.Mtime })
-		sort.SliceStable(items, func(i, j int) bool { return compareVersions(items[i].e.Version, items[j].e.Version) > 0 })
 		sort.SliceStable(items, func(i, j int) bool {
 			return rank[categoryOf(items[i].url, baseURL)] < rank[categoryOf(items[j].url, baseURL)]
 		})
@@ -1060,19 +1103,22 @@ func buildGameIndex(entries map[string]cacheEntry, categories []string, baseURL 
 		if len(urls) > maxURLs {
 			urls = urls[:maxURLs]
 		}
-		index[guid] = urls
+		if index[k.guid] == nil {
+			index[k.guid] = map[string][]string{}
+		}
+		index[k.guid][k.version] = urls
 	}
 	return index
 }
 
 type modpackIndexFile struct {
-	Generated string              `json:"generated"`
-	Count     int                 `json:"count"`
-	Guids     map[string][]string `json:"guids"`
+	Generated string    `json:"generated"`
+	Count     int       `json:"count"`
+	Guids     guidIndex `json:"guids"`
 }
 
 // readIndexGuids returns the GUIDs of an existing index file (nil if it can't be read).
-func readIndexGuids(path string) map[string][]string {
+func readIndexGuids(path string) guidIndex {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil
@@ -1084,16 +1130,33 @@ func readIndexGuids(path string) map[string][]string {
 	return prev.Guids
 }
 
+// flatURLs lists every URL of a GUID, over all its versions (versions in name order, the
+// URLs of each as they are in the index).
+func (g guidIndex) flatURLs(guid string) []string {
+	versions := make([]string, 0, len(g[guid]))
+	for v := range g[guid] {
+		versions = append(versions, v)
+	}
+	sort.Strings(versions)
+	var urls []string
+	for _, v := range versions {
+		urls = append(urls, g[guid][v]...)
+	}
+	return urls
+}
+
 // writeIndex writes an index unless the file already holds exactly these GUIDs (so a day
 // without changes on the server leaves no diff). A file that still has the old "game_type"
-// field is rewritten once, to drop it. Reports whether it wrote.
-func writeIndex(path string, index map[string][]string) (bool, error) {
+// field, or the old {guid: [url, ...]} format, is rewritten once. Reports whether it wrote.
+func writeIndex(path string, index guidIndex) (bool, error) {
 	if data, err := os.ReadFile(path); err == nil {
+		// Decoded strictly as the current format (not through guidIndex's lenient reader), so
+		// a file in the old {guid: [url, ...]} format fails here and is rewritten once.
 		var prev struct {
-			modpackIndexFile
-			LegacyGameType json.RawMessage `json:"game_type"`
+			Guids          map[string]map[string][]string `json:"guids"`
+			LegacyGameType json.RawMessage                `json:"game_type"`
 		}
-		if json.Unmarshal(data, &prev) == nil && prev.LegacyGameType == nil && reflect.DeepEqual(prev.Guids, index) {
+		if json.Unmarshal(data, &prev) == nil && prev.LegacyGameType == nil && reflect.DeepEqual(guidIndex(prev.Guids), index) {
 			return false, nil
 		}
 	}
@@ -1173,8 +1236,10 @@ func buildModpackIndex(opt modpackOptions) (problems, newGuids int, err error) {
 		return 0, 0, fmt.Errorf("could not write %s: %w", out, err)
 	}
 	urls := 0
-	for _, v := range index {
-		urls += len(v)
+	for _, versions := range index {
+		for _, v := range versions {
+			urls += len(v)
+		}
 	}
 	slog.Info("Modpack index", "guids", len(index), "urls", urls, "path", out, "changed", wrote)
 
@@ -1195,7 +1260,7 @@ func RunModpack(args []string) int {
 	baseURL := fs.String("base-url", defaultModpackBaseURL, "BetterRepack download server")
 	full := fs.Bool("full", false, "ignore the cache and probe every file")
 	retryFailed := fs.Bool("retry-failed", false, "probe again the files recorded as not indexable")
-	maxURLs := fs.Int("max-urls", defaultMaxURLs, "most URLs kept per GUID")
+	maxURLs := fs.Int("max-urls", defaultMaxURLs, "most URLs kept per GUID and version")
 	workers := fs.Int("workers", 8, "parallel requests (max 16)")
 	_ = fs.Parse(args)
 

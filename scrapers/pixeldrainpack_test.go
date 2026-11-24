@@ -108,7 +108,7 @@ func TestBuildPackIndex(t *testing.T) {
 	if f != 0 || n == 0 || zipCalls != 1 {
 		t.Fatalf("new=%d failures=%d zipCalls=%d", n, f, zipCalls)
 	}
-	if len(readIndexGuids(out)["[moonlight]Koshmar_hair"]) != 1 {
+	if len(readIndexGuids(out)["[moonlight]Koshmar_hair"][unknownVersion]) != 1 {
 		t.Errorf("index: %v", readIndexGuids(out))
 	}
 
@@ -131,7 +131,7 @@ func TestBuildPackIndex(t *testing.T) {
 	if _, f = run(false); f == 0 {
 		t.Error("expected a failure")
 	}
-	if len(readIndexGuids(out)["[moonlight]Koshmar_hair"]) != 1 {
+	if len(readIndexGuids(out)["[moonlight]Koshmar_hair"][unknownVersion]) != 1 {
 		t.Error("old entries were lost")
 	}
 	if len(loadPackCache(cache).Zips["CMFYyfJ3"].Entries) == 0 {
@@ -194,7 +194,7 @@ func TestListLinks(t *testing.T) {
 		t.Fatalf("new=%d failures=%d zipCalls=%d", n, f, zipCalls)
 	}
 	want := "https://pixeldrain.com/api/file/X4swdWeG/info/zip/%5B2025.01.25%5DCurve_Slient_Voice.zipmod"
-	if got := readIndexGuids(out)["[moonlight]Curve_Slient_Voice"]; len(got) != 1 || got[0] != want {
+	if got := readIndexGuids(out)["[moonlight]Curve_Slient_Voice"][unknownVersion]; len(got) != 1 || got[0] != want {
 		t.Errorf("got %v", got)
 	}
 	// Second run: the zip comes from the cache.
@@ -206,7 +206,7 @@ func TestListLinks(t *testing.T) {
 	if _, f := run(); f != 1 {
 		t.Errorf("failures=%d, want 1", f)
 	}
-	if len(readIndexGuids(out)["[moonlight]Koshmar_hair"]) != 1 {
+	if len(readIndexGuids(out)["[moonlight]Koshmar_hair"][unknownVersion]) != 1 {
 		t.Error("entries were lost while the list page was down")
 	}
 }

@@ -356,12 +356,12 @@ func TestDropboxFolders(t *testing.T) {
 		"com.test.top": "https://www.dropbox.com/scl/fo/abc123/AKey-9?preview=top.zipmod&rlkey=rk1",
 		"com.test.sub": "https://www.dropbox.com/scl/fo/abc123/AKey-9/Sub%20Dir?preview=a.zipmod&rlkey=rk1",
 	} {
-		if len(idx.Guids[g]) != 1 || idx.Guids[g][0] != u {
-			t.Errorf("%s: %v want %s", g, idx.Guids[g], u)
+		if len(idx.Guids.flatURLs(g)) != 1 || idx.Guids.flatURLs(g)[0] != u {
+			t.Errorf("%s: %v want %s", g, idx.Guids.flatURLs(g), u)
 		}
 	}
 	for _, g := range []string{"com.test.accent", "com.test.unicode"} {
-		if len(idx.Guids[g]) != 1 {
+		if len(idx.Guids.flatURLs(g)) != 1 {
 			t.Errorf("%s (a non-ASCII path) is missing: %v", g, idx.Guids)
 		}
 	}
@@ -369,7 +369,7 @@ func TestDropboxFolders(t *testing.T) {
 		t.Errorf("guids: %v", idx.Guids)
 	}
 	old := readIndex(t, filepath.Join(dir, "data", "dropbox", "Old Style.json"))
-	if u := old.Guids["com.test.old"]; len(u) != 1 || u[0] != "https://www.dropbox.com/sh/oldid1/AAKey_x/inner.zipmod" {
+	if u := old.Guids.flatURLs("com.test.old"); len(u) != 1 || u[0] != "https://www.dropbox.com/sh/oldid1/AAKey_x/inner.zipmod" {
 		t.Errorf("old style: %v", old.Guids)
 	}
 	if e := loadCache(filepath.Join(dir, "cache", "dropbox", "My Mods.json"))[dropboxItemURL("scl/fo/abc123/AKey-9", "rk1", "/Sub Dir/NotAZip.zip")]; e.Error == "" || e.Guid != "" {
@@ -427,7 +427,7 @@ func TestDropboxSingleFilesAndPurge(t *testing.T) {
 		t.Fatalf("newGuids=%d failures=%d", n, f)
 	}
 	idx := readIndex(t, filepath.Join(dir, "data", "dropbox", singleFilesName+".json"))
-	if u := idx.Guids["com.test.single"]; len(u) != 1 || u[0] != mod {
+	if u := idx.Guids.flatURLs("com.test.single"); len(u) != 1 || u[0] != mod {
 		t.Errorf("single file: %v", idx.Guids)
 	}
 	cfg, err := loadHostedConfig(opt.configPath)

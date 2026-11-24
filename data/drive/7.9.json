@@ -2,11 +2,15 @@
  "generated": "2026-11-09T02:49:00",
  "count": 2,
  "guids": {
-  "[SAL]Escoffierhead": [
-   "https://drive.google.com/file/d/1-AlU0oUIDbkZdkgr1HNgANEgbvN-fxXH/view"
-  ],
-  "[SAL]Mizukihead": [
-   "https://drive.google.com/file/d/1d4nOAh_u4GxEt-U7NJwljayFu10vNQi1/view"
-  ]
+  "[SAL]Escoffierhead": {
+   "1": [
+    "https://drive.google.com/file/d/1-AlU0oUIDbkZdkgr1HNgANEgbvN-fxXH/view"
+   ]
+  },
+  "[SAL]Mizukihead": {
+   "1": [
+    "https://drive.google.com/file/d/1d4nOAh_u4GxEt-U7NJwljayFu10vNQi1/view"
+   ]
+  }
  }
 }

@@ -2,11 +2,15 @@
  "generated": "2026-11-16T10:24:02",
  "count": 2,
  "guids": {
-  "CLOSERS_LIFU": [
-   "https://drive.google.com/file/d/1wV0--maHcdFjbW6QSY98Xg50XQzbA3mr/view"
-  ],
-  "CLOSERS_YONGZHUANG": [
-   "https://drive.google.com/file/d/1wN2HZJG1LgDEV2cOZ3JjM4lZbFT4d1md/view"
-  ]
+  "CLOSERS_LIFU": {
+   "1.0": [
+    "https://drive.google.com/file/d/1wV0--maHcdFjbW6QSY98Xg50XQzbA3mr/view"
+   ]
+  },
+  "CLOSERS_YONGZHUANG": {
+   "1.0": [
+    "https://drive.google.com/file/d/1wN2HZJG1LgDEV2cOZ3JjM4lZbFT4d1md/view"
+   ]
+  }
  }
 }

@@ -2,11 +2,15 @@
  "generated": "2026-11-12T10:34:37",
  "count": 2,
  "guids": {
-  "[Ltsuki]SonodaUmiChristmas": [
-   "https://gofile.io/d/SMEsYF#d48b34e6-9343-43e1-8378-8bdc4bd24b37"
-  ],
-  "lyqy": [
-   "https://gofile.io/d/SMEsYF#6c4087e8-bf5b-4e05-8632-538b70bb05e5"
-  ]
+  "[Ltsuki]SonodaUmiChristmas": {
+   "1.0.0": [
+    "https://gofile.io/d/SMEsYF#d48b34e6-9343-43e1-8378-8bdc4bd24b37"
+   ]
+  },
+  "lyqy": {
+   "1": [
+    "https://gofile.io/d/SMEsYF#6c4087e8-bf5b-4e05-8632-538b70bb05e5"
+   ]
+  }
  }
 }

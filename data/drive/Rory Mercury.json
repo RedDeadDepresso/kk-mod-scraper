@@ -2,41 +2,65 @@
  "generated": "2026-11-21T10:30:24",
  "count": 12,
  "guids": {
-  "HeadMod": [
-   "https://drive.google.com/file/d/1eBM93OFjH5PpawVt0fcwpMPdBoVPeWTA/view"
-  ],
-  "HeartCat_bow": [
-   "https://drive.google.com/file/d/10iGZAhMLcQ2df0SqpVYsd242-QERT0Gj/view"
-  ],
-  "KKUSS": [
-   "https://drive.google.com/file/d/19vomENVYLesSmSvuOorHCLylmjhfOqII/view"
-  ],
-  "KKUTS": [
-   "https://drive.google.com/file/d/1RbrOiyXmtbtFaJ2RqiCycDMux06TLEyX/view"
-  ],
-  "[B5] BES": [
-   "https://drive.google.com/file/d/1u5gOfBGphRUSJ7Wefb7I34XRZm31DP0Q/view"
-  ],
-  "[bokuli]Fuka_C5_04_01": [
-   "https://drive.google.com/file/d/1FSh2Y8SgWHjuQz-bDw5cIi_YuqUQaJbH/view"
-  ],
-  "cm3d2": [
-   "https://drive.google.com/file/d/1PO5Veh3BzVWVzo-5OzyC7Ydlt6Ayc9u5/view"
-  ],
-  "com.nep.marvystuff": [
-   "https://drive.google.com/file/d/1IrJMS18VECvCqXNdYvJzZc2yK1GXYS0_/view"
-  ],
-  "com.roy12.sexypackb": [
-   "https://drive.google.com/file/d/1vgcWvtwAFuPofKHda7lRfxwjV3_h4oJS/view"
-  ],
-  "fissy.vera.mod": [
-   "https://drive.google.com/file/d/1Jd2G7h30O8lZ-Bpqc1pw5ko-bdcgWIaX/view"
-  ],
-  "wtf.FaceDetail": [
-   "https://drive.google.com/file/d/1bAC9mfzBGH-qUwy0MkJxOkIJfIVYrRG5/view"
-  ],
-  "yamadamod.clothVariation2": [
-   "https://drive.google.com/file/d/14Er2EV-FPuCGNz3n1ylgdH-gC1Orhj92/view"
-  ]
+  "HeadMod": {
+   "3": [
+    "https://drive.google.com/file/d/1eBM93OFjH5PpawVt0fcwpMPdBoVPeWTA/view"
+   ]
+  },
+  "HeartCat_bow": {
+   "1.0.0": [
+    "https://drive.google.com/file/d/10iGZAhMLcQ2df0SqpVYsd242-QERT0Gj/view"
+   ]
+  },
+  "KKUSS": {
+   "1.10": [
+    "https://drive.google.com/file/d/19vomENVYLesSmSvuOorHCLylmjhfOqII/view"
+   ]
+  },
+  "KKUTS": {
+   "2.2": [
+    "https://drive.google.com/file/d/1RbrOiyXmtbtFaJ2RqiCycDMux06TLEyX/view"
+   ]
+  },
+  "[B5] BES": {
+   "version B5": [
+    "https://drive.google.com/file/d/1u5gOfBGphRUSJ7Wefb7I34XRZm31DP0Q/view"
+   ]
+  },
+  "[bokuli]Fuka_C5_04_01": {
+   "1.1": [
+    "https://drive.google.com/file/d/1FSh2Y8SgWHjuQz-bDw5cIi_YuqUQaJbH/view"
+   ]
+  },
+  "cm3d2": {
+   "1.5": [
+    "https://drive.google.com/file/d/1PO5Veh3BzVWVzo-5OzyC7Ydlt6Ayc9u5/view"
+   ]
+  },
+  "com.nep.marvystuff": {
+   "1.0": [
+    "https://drive.google.com/file/d/1IrJMS18VECvCqXNdYvJzZc2yK1GXYS0_/view"
+   ]
+  },
+  "com.roy12.sexypackb": {
+   "1.1": [
+    "https://drive.google.com/file/d/1vgcWvtwAFuPofKHda7lRfxwjV3_h4oJS/view"
+   ]
+  },
+  "fissy.vera.mod": {
+   "1.0": [
+    "https://drive.google.com/file/d/1Jd2G7h30O8lZ-Bpqc1pw5ko-bdcgWIaX/view"
+   ]
+  },
+  "wtf.FaceDetail": {
+   "1": [
+    "https://drive.google.com/file/d/1bAC9mfzBGH-qUwy0MkJxOkIJfIVYrRG5/view"
+   ]
+  },
+  "yamadamod.clothVariation2": {
+   "5": [
+    "https://drive.google.com/file/d/14Er2EV-FPuCGNz3n1ylgdH-gC1Orhj92/view"
+   ]
+  }
  }
 }

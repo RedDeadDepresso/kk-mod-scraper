@@ -2,11 +2,15 @@
  "generated": "2026-11-17T11:27:02",
  "count": 2,
  "guids": {
-  "[Grafko]Rudolph Bodysuit": [
-   "https://gofile.io/d/3cCz4Jun#12ad18c4-8b27-48d6-a26b-db64a9822233"
-  ],
-  "[OoOoO]wwJiaoe": [
-   "https://gofile.io/d/3cCz4Jun#cbf34989-d33f-43ed-b72b-b47f90bc3ccd"
-  ]
+  "[Grafko]Rudolph Bodysuit": {
+   "1.0": [
+    "https://gofile.io/d/3cCz4Jun#12ad18c4-8b27-48d6-a26b-db64a9822233"
+   ]
+  },
+  "[OoOoO]wwJiaoe": {
+   "unknown": [
+    "https://gofile.io/d/3cCz4Jun#cbf34989-d33f-43ed-b72b-b47f90bc3ccd"
+   ]
+  }
  }
 }

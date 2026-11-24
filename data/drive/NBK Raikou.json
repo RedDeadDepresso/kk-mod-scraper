@@ -2,8 +2,10 @@
  "generated": "2026-11-15T10:12:01",
  "count": 1,
  "guids": {
-  "hb.minamoto.no.raikou.outfit": [
-   "https://drive.google.com/file/d/19hcocNBScX-c9xmKjOYNtHitlk521jZv/view"
-  ]
+  "hb.minamoto.no.raikou.outfit": {
+   "1.1": [
+    "https://drive.google.com/file/d/19hcocNBScX-c9xmKjOYNtHitlk521jZv/view"
+   ]
+  }
  }
 }

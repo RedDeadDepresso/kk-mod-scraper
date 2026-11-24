@@ -251,8 +251,8 @@ func TestCatboxAlbumEndToEnd(t *testing.T) {
 		t.Errorf("index: %+v", idx)
 	}
 	for g, u := range want {
-		if len(idx.Guids[g]) != 1 || idx.Guids[g][0] != u {
-			t.Errorf("%s: %v want %s", g, idx.Guids[g], u)
+		if len(idx.Guids.flatURLs(g)) != 1 || idx.Guids.flatURLs(g)[0] != u {
+			t.Errorf("%s: %v want %s", g, idx.Guids.flatURLs(g), u)
 		}
 	}
 	cache := loadCache(cachePath)
@@ -316,7 +316,7 @@ func TestCatboxSingleFilesAndPurge(t *testing.T) {
 		t.Error("a link that isn't a zip must not be requested")
 	}
 	idx := readMediaFireIndexKind(t, dir, "catbox", singleFilesName)
-	if u := idx.Guids["com.test.single"]; len(u) != 1 || u[0] != "https://files.catbox.moe/modfile.zipmod" {
+	if u := idx.Guids.flatURLs("com.test.single"); len(u) != 1 || u[0] != "https://files.catbox.moe/modfile.zipmod" {
 		t.Errorf("single file: %v", idx.Guids)
 	}
 	cfg, err := loadHostedConfig(opt.configPath)

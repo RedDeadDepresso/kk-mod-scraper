@@ -2,50 +2,80 @@
  "generated": "2026-11-16T10:24:25",
  "count": 15,
  "guids": {
-  "Helmets_WW2.Type-90": [
-   "https://drive.google.com/file/d/11rTuPImhM3I-Z9BW1gtUghzg3qqS8ljC/view"
-  ],
-  "Tools.Objects": [
-   "https://drive.google.com/file/d/1hllBm4jwqIaU-X_5MiwHYCNL9VPeBEiW/view"
-  ],
-  "Weapons_ww2.Arisaka Type-38": [
-   "https://drive.google.com/file/d/1zYASdgmfSleD5Vs6sgPOy4EjazG3nk1Z/view"
-  ],
-  "Weapons_ww2.Arisaka Type-38 & Bayonet": [
-   "https://drive.google.com/file/d/1XLRI7sT9PDAvQeP4H_OX6t5wtbCj5iiZ/view"
-  ],
-  "Weapons_ww2.Luger-P08": [
-   "https://drive.google.com/file/d/1b55vOj24vQ-sEEevO8ok1baQNFBQ7Iq_/view"
-  ],
-  "Weapons_ww2.Panzerfaust": [
-   "https://drive.google.com/file/d/1KuxOVFhwMinDoBjvSV6hTt1Whw2BCWDk/view"
-  ],
-  "Weapons_ww2.Panzerschreck": [
-   "https://drive.google.com/file/d/1lONJqd8cGwqWkOPHwTjyvwZVb01h1h_M/view"
-  ],
-  "Weapons_ww2.Panzerschreck-rocket": [
-   "https://drive.google.com/file/d/1VY2l-nrUJEa1hHVGtS3oxHeOX7i2ymAW/view"
-  ],
-  "Weapons_ww2.Shitotsubakurai": [
-   "https://drive.google.com/file/d/178x8LkQuXaiMUfXaSU1XwhnhJQFZw5tb/view"
-  ],
-  "Weapons_ww2.Stg-44": [
-   "https://drive.google.com/file/d/1hQiWazpmhnUAIpALQgdPDTSw5SdaLQ3c/view"
-  ],
-  "Weapons_ww2.Type-14 Nambu": [
-   "https://drive.google.com/file/d/1tV7O2VCoWhKc0_1ciiAnu5cpmJX6Et0c/view"
-  ],
-  "Weapons_ww2.Type-94 Nambu": [
-   "https://drive.google.com/file/d/1ONvue65GMF_CEwR0Po7iK5OI94EznEEh/view"
-  ],
-  "Weapons_ww2.Walther-P38": [
-   "https://drive.google.com/file/d/1bpClEi-8IovlzhyubvIHWYCkQK8A7zhJ/view"
-  ],
-  "goodthang.Kar-98": [
-   "https://drive.google.com/file/d/1aRXQ4OpIkdNrtv1bn5VKXUpt8Ym9YB5K/view"
-  ],
-  "goodthang.Walther-PPK": [
-   "https://drive.google.com/file/d/1PqmKxPBeS0i6OGykt_iS9CWIe5aOeE1X/view"
-  ]
+  "Helmets_WW2.Type-90": {
+   "1.0": [
+    "https://drive.google.com/file/d/11rTuPImhM3I-Z9BW1gtUghzg3qqS8ljC/view"
+   ]
+  },
+  "Tools.Objects": {
+   "1.0": [
+    "https://drive.google.com/file/d/1hllBm4jwqIaU-X_5MiwHYCNL9VPeBEiW/view"
+   ]
+  },
+  "Weapons_ww2.Arisaka Type-38": {
+   "1.0": [
+    "https://drive.google.com/file/d/1zYASdgmfSleD5Vs6sgPOy4EjazG3nk1Z/view"
+   ]
+  },
+  "Weapons_ww2.Arisaka Type-38 & Bayonet": {
+   "1.0": [
+    "https://drive.google.com/file/d/1XLRI7sT9PDAvQeP4H_OX6t5wtbCj5iiZ/view"
+   ]
+  },
+  "Weapons_ww2.Luger-P08": {
+   "1.0": [
+    "https://drive.google.com/file/d/1b55vOj24vQ-sEEevO8ok1baQNFBQ7Iq_/view"
+   ]
+  },
+  "Weapons_ww2.Panzerfaust": {
+   "1.0": [
+    "https://drive.google.com/file/d/1KuxOVFhwMinDoBjvSV6hTt1Whw2BCWDk/view"
+   ]
+  },
+  "Weapons_ww2.Panzerschreck": {
+   "1.0": [
+    "https://drive.google.com/file/d/1lONJqd8cGwqWkOPHwTjyvwZVb01h1h_M/view"
+   ]
+  },
+  "Weapons_ww2.Panzerschreck-rocket": {
+   "1.0": [
+    "https://drive.google.com/file/d/1VY2l-nrUJEa1hHVGtS3oxHeOX7i2ymAW/view"
+   ]
+  },
+  "Weapons_ww2.Shitotsubakurai": {
+   "1.0": [
+    "https://drive.google.com/file/d/178x8LkQuXaiMUfXaSU1XwhnhJQFZw5tb/view"
+   ]
+  },
+  "Weapons_ww2.Stg-44": {
+   "1.0": [
+    "https://drive.google.com/file/d/1hQiWazpmhnUAIpALQgdPDTSw5SdaLQ3c/view"
+   ]
+  },
+  "Weapons_ww2.Type-14 Nambu": {
+   "1.0": [
+    "https://drive.google.com/file/d/1tV7O2VCoWhKc0_1ciiAnu5cpmJX6Et0c/view"
+   ]
+  },
+  "Weapons_ww2.Type-94 Nambu": {
+   "1.0": [
+    "https://drive.google.com/file/d/1ONvue65GMF_CEwR0Po7iK5OI94EznEEh/view"
+   ]
+  },
+  "Weapons_ww2.Walther-P38": {
+   "1.0": [
+    "https://drive.google.com/file/d/1bpClEi-8IovlzhyubvIHWYCkQK8A7zhJ/view"
+   ]
+  },
+  "goodthang.Kar-98": {
+   "1.0": [
+    "https://drive.google.com/file/d/1aRXQ4OpIkdNrtv1bn5VKXUpt8Ym9YB5K/view"
+   ]
+  },
+  "goodthang.Walther-PPK": {
+   "1.0": [
+    "https://drive.google.com/file/d/1PqmKxPBeS0i6OGykt_iS9CWIe5aOeE1X/view"
+   ]
+  }
  }
 }
