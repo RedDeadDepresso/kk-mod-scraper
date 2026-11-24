@@ -66,7 +66,7 @@ jobs:
             def uniq: reduce .[] as $x ([]; if any(.[]; . == $x) then . else . + [$x] end);
             def vkey: [scan("[0-9]+") | tonumber];
             def unknown: "unknown";
-            # {guid: {version: [link]}} from the index files of one source's folders
+            # {guid: {version: [link]}} from the index files of the folders of one source
             def folders: reduce (.[] | (.guids // {}) | to_entries[]) as $e ({};
               reduce ($e.value | to_entries[]) as $v (.; .[$e.key][$v.key] += $v.value));
             # newest version first, "unknown" last
