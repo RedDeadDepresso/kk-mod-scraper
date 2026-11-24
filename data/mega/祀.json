@@ -2,10 +2,16 @@
  "generated": "2026-11-08T06:27:04",
  "count": 1,
  "guids": {
-  "carrotgeball.EndFiled.Character.Jsspsi": [
-   "https://mega.nz/folder/o6slzI5Z#lFEOEUOllZKHTkqVWQNasg/file/V7tWHLKK",
-   "https://mega.nz/folder/o6slzI5Z#lFEOEUOllZKHTkqVWQNasg/file/My1hSbLI",
-   "https://mega.nz/folder/o6slzI5Z#lFEOEUOllZKHTkqVWQNasg/file/Bjlw3ABJ"
-  ]
+  "carrotgeball.EndFiled.Character.Jsspsi": {
+   "1.0": [
+    "https://mega.nz/folder/o6slzI5Z#lFEOEUOllZKHTkqVWQNasg/file/Bjlw3ABJ"
+   ],
+   "1.2": [
+    "https://mega.nz/folder/o6slzI5Z#lFEOEUOllZKHTkqVWQNasg/file/My1hSbLI"
+   ],
+   "1.3": [
+    "https://mega.nz/folder/o6slzI5Z#lFEOEUOllZKHTkqVWQNasg/file/V7tWHLKK"
+   ]
+  }
  }
 }
