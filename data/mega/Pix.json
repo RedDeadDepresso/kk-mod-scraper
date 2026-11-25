@@ -1,8 +1,152 @@
 {
- "generated": "2026-11-23T00:14:21",
+ "generated": "2026-11-25T11:54:14",
  "count": 3,
  "guids": {
   "Az.Shader.Standard": {
+   "1.0.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/0vcRVRiA",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/dzUDxZKQ"
+   ],
+   "1.1.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/dzdVHRBC",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/l2VFgRBB"
+   ],
+   "1.1.1": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/Q2FDWDRZ",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/wjMH3ZwR"
+   ],
+   "2.0.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/QrUlVDZZ",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/Z6EHxZjB"
+   ],
+   "2.0.1": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/YiVDxbKK",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/Z2ERELiZ"
+   ],
+   "2.0.2": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/M3MhEbrQ",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/onU3VZbJ"
+   ],
+   "2.1.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/Y2czWTAQ",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/g7MFTZJJ"
+   ],
+   "2.2.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/N2FlGJiK",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/ZncD2RwI"
+   ],
+   "2.3.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/RmEBhDyJ",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/V7E1BTYZ"
+   ],
+   "2.4.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/Zjc1wbpA",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/dzMlCLbZ"
+   ],
+   "3.0.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/BudVhTqK",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/h7cTiDZZ"
+   ],
+   "3.0.1": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/B3dhzRrY",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/Z2FjRbZZ"
+   ],
+   "3.0.2": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/9mdTBLiT",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/ouN13ZrS"
+   ],
+   "3.1.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/9yUFVLDb",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/drdHCBLI"
+   ],
+   "3.2.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/J6VRjBSC",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/cqcFSTyS"
+   ],
+   "3.3.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/9idHjDDY",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/AnMjiJrJ"
+   ],
+   "3.4.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/kzUBnTzS",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/liMR0DZA"
+   ],
+   "3.5.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/YiNzDBKD",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/s6NzxZiQ"
+   ],
+   "4.0.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/ZjEBhDJC",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/ZqUFiBAT"
+   ],
+   "4.1.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/IjEFEZqD",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/lzMlUDZQ"
+   ],
+   "4.1.1": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/8ncB3JCb",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/VqUxxLRZ"
+   ],
+   "4.2.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/53EBDJiK",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/NiVVXZKI"
+   ],
+   "4.3.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/h2cFyRBD",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/p7dlCJpD"
+   ],
+   "4.3.1": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/E3chDZpa",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/o7FjQTIZ"
+   ],
+   "4.4.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/FuFl3JgK",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/Zud3Tb6B"
+   ],
+   "4.5.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/4qUTDLrI",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/pqdzkBDD"
+   ],
+   "4.6.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/ArM3VJKT",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/hzdFADpC"
+   ],
+   "4.7.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/RuMFnLSC",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/tvF1GJ5L"
+   ],
+   "4.8.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/dzUjnLwI",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/siFRiJ6b"
+   ],
+   "5.0.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/MmdVTBSY",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/QmNllBiY"
+   ],
+   "5.1.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/57FFnLxY",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/w2FTnZDD"
+   ],
+   "5.2.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/03cxSDjY",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/AnUlzDSL"
+   ],
+   "5.3.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/1vMnFbCR",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/Z7VRkbKD"
+   ],
+   "5.3.1": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/UuMDSLxZ",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/knM1AJ6R"
+   ],
+   "5.3.2": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/AydjQZjQ",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/BudT0LCa"
+   ],
+   "5.4.0": [
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/RjcT0Bia",
+    "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/svdHEBLK"
+   ],
    "5.5.0": [
     "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/8mUHXLjT",
     "https://mega.nz/folder/wrVFnaDJ#gS17QUDcdjfHAMGwq5L_5A/file/sudFiZxS"

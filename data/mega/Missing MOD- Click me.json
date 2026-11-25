@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-10T18:59:50",
+ "generated": "2026-11-25T11:53:57",
  "count": 5527,
  "guids": {
   "!Warning Item": {
@@ -1246,6 +1246,12 @@
    ]
   },
   "Az.Shader.Standard": {
+   "4.2.0": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/yd1mRLqR"
+   ],
+   "4.4.0": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/LVkGiAoA"
+   ],
    "5.4.0": [
     "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/fQ1UlJiR"
    ],
@@ -1406,6 +1412,15 @@
    ]
   },
   "Blue Archive": {
+   "1.37": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/GVdSnLIZ"
+   ],
+   "1.53": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/jBFlzDJR"
+   ],
+   "1.55": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/fQVXUZ4A"
+   ],
    "1.56": [
     "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/DU03iDLB"
    ],
@@ -2787,6 +2802,9 @@
    ]
   },
   "EveKaczmarek.AzurLane.Mod": {
+   "0.85": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/fJFywLpR"
+   ],
    "0.96.2": [
     "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/7N1CyYqL",
     "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/LMdVyZ5Q",
@@ -6471,6 +6489,33 @@
    ]
   },
   "Phantom.Hairs": {
+   "1.0": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/TFUkjbIY"
+   ],
+   "1.1": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/PMFwnZ7b"
+   ],
+   "1.11": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/KUMQnZRC"
+   ],
+   "1.13": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/CdNiwDrQ"
+   ],
+   "1.14": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/GREGzb5S"
+   ],
+   "1.15": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/7Q9y2KTC"
+   ],
+   "1.16": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/6QFFgBha"
+   ],
+   "1.17": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/jc1zWLKS"
+   ],
+   "1.18": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/zI9QHTgL"
+   ],
    "1.19": [
     "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/3FkS1BCC"
    ],
@@ -6482,6 +6527,24 @@
    ],
    "1.24": [
     "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/LJkTgSbJ"
+   ],
+   "1.3": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/eFtXzLhT"
+   ],
+   "1.4": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/WAskGJrC"
+   ],
+   "1.6": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/TVsHgRqa"
+   ],
+   "1.7": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/uIkFSD7Y"
+   ],
+   "1.8": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/mY9R2JzR"
+   ],
+   "1.9": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/LZUA1DYC"
    ]
   },
   "Phantom.LilijaSSR5": {
@@ -20260,6 +20323,12 @@
    ]
   },
   "com3d2.hair": {
+   "1.6": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/eR0gyRQQ"
+   ],
+   "3.0": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/SNdCSLDK"
+   ],
    "4.01": [
     "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/2U0U3LLa"
    ],
@@ -20271,6 +20340,9 @@
    ],
    "5.5": [
     "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/uMcS1JrT"
+   ],
+   "v1.0": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/OVs1iSKI"
    ]
   },
   "com3d2.hair.for.sesil": {
@@ -27395,6 +27467,19 @@
    ]
   },
   "xukmi.Shaders.VanillaPlus": {
+   "1.3.1": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/aAskRZiK",
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/LQ0G1SqJ"
+   ],
+   "1.5.1": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/vFtzkRoY"
+   ],
+   "1.5.3": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/fAEiCBKT"
+   ],
+   "1.5.4": [
+    "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/SY8VjDCY"
+   ],
    "1.7.0": [
     "https://mega.nz/folder/PJV2TDBK#D3zAzqBEw00Ax_sCmvOgRA/file/uJEkFJKI"
    ],
